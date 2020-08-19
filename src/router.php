@@ -8,11 +8,12 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-require_once 'config.php';
+use StaticObj;
+use Config;
 
-class Router extends staticObj
+class Router extends StaticObj
 {
     static protected $_vars = array();
 

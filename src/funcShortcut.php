@@ -8,7 +8,7 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
 function setup($vars){
     return Config::init($vars);

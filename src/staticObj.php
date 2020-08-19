@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class staticObj 
+class StaticObj 
 {
     static function set($key, $value, $overwrite = true)
     {

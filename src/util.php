@@ -8,7 +8,7 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
 class Util{
 

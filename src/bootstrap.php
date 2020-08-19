@@ -1,6 +1,7 @@
 <?php
 /**
  * SPT software - Bootstrap
+ * This write for no PSR usage, or no Composer
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
@@ -12,16 +13,16 @@ defined( 'APP_PATH' ) or die('You must define Application path first');
 
 define( 'SPT_PATH', __DIR__ . '/');
 
-require_once 'baseObj.php';
-require_once 'staticObj.php';
-require_once 'fncArray.php';
-require_once 'fncObject.php';
-require_once 'util.php';
-require_once 'config.php';
-require_once 'log.php';
-require_once 'lang.php';
-require_once 'theme.php';
-require_once 'asset.php';
-require_once 'pdo.php';
-require_once 'query.php';
-require_once 'response.php';
+require_once 'BaseObj.php';
+require_once 'StaticObj.php';
+require_once 'FncArray.php';
+require_once 'FncObject.php';
+require_once 'Util.php';
+require_once 'Config.php';
+require_once 'Log.php';
+require_once 'Lang.php';
+require_once 'Theme.php';
+require_once 'Asset.php';
+require_once 'PdoWrapper.php';
+require_once 'Query.php';
+require_once 'Response.php';

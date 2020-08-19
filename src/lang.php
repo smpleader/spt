@@ -8,9 +8,11 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class Lang extends staticObj
+use StaticObj;
+
+class Lang extends StaticObj
 {
     static protected $_vars = array();
 

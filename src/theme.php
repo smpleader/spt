@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class Theme extends staticObj
+class Theme extends StaticObj
 {
     static protected $_vars = array();
     //static protected $_widgets = array();

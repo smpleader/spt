@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class fncArray
+class FncArray
 {
     public static function merge(&$arr1, $arr2)
     {

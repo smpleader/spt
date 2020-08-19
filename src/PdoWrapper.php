@@ -8,9 +8,11 @@
  * 
  */
 
-require_once 'log.php';
+namespace SPT;
 
-class PDOWrapper{
+use Log;
+
+class PdoWrapper{
 	
 	/*
 	protected $host;

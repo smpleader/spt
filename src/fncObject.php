@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class fncObject
+class FncObject
 {
     public static function merge(&$obj1, $obj2)
     {

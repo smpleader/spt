@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class Response extends staticObj
+class Response extends StaticObj
 {
     static protected $_vars = array();
 

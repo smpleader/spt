@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class app extends staticObj
+class App extends StaticObj
 {
     protected static $_vars = array();
     protected static $_data = array();

@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class baseObj 
+class BaseObj 
 {
     protected $_vars;
 

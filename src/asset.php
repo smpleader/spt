@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'SPT_PATH' ) or die('');
+namespace SPT;
 
-class Asset extends baseObj
+class Asset extends BaseObj
 {
     public function __construct(string $link, array $dependencies = array())
     {

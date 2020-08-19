@@ -8,9 +8,9 @@
  * 
  */
 
-defined( 'APP_PATH' ) or die('');
+namespace SPT;
 
-class query
+class Query
 {
     private $db;
     private $query;

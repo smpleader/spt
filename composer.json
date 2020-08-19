@@ -2,7 +2,7 @@
     "name": "smpleader/spt",
     "description": "The SPT Framework.",
     "keywords": ["framework", "spt"],
-    "license": "MIT",
+    "license": "GPL-2.0-or-later",
     "homepage": "https://github.com/smpleader/spt/wiki",
     "support": {
         "issues": "https://github.com/smpleader/spt/issues",

@@ -32,26 +32,26 @@ class PdoWrapper{
 
 			if( isset($parameters['connection']))
 			{
-				$this->connection = new PDO($parameters['connection'], $username, $password);
+				$this->connection = new \PDO($parameters['connection'], $username, $password);
 			}
 			else
 			{
-				$this->connection = new PDO("mysql:host=" . $host . ";dbname=" . $database. ";charset=utf8mb4", $username, $password);
+				$this->connection = new \PDO("mysql:host=" . $host . ";dbname=" . $database. ";charset=utf8mb4", $username, $password);
 			}
 
 			if( isset($parameters['fetch_mode']))
 			{
-				$this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, $parameters['fetch_mode']);
+				$this->connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, $parameters['fetch_mode']);
 			}
 			else
 			{
-				$this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+				$this->connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
 			}
 
-			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+			$this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			$this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
 		}
-		catch(PDOException $e)
+		catch(\PDOException $e)
 		{
 			$this->connected = false;
 			 
@@ -102,7 +102,7 @@ class PdoWrapper{
 				$this->log($query, $parameters);
 				return $query->fetch();
 			}
-			catch(PDOException $e)
+			catch(\PDOException $e)
 			{
 				return $this->setError($e->getMessage(), $query, $parameters);
 			}
@@ -120,7 +120,7 @@ class PdoWrapper{
 				$this->log($query, $parameters);
 				return $query->fetchColumn();
 			}
-			catch(PDOException $e)
+			catch(\PDOException $e)
 			{
 				return $this->setError($e->getMessage(), $query, $parameters);
 			}
@@ -138,7 +138,7 @@ class PdoWrapper{
 				$this->log($query, $parameters);
 				return $query->fetchAll();
 			}
-			catch(PDOException $e)
+			catch(\PDOException $e)
 			{
 				return $this->setError($e->getMessage(), $query, $parameters);
 			}
@@ -157,7 +157,7 @@ class PdoWrapper{
 				$this->log($query, $parameters);
 				return $query->rowCount();
 			}
-			catch(PDOException $e)
+			catch(\PDOException $e)
 			{
 				return $this->setError($e->getMessage(), $query, $parameters);
 			}
@@ -175,7 +175,7 @@ class PdoWrapper{
 				$this->log($query, '--');
 				return $this->connection->exec($query);
 			}
-			catch(PDOException $e)
+			catch(\PDOException $e)
 			{
 				return $this->setError($e->getMessage(), $query, '--');
 			}
@@ -195,7 +195,7 @@ class PdoWrapper{
 				$this->log($query, $parameters);
 				return $this->connection->lastInsertId();
 			}
-			catch(PDOException $e)
+			catch(\PDOException $e)
 			{
 				return $this->setError($e->getMessage(), $query, $parameters);
 			}
@@ -226,7 +226,7 @@ class PdoWrapper{
 				$result = $query->execute($parameters); 
 				$this->log($query, $parameters);
 			}
-			catch(PDOException $e)
+			catch(\PDOException $e)
 			{
 				return $this->setError($e->getMessage(), $query, $parameters);
 			}
@@ -243,7 +243,7 @@ class PdoWrapper{
 				$this->log($query, '-');
 				return ($query > 0) ? true : false;
 			}
-			catch(PDOException $e)
+			catch(\PDOException $e)
 			{
 				return $this->setError($e->getMessage(), "SHOW TABLES LIKE '$table'", $table);
 			}

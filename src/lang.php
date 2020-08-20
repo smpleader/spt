@@ -10,7 +10,7 @@
 
 namespace SPT;
 
-use StaticObj;
+use SPT\StaticObj;
 
 class Lang extends StaticObj
 {

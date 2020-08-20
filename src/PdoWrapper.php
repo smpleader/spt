@@ -10,7 +10,7 @@
 
 namespace SPT;
 
-use Log;
+use SPT\Log;
 
 class PdoWrapper{
 	

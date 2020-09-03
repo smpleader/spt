@@ -68,4 +68,17 @@ class Response extends StaticObj
         http_response_code('500');
         self::_($msg);
     }
+
+    public static function redirect($url)
+    {
+        if(headers_sent())
+        {
+            echo '<script>document.location.href="'. $url .'"</script>';
+        }
+        else
+        {
+            header('Location: '.$url);
+        }
+        exit(0);
+    }
 }

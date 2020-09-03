@@ -27,7 +27,7 @@ class Query
 
     public function __construct($host, $username, $password, $database, $prefix, $fquota='`')
     {
-        $this->db = new PDOWrapper($host, $username, $password, $database);
+        $this->db = new PdoWrapper($host, $username, $password, $database);
         
         if($this->db === false)
         {

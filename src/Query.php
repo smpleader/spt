@@ -25,14 +25,9 @@ class Query
     private $orderby;
     private $limit;
 
-    public function __construct($host, $username, $password, $database, $prefix, $fquota='`')
+    public function __construct(PDOWrapper $db, $prefix, $fquota='`')
     {
-        $this->db = new PdoWrapper($host, $username, $password, $database);
-        
-        if($this->db === false)
-        {
-            die('Invalid DB connection');
-        }
+        $this->db = $db;
         $this->prefix = $prefix;
         $this->qq = $fquota;
         $this->reset();

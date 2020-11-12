@@ -54,6 +54,12 @@ class Theme extends StaticObj
         {
             $tag = '';
             $output = self::get($type);
+
+            if(!is_array($output))
+            {
+                return [];
+            }
+            
             switch($type)
             {
                 case 'inlineCss':

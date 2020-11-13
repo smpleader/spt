@@ -4,7 +4,7 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: A way to log some information for admin
+ * @description: A way to response the package
  * 
  */
 

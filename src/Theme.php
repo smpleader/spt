@@ -137,7 +137,7 @@ class Theme extends StaticObj
 
     public static function createPage()
     {
-        if(!defined('THEME_PATH')) die('<!-- Invalid theme -->');
+        if(!defined('THEME_PATH')) Response::_404('Invalid theme');
         
         include THEME_PATH. self::$_theme. '.php';
 
@@ -149,7 +149,7 @@ class Theme extends StaticObj
 
     public static function echoWidget($name, $data = array())
     {
-        if(!defined('THEME_PATH')) die('<!-- Invalid theme -->');
+        if(!defined('THEME_PATH')) Response::_404('Invalid theme widget '.$name);
 
         $layout = THEME_PATH.'widgets/'. $name. '/'. $name. '.php';
 

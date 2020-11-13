@@ -233,7 +233,7 @@ class Query
 
     private function buildSelect($getTotal=false)
     {
-        if(empty($this->table)) die('Invalid query table');
+        if(empty($this->table)) Response::_404('Invalid table');
         if(empty($this->fields)) $this->fields[] = '*';
 
         $q = $getTotal ? 'SELECT COUNT(*) FROM '.$this->table : 'SELECT '. implode(',', $this->fields). ' FROM '.$this->table;

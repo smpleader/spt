@@ -60,7 +60,9 @@ class Query
     private function qq($name)
     {
         if(  
-            strpos($name, $this->qq) === false && strpos($name, ' as ') === false
+            strpos($name, $this->qq) === false 
+            && strpos($name, ' as ') === false
+            && strpos($name, '(') === false
         )
         {
             $name = $this->qq. $name .$this->qq;

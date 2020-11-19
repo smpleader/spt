@@ -33,4 +33,43 @@ class FncArray
     {
         return(is_array($arr) && count($arr));
     }
+
+    public static function flat(array $arr, $includeNumericIndex=true, $token='')
+    {
+        $tmp = [];
+        foreach($arr as $key=>$value)
+        {
+            $newToken = empty($token) ? $key : $token. '.'. $key;
+            
+            if( is_array($value) &&
+                (static::isAssoc($value) || $includeNumericIndex)
+            )
+            {
+                $tmp = $tmp + static::flat($value, $includeNumericIndex, $newToken);
+            }
+            else
+            {
+                $tmp[$newToken] = $value;
+            }
+        }
+        return $tmp;
+    }
+
+    public static function isAssoc(array $arr)
+    {
+        return !static::isIndex( $arr);
+    }
+
+    public static function isIndex(array $arr, $checkSequential=false)
+    {
+        if (array() === $arr) return true;
+        if($checkSequential)
+        {
+            return array_keys($arr) === range(0, count($arr) - 1);
+        }
+        else
+        {
+            return array_unique(array_map("is_int", array_keys($arr))) === array(true);
+        }
+    }
 }

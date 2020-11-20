@@ -34,18 +34,18 @@ class FncArray
         return(is_array($arr) && count($arr));
     }
 
-    public static function flat(array $arr, $includeNumericIndex=true, $token='')
+    public static function flat(array $arr, $dot='.', $includeNumericIndex=true, $token='')
     {
         $tmp = [];
         foreach($arr as $key=>$value)
         {
-            $newToken = empty($token) ? $key : $token. '.'. $key;
+            $newToken = empty($token) ? $key : $token. $dot. $key;
             
             if( is_array($value) &&
                 (static::isAssoc($value) || $includeNumericIndex)
             )
             {
-                $tmp = $tmp + static::flat($value, $includeNumericIndex, $newToken);
+                $tmp = $tmp + static::flat($value, $dot, $includeNumericIndex, $newToken);
             }
             else
             {

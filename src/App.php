@@ -60,7 +60,7 @@ class App extends StaticObj
     {
         if(session_id() == '' || !isset($_SESSION)) {
             // session isn't started
-            session_start();
+            @session_start();
         }
         $arr = func_get_args();
         array_unshift( $arr, 'session');

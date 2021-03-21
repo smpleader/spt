@@ -25,4 +25,9 @@ class Lang extends StaticObj
     public static function e($key){
         echo self::_($key);
     }
+    
+    public static function loaded()
+    {
+        return count(self::$_vars);
+    }
 }

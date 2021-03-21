@@ -11,6 +11,7 @@
 namespace SPT;
 
 use SPT\Log;
+use SPT\Config;
 
 class PdoWrapper{
 	

@@ -76,10 +76,9 @@ class Router extends StaticObj
     private $nodes;
     //public function __construct(){}
 
-    public function parse()
+    public function parse( $protocol = '', $siteSubpath = '')
     {
-
-        $protocol =  Config::get('siteProtocol', '');
+ 
         $p =  (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
 
         if( empty($protocol) )
@@ -106,7 +105,7 @@ class Router extends StaticObj
             self::set( $key, $value);
         }
 
-        $subPath = trim( Config::get('siteSubpath', ''), '/');
+        $subPath = trim( $siteSubpath, '/');
 
         $actualPath = '/'; 
         

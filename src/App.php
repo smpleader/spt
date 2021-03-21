@@ -14,6 +14,7 @@ class App extends StaticObj
 {
     protected static $_vars = array();
     protected static $_data = array();
+    protected static $sessionTimeout = 15;
 
     private static function _data($data, $key = null, $value = null, $format = 0)
     {
@@ -97,7 +98,7 @@ class App extends StaticObj
 
         } elseif ( is_int($param)){
 
-            $param += 60 * Config::get('sessionTimeout', 15);
+            $param += 60 * self::$sessionTimeout;
             self::session('token_timeout', $param, true);
 
         }
@@ -105,5 +106,9 @@ class App extends StaticObj
 
     public static function execute($router){
 
+    }
+
+    public static function setTimeout($int){
+        self::$sessionTimeout = (int) $int;
     }
 }

@@ -27,11 +27,6 @@ class Response extends StaticObj
         {
             echo $content;
         }
-
-        if(Config::get('debug', false) && Config::get('debugPath', ''))
-        {
-            Log::toFile(Config::get('debugPath'), !Config::get('debugOnce'));
-        }
         
         exit(0);
     }

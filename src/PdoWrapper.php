@@ -25,8 +25,9 @@ class PdoWrapper{
 	protected $connection;
 	public $connected = false;
 	private $errors = true;
+	private $debug;
 
-	function __construct($host, $username, $password, $database, $parameters=array()){
+	function __construct($host, $username, $password, $database, $parameters=array(), $isDebug = false){
 		
 		try{ 
 			$this->connected = true;
@@ -51,6 +52,7 @@ class PdoWrapper{
 
 			$this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 			$this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+			$this->debug = $isDebug;
 		}
 		catch(\PDOException $e)
 		{
@@ -78,7 +80,7 @@ class PdoWrapper{
 
 	public function log($sql, $input, $error='')
 	{
-		if(Config::get('debug'))
+		if($this->debug)
 		{
 			if($error)
 			{

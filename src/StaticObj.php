@@ -32,6 +32,6 @@ class StaticObj
 
     static function importArr(array $arr)
     {
-        fncArray::merge(static::$_vars, $arr);
+        FncArray::merge(static::$_vars, $arr);
     }
 }

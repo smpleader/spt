@@ -17,7 +17,7 @@ class FncArray
         foreach($arr2 as $key => $value)
         {
             if(is_array($value)){
-                fncArray::merge($arr1[$key], $value);
+                FncArray::merge($arr1[$key], $value);
             } else {
                 $arr1[$key] = $value;
             }

@@ -47,7 +47,7 @@ class Query
 
     private function prefix($q)
     {
-        if(fncArray::ifReady($this->prefix))
+        if(FncArray::ifReady($this->prefix))
         {
             foreach($this->prefix as $find=>$replace)
             {
@@ -90,7 +90,7 @@ class Query
 
     public function select($fields){
 
-        if(fncArray::ifReady($fields))
+        if(FncArray::ifReady($fields))
         {
             $this->fields[] = $this->qq. implode($this->qq. ','.$this->qq, $fields).$this->qq;
         }
@@ -110,7 +110,7 @@ class Query
 
     public function where($conditions){
 
-        if(fncArray::ifReady($conditions))
+        if(FncArray::ifReady($conditions))
         {
             foreach($conditions as $key=>$val)
             {
@@ -176,7 +176,7 @@ class Query
 
     public function orderby($order){
 
-        if(fncArray::ifReady($order))
+        if(FncArray::ifReady($order))
         {
             $this->orderby = implode(' ', $order);
         }
@@ -190,7 +190,7 @@ class Query
 
     public function limit($limit){
 
-        if(fncArray::ifReady($limit))
+        if(FncArray::ifReady($limit))
         {
             $this->limit = implode(', ', $limit);
         }
@@ -204,7 +204,7 @@ class Query
 
     public function join($joins){
 
-        if(fncArray::ifReady($joins))
+        if(FncArray::ifReady($joins))
         {
             foreach($joins as $j)
             {
@@ -212,7 +212,7 @@ class Query
                 {
                     $this->join[] = $j;
                 }
-                elseif(fncArray::ifReady($j))
+                elseif(FncArray::ifReady($j))
                 {
                     if(count($j) == 2)
                     {

@@ -15,6 +15,7 @@ class Theme extends StaticObj
     static protected $_vars = array();
     //static protected $_widgets = array();
     static protected $_theme = '';
+    static protected $_widget = '';
 
     public static function add(string $link, $dependencies = array(), $id = '')
     {
@@ -126,20 +127,19 @@ class Theme extends StaticObj
         }
     }
 
-    public static function init($theme)
+    public static function init($theme_path)
     {
         if( self::$_theme === '')
         {
-            define('THEME_PATH', APP_PATH. 'themes/'. $theme. '/');
-            self::$_theme = $theme;
+            self::$_theme = $theme_path;
         }
     }
 
-    public static function createPage()
+    public static function createPage($page='index')
     {
-        if(!defined('THEME_PATH')) Response::_404('Invalid theme');
+        if(empty(self::$_theme)) Response::_404('Invalid theme');
         
-        include THEME_PATH. self::$_theme. '.php';
+        include self::$_theme. $page. '.php';
 
         /**
          *  TODO: use structure fefine as default.html to generate a page
@@ -149,15 +149,7 @@ class Theme extends StaticObj
 
     public static function echoWidget($name, $data = array())
     {
-        if(!defined('THEME_PATH')) Response::_404('Invalid theme widget '.$name);
-
-        $layout = THEME_PATH.'widgets/'. $name. '/'. $name. '.php';
-
-        if(!file_exists($layout))
-        {
-            $layout = APP_PATH. 'widgets/'. $name. '/'. $name. '.php';
-            
-        }
+        $layout = self::$_theme. 'widgets/'. $name. '/'. $name. '.php';
 
         if(file_exists($layout))
         {

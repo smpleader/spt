@@ -40,7 +40,7 @@ class Log extends StaticObj
                 $content . 
                 "\n--- LOGGED AT ".date('Y-m-d H:i:s')." ---\n";
     
-            if( $name === null ) $name = APP_PATH. date('Y-m-d_His').'.log';
+            if( $name === null ) $name = date('Y-m-d_His').'.log';
     
             if( $append ) {
                 file_put_contents($name, $content, FILE_APPEND);

@@ -34,139 +34,139 @@ class Response extends StaticObj
     // Okie
     public static function _200($msg='')
     {
-        self::_($msg);
+        static::_($msg);
     }
 
     // Accepted
     public static function _202($msg='')
     {
-        self::_($msg, '202');
+        static::_($msg, '202');
     }
 
     // No Content
     public static function _204($msg='')
     {
-        self::_($msg, '204');
+        static::_($msg, '204');
     }
 
     // Moved Permanently
     public static function _301($msg='')
     {
-        self::_($msg, '301');
+        static::_($msg, '301');
     }
 
     // Found
     public static function _302($msg='')
     {
-        self::_($msg, '302');
+        static::_($msg, '302');
     }
 
     // See Other (since HTTP/1.1)
     public static function _303($msg='')
     {
-        self::_($msg, '303');
+        static::_($msg, '303');
     }
 
     // Temporary Redirect (since HTTP/1.1)
     public static function _307($msg='')
     {
-        self::_($msg, '307');
+        static::_($msg, '307');
     }
 
     // Permanent Redirect (RFC 7538)
     public static function _308($msg='')
     {
-        self::_($msg, '308');
+        static::_($msg, '308');
     }
 
     // Bad Request
     public static function _400($msg='')
     {
-        self::_($msg, '400');
+        static::_($msg, '400');
     }
 
     // unauthorised
     public static function _401($msg='')
     {
-        self::_($msg, '401');
+        static::_($msg, '401');
     }
 
     // Payment Required
     public static function _402($msg='')
     {
-        self::_($msg, '402');
+        static::_($msg, '402');
     }
 
     // Forbidden
     public static function _403($msg='')
     {
-        self::_($msg, '403');
+        static::_($msg, '403');
     }
 
     // Not found
     public static function _404($msg='')
     {
-        self::_($msg, '404');
+        static::_($msg, '404');
     }
 
     // Method Not Allowed
     public static function _405($msg='')
     {
-        self::_($msg, '405');
+        static::_($msg, '405');
     }
 
     // Not Acceptable
     public static function _406($msg='')
     {
-        self::_($msg, '406');
+        static::_($msg, '406');
     }
 
     // Proxy Authentication Required (RFC 7235)
     public static function _407($msg='')
     {
-        self::_($msg, '407');
+        static::_($msg, '407');
     }
 
     // Request Timeout
     public static function _408($msg='')
     {
-        self::_($msg, '408');
+        static::_($msg, '408');
     }
 
     //  Conflict
     public static function _409($msg='')
     {
-        self::_($msg, '409');
+        static::_($msg, '409');
     }
 
     // internal error
     public static function _500($msg='')
     {
-        self::_($msg, '500');
+        static::_($msg, '500');
     }
 
     // Not Implemented
     public static function _501($msg='')
     {
-        self::_($msg, '501');
+        static::_($msg, '501');
     }
 
     // Bad Gateway
     public static function _502($msg='')
     {
-        self::_($msg, '502');
+        static::_($msg, '502');
     }
 
     // Service Unavailable
     public static function _503($msg='')
     {
-        self::_($msg, '503');
+        static::_($msg, '503');
     }
 
     // Gateway Timeout
     public static function _504($msg='')
     {
-        self::_($msg, '504');
+        static::_($msg, '504');
     }
 
     public static function redirect($url)

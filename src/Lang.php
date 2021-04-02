@@ -25,7 +25,7 @@ class Lang extends StaticObj
     public static function e($key){
         echo static::_($key);
     }
-    
+
     public static function _s(){
         $arr = func_get_args();
         $arr[0] = static::_($arr[0]);
@@ -40,6 +40,6 @@ class Lang extends StaticObj
     
     public static function loaded()
     {
-        return count(self::$_vars);
+        return count(static::$_vars);
     }
 }

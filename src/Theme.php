@@ -30,21 +30,21 @@ class Theme extends StaticObj
         }
         $id = $asset->get('id');
 
-        self::importArr([
+        static::importArr([
             $type => [ $id => $asset ]
         ]);
     }
 
     public static function addInline(string $type, string $lines)
     {
-        self::importArr([
+        static::importArr([
             'inline'. Util::uc($type) => [ $lines ]
         ]);
     }
 
     public static function echo($type)
     {
-        echo implode("\n", self::generate($type));
+        echo implode("\n", static::generate($type));
     }
 
     public static function generate($type)
@@ -54,7 +54,7 @@ class Theme extends StaticObj
         if( strpos($type, 'inline') === 0 )
         {
             $tag = '';
-            $output = self::get($type);
+            $output = static::get($type);
 
             if(!is_array($output))
             {
@@ -78,12 +78,12 @@ class Theme extends StaticObj
         }
         else
         {
-            $assets = self::get($type);
+            $assets = static::get($type);
             if( is_array($assets) && count($assets) )
             {
                 foreach($assets as $id => $asset)
                 {
-                    self::createLink($output, $type, $id, $assets);
+                    static::createLink($output, $type, $id, $assets);
                 }
             }
         }
@@ -108,7 +108,7 @@ class Theme extends StaticObj
                 {
                     foreach($asset->get('parents') as $pid)
                     {
-                        self::createLink($result, $type, $pid, $assets);
+                        static::createLink($result, $type, $pid, $assets);
                     }
                 }
     
@@ -129,17 +129,17 @@ class Theme extends StaticObj
 
     public static function init($theme_path)
     {
-        if( self::$_theme === '')
+        if( static::$_theme === '')
         {
-            self::$_theme = $theme_path;
+            static::$_theme = $theme_path;
         }
     }
 
     public static function createPage($page='index')
     {
-        if(empty(self::$_theme)) Response::_404('Invalid theme');
+        if(empty(static::$_theme)) Response::_404('Invalid theme');
         
-        include self::$_theme. $page. '.php';
+        include static::$_theme. $page. '.php';
 
         /**
          *  TODO: use structure fefine as default.html to generate a page
@@ -149,7 +149,7 @@ class Theme extends StaticObj
 
     public static function echoWidget($name, $data = array())
     {
-        $layout = self::$_theme. 'widgets/'. $name. '/'. $name. '.php';
+        $layout = static::$_theme. 'widgets/'. $name. '/'. $name. '.php';
 
         if(file_exists($layout))
         {

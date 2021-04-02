@@ -17,12 +17,12 @@ class Log extends StaticObj
     public static function add(){
         $arg_list = func_get_args();
         foreach($arg_list as $arg){
-            self::$_vars[] = $arg;
+            static::$_vars[] = $arg;
         }
     }
 
     public static function show(){
-        foreach( self::$_vars as $item ){
+        foreach( static::$_vars as $item ){
             print_r( $item );
             echo "\n";
         }
@@ -31,7 +31,7 @@ class Log extends StaticObj
     public static function toFile($name = null, $append = true){
 
         ob_start();
-        self::show();
+        static::show();
         $content = ob_get_clean();
 
         if( $content ){

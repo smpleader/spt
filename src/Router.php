@@ -23,21 +23,21 @@ class Router extends StaticObj
     private static $instance;
     public static function _( $sitemap = [] ){
 
-        if( self::$instance === null )
+        if( static::$instance === null )
         {
-            self::$instance = new Router();
-            self::set('sitemap', array());
-            self::$instance->parse();
+            static::$instance = new Router();
+            static::set('sitemap', array());
+            static::$instance->parse();
         }
 
         if( is_array($sitemap) && count($sitemap) ) 
         {
-            $arr = self::get('sitemap');
-            $arr = array_merge($arr, self::flatNodes($sitemap));
-            self::set('sitemap', $arr);
+            $arr = static::get('sitemap');
+            $arr = array_merge($arr, static::flatNodes($sitemap));
+            static::set('sitemap', $arr);
         }
 
-        return self::$instance;
+        return static::$instance;
     }
 
     // support nested keys
@@ -48,11 +48,11 @@ class Router extends StaticObj
         {
             if(($key == '/' || empty($key)) && $parentSlug == '')
             {
-                self::set('home', $inside); 
+                static::set('home', $inside); 
             }
             elseif(strpos($key, '/') === 0)
             {
-                $arr = array_merge($arr, self::flatNodes($inside, substr($key, 1)));
+                $arr = array_merge($arr, static::flatNodes($inside, substr($key, 1)));
             }
             else
             {
@@ -67,7 +67,7 @@ class Router extends StaticObj
     }
  
     public static function url($asset = ''){
-        return self::get('root'). $asset;
+        return static::get('root'). $asset;
     }
 
     /**
@@ -97,12 +97,12 @@ class Router extends StaticObj
         $protocol .= '://';
 
         $current = $protocol. $_SERVER['HTTP_HOST'] .$_SERVER['REQUEST_URI'];
-        self::set('current', $current);
+        static::set('current', $current);
 
         $more = parse_url( $current );
         foreach( $more as $key => $value)
         {
-            self::set( $key, $value);
+            static::set( $key, $value);
         }
 
         $subPath = trim( $siteSubpath, '/');
@@ -113,31 +113,31 @@ class Router extends StaticObj
         
         $subPath = empty($subPath) ? '/' : '/'. $subPath .'/';
 
-        self::set( 'root', $protocol. $_SERVER['HTTP_HOST']. $subPath );
+        static::set( 'root', $protocol. $_SERVER['HTTP_HOST']. $subPath );
 
-        self::set( 'actualPath', $actualPath);
+        static::set( 'actualPath', $actualPath);
 
-        self::set( 'isHome', ($actualPath == '/' || empty($actualPath)) );
+        static::set( 'isHome', ($actualPath == '/' || empty($actualPath)) );
 
         return;
     }
 
     public function pathFinding( $default, $callback = null)
     {
-        $sitemap = self::get('sitemap');
-        $path = self::get('actualPath');
-        $isHome = self::get('isHome');
-        self::set('sitenode', '');
+        $sitemap = static::get('sitemap');
+        $path = static::get('actualPath');
+        $isHome = static::get('isHome');
+        static::set('sitenode', '');
         
         if($isHome){
-            $found = self::get('home', '');
+            $found = static::get('home', '');
             if( $found === '')
             {
                 $found = $default;
             }
             else
             {
-                self::set('sitenode', '/');
+                static::set('sitenode', '/');
             }
             return $found;
         }
@@ -163,7 +163,7 @@ class Router extends StaticObj
                     if( !is_array($value) || isset($value['fnc']))
                     {
                         $found = $value;
-                        self::set('sitenode', $reg);
+                        static::set('sitenode', $reg);
                         break;
                     }
                 }
@@ -234,8 +234,8 @@ class Router extends StaticObj
 
     public function praseUrl(array $parameters)
     {
-        $slugs = trim(self::get('actualPath', ''), '/');
-        $sitenote = self::get('sitenode', '');
+        $slugs = trim(static::get('actualPath', ''), '/');
+        $sitenote = static::get('sitenode', '');
         if( $slugs > $sitenote )
         {
             $slugs = trim(substr($slugs, strlen($sitenote)), '/');

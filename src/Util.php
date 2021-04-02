@@ -74,8 +74,8 @@ class Util{
                     $from = $_GET;
                     break;
                 default:
-                    $find = self::get($var, $type, 'post');
-                    return $find === null ? self::get($var, $type, 'get') : $find;
+                    $find = static::get($var, $type, 'post');
+                    return $find === null ? static::get($var, $type, 'get') : $find;
                     break;
             }
         }

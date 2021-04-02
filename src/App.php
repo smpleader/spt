@@ -68,33 +68,33 @@ class App extends StaticObj
 
         if( is_null($param)){
 
-            return self::session('token', null);
+            return static::session('token', null);
 
         } elseif ( $param == 'validPost' || $param == 'validGet'){
 
             $tmp = ( $param == 'validPost' ) ? $_POST : $_GET;
-            $token = self::token(); 
+            $token = static::token(); 
             $passed = isset($tmp[$token])  && $tmp[$token] == 1;
             if( $passed ){
-               return self::token('isAlive');
+               return static::token('isAlive');
             }
             return false;
         
         } elseif ( $param == 'isAlive'){
 
-            $expire = self::session('token_timeout', 0);
+            $expire = static::session('token_timeout', 0);
             $now = strtotime("now");
             return $expire > $now;
 
         } elseif ( is_array($param)){
 
-            self::session('token', $param[0], true);
-            self::token( (int)$param[1] );
+            static::session('token', $param[0], true);
+            static::token( (int)$param[1] );
 
         } elseif ( is_int($param)){
 
-            $param += 60 * self::$sessionTimeout;
-            self::session('token_timeout', $param, true);
+            $param += 60 * static::$sessionTimeout;
+            static::session('token_timeout', $param, true);
 
         }
     }
@@ -104,6 +104,6 @@ class App extends StaticObj
     }
 
     public static function setTimeout($int){
-        self::$sessionTimeout = (int) $int;
+        static::$sessionTimeout = (int) $int;
     }
 }

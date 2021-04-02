@@ -18,10 +18,10 @@ class Config extends StaticObj
 
     static function init( $vars ){
         // run once
-        if( is_array($vars) && count(self::$_vars) == 0 ){
+        if( is_array($vars) && count(static::$_vars) == 0 ){
             foreach($vars as $key => $val){ 
                 if( !is_numeric($key) ){
-                    self::set($key, $val);
+                    static::set($key, $val);
                 }
             }
         }

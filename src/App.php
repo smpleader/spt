@@ -16,42 +16,24 @@ class App extends StaticObj
     protected static $_data = array();
     protected static $sessionTimeout = 15;
 
-    private static function _data($data, $key = null, $value = null, $format = 0)
-    {
-        switch($data)
-        {
-            case 'session': $storage = &$_SESSION; break;
-            default: $storage = &self::$_data; break;
-        }
-
-        $numargs = func_num_args();
-        $numargs --;
-        switch($numargs){
-            case 0: return $storage;
-            case 1: 
-            case 2: 
-                return isset($storage[$key]) ? $storage[$key] : $value;
-            case 3: 
-                if($format === true)
-                {
-                    $storage[$key] = $value;
-                }
-            break;
-        }
-
-        if(is_string($format))
-        {
-            return Util::get($key, $format, $storage);
-        }
-         
-    }
-
     public static function data($key = null, $value = null, $format = 0)
     {
-        $arr = func_get_args();
-        array_unshift( $arr, 'data');
+        switch($key)
+        {
+            case null: return static::$_data;
+            default:
 
-        return forward_static_call_array( [__CLASS__, '_data'], $arr);
+                if( true === $format )
+                {
+                    static::$_data[$key] = $value;
+                }
+                elseif( is_string($format) )
+                {
+                    return Util::get($key, $format, static::$_data);
+                }
+
+                return isset(static::$_data[$key]) ? static::$_data[$key] : $value;
+        }
     }
 
     /**
@@ -63,10 +45,23 @@ class App extends StaticObj
             // session isn't started
             @session_start();
         }
-        $arr = func_get_args();
-        array_unshift( $arr, 'session');
+        
+        switch($key)
+        {
+            case null: return $_SESSION;
+            default:
 
-        return forward_static_call_array( [__CLASS__, '_data'], $arr); 
+                if( true === $format )
+                {
+                    $_SESSION[$key] = $value;
+                }
+                elseif( is_string($format) )
+                {
+                    return Util::get($key, $format, $_SESSION);
+                }
+
+                return isset($_SESSION[$key]) ? $_SESSION[$key] : $value;
+        }
     }
 
     public static function token($param = null){

@@ -42,6 +42,7 @@ class Query
         $this->where = [];
         $this->value = [];
         $this->orderby = '';
+        $this->groupby = '';
         $this->limit = '';
     }
 
@@ -188,6 +189,20 @@ class Query
         return $this;
     }
 
+    public function groupby($group){
+
+        if(FncArray::ifReady($group))
+        {
+            $this->groupby = implode(', ', $group);
+        }
+        elseif(is_string($group))
+        {
+            $this->groupby = $group;
+        }
+  
+        return $this;
+    }
+
     public function limit($limit){
 
         if(FncArray::ifReady($limit))
@@ -249,6 +264,11 @@ class Query
         if(count($this->where))
         {
             $q .= ' WHERE '. implode(' AND ', $this->where);
+        }
+
+        if(!empty($this->groupby))
+        {
+            $q .= ' GROUP BY '.$this->groupby;
         }
 
         if(!empty($this->orderby))

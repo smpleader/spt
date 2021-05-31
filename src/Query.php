@@ -23,6 +23,7 @@ class Query
     private $where;
     private $value;
     private $orderby;
+    private $groupby;
     private $limit;
 
     public function __construct(PDOWrapper $db, $prefix, $fquota='`')
@@ -307,7 +308,7 @@ class Query
         $this->buildSelect();
         $data = $this->db->fetchAll($this->query, $this->getValue());
 
-        if($getTotal)
+        if(false !== $getTotal)
         {
             $this->limit(''); // reset to count
             $this->buildSelect(true);

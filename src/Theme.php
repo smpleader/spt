@@ -13,9 +13,6 @@ namespace SPT;
 class Theme extends StaticObj
 {
     static protected $_vars = array();
-    //static protected $_widgets = array();
-    static protected $_theme = '';
-    static protected $_widget = '';
 
     public static function add(string $link, $dependencies = array(), $id = '')
     {
@@ -51,7 +48,7 @@ class Theme extends StaticObj
     {
         $output = []; 
 
-        if( strpos($type, 'inline') === 0 )
+        if( 0 === strpos($type, 'inline') )
         {
             $tag = '';
             $output = static::get($type);
@@ -115,10 +112,10 @@ class Theme extends StaticObj
                 switch($type)
                 {
                     case 'css':
-                        $result[] = '<link rel="stylesheet" type="text/css" href="'.$asset->get('url').'" >';
+                        $result[] = '<link rel="stylesheet" type="text/css" href="'. $asset->get('url'). '" >';
                     break;
                     case 'js':
-                        $result[] = '<script src="'.$asset->get('url').'" ></script>';
+                        $result[] = '<script src="'. $asset->get('url'). '" ></script>';
                     break;
                 }
     
@@ -127,34 +124,22 @@ class Theme extends StaticObj
         }
     }
 
-    public static function init($theme_path)
+    public static function createPage($page='index', $data = array())
     {
-        if( static::$_theme === '')
-        {
-            static::$_theme = $theme_path;
-        }
-    }
-
-    public static function createPage($page='index')
-    {
-        if(empty(static::$_theme)) Response::_404('Invalid theme');
-        
-        include static::$_theme. $page. '.php';
+        include $page. '.php';
 
         /**
-         *  TODO: use structure fefine as default.html to generate a page
+         *  TODO: use structure define as default.html to generate a page
          *  $tags = [ 'content', 'css', 'js', 'widget' ]
          */
     }
 
     public static function echoWidget($name, $data = array())
     {
-        $layout = static::$_theme. 'widgets/'. $name. '/'. $name. '.php';
-
-        if(file_exists($layout))
+        if(file_exists($name. '.php'))
         {
             ob_start();
-            include $layout;
+            include $name. '.php';
             echo  ob_get_clean();
         }
     }

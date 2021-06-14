@@ -66,6 +66,9 @@ When you are bored with packages, and love simply "include and run", let try thi
 
 15.  Query builder and PDO wrapper to work with database: examples/database
 
+16. Use DI container PSR-11
+
+17. And many more
 
 # LICENCE
 

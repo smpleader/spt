@@ -21,13 +21,13 @@ class Router extends StaticObj
      * singleton
      */
     private static $instance;
-    public static function _( $sitemap = [] ){
+    public static function _( $sitemap = [], $subpath = '' ){
 
         if( static::$instance === null )
         {
             static::$instance = new Router();
             static::set('sitemap', array());
-            static::$instance->parse();
+            static::$instance->parse($subpath);
         }
 
         if( is_array($sitemap) && count($sitemap) ) 
@@ -76,7 +76,7 @@ class Router extends StaticObj
     private $nodes;
     //public function __construct(){}
 
-    public function parse( $protocol = '', $siteSubpath = '')
+    public function parse( $siteSubpath = '', $protocol = '')
     {
  
         $p =  (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';

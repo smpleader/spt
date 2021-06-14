@@ -24,8 +24,8 @@ class PdoWrapper{
 
 	protected $connection;
 	public $connected = false;
-	private $errors = true;
-	private $debug;
+	protected $errors = true;
+	protected $debug;
 
 	function __construct($host, $username, $password, $database, $parameters=array(), $isDebug = false){
 		

@@ -89,7 +89,7 @@ class Theme extends StaticObj
 
     }
 
-    private static function createLink(&$result, $type, $id, &$assets)
+    protected static function createLink(&$result, $type, $id, &$assets)
     {
         if(!isset($assets[$id]))
         {

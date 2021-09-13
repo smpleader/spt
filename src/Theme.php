@@ -14,12 +14,12 @@ class Theme extends StaticObj
 {
     static protected $_vars = array();
 
-    public static function add(string $link, $dependencies = array(), $id = '')
+    public static function add(string $link, $dependencies = array(), $id = '', $group = '')
     {
         if(empty($dependencies)) $dependencies = array();
         else  $dependencies = (array) $dependencies;
         $asset = new Asset($link, $dependencies);
-        $type = $asset->getType();
+        $type = $asset->get('type');
 
         if(!empty($id))
         {
@@ -27,8 +27,10 @@ class Theme extends StaticObj
         }
         $id = $asset->get('id');
 
+        $key = $group ? $group. ucfirst($type) : $type;
+
         static::importArr([
-            $type => [ $id => $asset ]
+            $key => [ $id => $asset ]
         ]);
     }
 
@@ -79,7 +81,7 @@ class Theme extends StaticObj
             {
                 foreach($assets as $id => $asset)
                 {
-                    static::createLink($output, $type, $id, $assets);
+                    static::createLink($output, $asset->get('type'), $id, $assets);
                 }
             }
         }

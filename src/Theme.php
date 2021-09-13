@@ -33,10 +33,9 @@ class Theme extends StaticObj
     }
 
     public static function addInline(string $type, string $lines)
-    {
-        static::importArr([
-            'inline'. Util::uc($type) => [ $lines ]
-        ]);
+    {   
+        $key = 'inline'. Util::uc($type);
+        static::$_vars[$key][] = $lines;
     }
 
     public static function echo($type)

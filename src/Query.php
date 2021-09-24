@@ -12,19 +12,19 @@ namespace SPT;
 
 class Query
 {
-    private $db;
-    private $query;
+    protected $db;
+    protected $query;
 
-    private $prefix;
-    private $qq;
-    private $table;
-    private $fields;
-    private $join;
-    private $where;
-    private $value;
-    private $orderby;
-    private $groupby;
-    private $limit;
+    protected $prefix;
+    protected $qq;
+    protected $table;
+    protected $fields;
+    protected $join;
+    protected $where;
+    protected $value;
+    protected $orderby;
+    protected $groupby;
+    protected $limit;
 
     public function __construct(PDOWrapper $db, $prefix, $fquota='`')
     {
@@ -34,7 +34,7 @@ class Query
         $this->reset();
     }
 
-    private function reset()
+    protected function reset()
     {
         $this->query = '';
         $this->table = '';
@@ -47,7 +47,7 @@ class Query
         $this->limit = '';
     }
 
-    private function prefix($q)
+    protected function prefix($q)
     {
         if(FncArray::ifReady($this->prefix))
         {
@@ -59,7 +59,7 @@ class Query
         return $q;
     }
 
-    private function qq($name)
+    protected function qq($name)
     {
         if(  
             strpos($name, $this->qq) === false 
@@ -249,7 +249,7 @@ class Query
         return $this;
     }
 
-    private function buildSelect($getTotal=false)
+    protected function buildSelect($getTotal=false)
     {
         if(empty($this->table)) Response::_404('Invalid table');
         if(empty($this->fields)) $this->fields[] = '*';

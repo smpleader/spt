@@ -10,24 +10,14 @@
 
 namespace SPT;
 
-use SPT\Log;
-use SPT\Config;
-
 class PdoWrapper{
-	
-	/*
-	protected $host;
-	protected $username;
-	protected $password;
-	protected $database;
-	*/
+
+	use \SPT\Triat\Log;
 
 	protected $connection;
-	public $connected = false;
-	protected $errors = true;
-	protected $debug;
+	public $connected = false; 
 
-	function __construct($host, $username, $password, $database, $parameters=array(), $isDebug = false){
+	function __construct($host, $username, $password, $database, $parameters=array()){
 		
 		try{ 
 			$this->connected = true;
@@ -52,13 +42,13 @@ class PdoWrapper{
 
 			$this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 			$this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-			$this->debug = $isDebug;
+			
 		}
 		catch(\PDOException $e)
 		{
 			$this->connected = false;
 			 
-			return $this->setError(
+			return $this->logError(
 				$e->getMessage(),
 				'Tried to connect DB',
 				[$host, $username, $password, $database, $parameters]
@@ -72,7 +62,7 @@ class PdoWrapper{
 		$this->connection = null;
 	}
 
-	public function setError($error, $sql, $input)
+	public function logError($error, $sql, $input)
 	{
 		$this->log($sql, $input, $error);
 		return false;
@@ -80,20 +70,17 @@ class PdoWrapper{
 
 	public function log($sql, $input, $error='')
 	{
-		if($this->debug)
+		if($error)
 		{
-			if($error)
-			{
-				Log::add('>> Mysql error:', $error);
-			}
-			else
-			{
-				Log::add('* Mysql query log *');
-			}
-
-			Log::add('>> SQL:', $sql);
-			Log::add('>> Inputed value:', $input);
+			$this->addLog('>> Mysql error:', $error);
 		}
+		else
+		{
+			$this->addLog('* Mysql query log *');
+		}
+
+		$this->addLog('>> SQL:', $sql);
+		$this->addLog('>> Inputed value:', $input);
 	}
 
 	public function fetch($query, $parameters = array()){
@@ -107,7 +94,7 @@ class PdoWrapper{
 			}
 			catch(\PDOException $e)
 			{
-				return $this->setError($e->getMessage(), $query, $parameters);
+				return $this->logError($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -125,7 +112,7 @@ class PdoWrapper{
 			}
 			catch(\PDOException $e)
 			{
-				return $this->setError($e->getMessage(), $query, $parameters);
+				return $this->logError($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -143,7 +130,7 @@ class PdoWrapper{
 			}
 			catch(\PDOException $e)
 			{
-				return $this->setError($e->getMessage(), $query, $parameters);
+				return $this->logError($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -162,7 +149,7 @@ class PdoWrapper{
 			}
 			catch(\PDOException $e)
 			{
-				return $this->setError($e->getMessage(), $query, $parameters);
+				return $this->logError($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -180,7 +167,7 @@ class PdoWrapper{
 			}
 			catch(\PDOException $e)
 			{
-				return $this->setError($e->getMessage(), $query, '--');
+				return $this->logError($e->getMessage(), $query, '--');
 			}
 		}
 		
@@ -200,7 +187,7 @@ class PdoWrapper{
 			}
 			catch(\PDOException $e)
 			{
-				return $this->setError($e->getMessage(), $query, $parameters);
+				return $this->logError($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -231,7 +218,7 @@ class PdoWrapper{
 			}
 			catch(\PDOException $e)
 			{
-				return $this->setError($e->getMessage(), $query, $parameters);
+				return $this->logError($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -248,7 +235,7 @@ class PdoWrapper{
 			}
 			catch(\PDOException $e)
 			{
-				return $this->setError($e->getMessage(), "SHOW TABLES LIKE '$table'", $table);
+				return $this->logError($e->getMessage(), "SHOW TABLES LIKE '$table'", $table);
 			}
 		}
 		

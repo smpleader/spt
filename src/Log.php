@@ -28,6 +28,10 @@ class Log extends StaticObj
         }
     }
 
+    public static function all(){
+        return static::$_vars;
+    }
+
     public static function toFile($name = null, $append = true){
 
         ob_start();

@@ -90,8 +90,8 @@ class Query
         return $this;
     }
 
-    public function select($fields){
-
+    public function select($fields)
+    {
         if(FncArray::ifReady($fields))
         {
             $this->fields[] = $this->qq. implode($this->qq. ','.$this->qq, $fields).$this->qq;
@@ -250,7 +250,7 @@ class Query
     }
 
     protected function buildSelect($getTotal=false)
-    {
+    { 
         if(empty($this->table)) Response::_404('Invalid table');
         if(empty($this->fields)) $this->fields[] = '*';
 

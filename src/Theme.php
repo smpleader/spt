@@ -18,7 +18,7 @@ class Theme extends StaticObj
     {
         if(empty($dependencies)) $dependencies = array();
         else  $dependencies = (array) $dependencies;
-        $asset = new Asset($link, $dependencies);
+        $asset = new Asset($link, $dependencies, $group);
         $type = $asset->get('type');
 
         if(!empty($id))
@@ -35,7 +35,7 @@ class Theme extends StaticObj
     }
 
     public static function addInline(string $type, string $lines)
-    {   
+    {
         $key = 'inline'. Util::uc($type);
         static::$_vars[$key][] = $lines;
     }
@@ -90,7 +90,7 @@ class Theme extends StaticObj
 
     }
 
-    protected static function createLink(&$result, $type, $id, &$assets)
+    private static function createLink(&$result, $type, $id, &$assets)
     {
         if(!isset($assets[$id]))
         {

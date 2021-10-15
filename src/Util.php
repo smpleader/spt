@@ -177,4 +177,31 @@ class Util{
         }
         return $body;
     }
+
+    public static function input($key, $default = '', $filter = '')
+    {
+        $type = '';
+        $storage = 'get';
+
+        if($filter)
+        {
+            foreach([
+                'type' => ['int', 'integer', 'float', 'double', 'bool', 'boolean', 'email','word', 'alnum', 'array', 'cmd', 'base64'],
+                'storage' => ['get','post', 'any']
+            ] as $var => $val )
+            {
+                foreach($val as $v)
+                {
+                    if(false !== stripos( $filter, $v ))
+                    {
+                        ${$var} = $v;
+                        break;
+                    }
+                }
+            }
+        }
+
+        $try = self::get( $key, $type, $storage );
+        return null === $try ? $default : $try;
+    }
 }

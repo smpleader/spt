@@ -65,6 +65,7 @@ class Query
             strpos($name, $this->qq) === false 
             && strpos($name, ' as ') === false
             && strpos($name, '(') === false
+            && strpos($name, ' ') !== 0
         )
         {
             $name = $this->qq. $name .$this->qq;
@@ -110,7 +111,7 @@ class Query
     }
 
 
-    public function where($conditions){
+    /*public function where($conditions){
 
         if(FncArray::ifReady($conditions))
         {
@@ -141,7 +142,7 @@ class Query
         }
   
         return $this;
-    }
+    }*/
 
     public function value($value, $place="where"){
 
@@ -294,7 +295,7 @@ class Query
         return $data;
     }
 
-    public function list($start='0', $limit='20', $order='', $getTotal=false)
+    public function list($start='0', $limit='20', $getTotal=false)
     {
         if(empty($start) && empty($limit))
         {
@@ -304,7 +305,7 @@ class Query
         {
             $this->limit($start.', '.$limit);
         }
-        $this->orderby($order);
+
         $this->buildSelect();
         $data = $this->db->fetchAll($this->query, $this->getValue());
 
@@ -425,16 +426,6 @@ class Query
             $q .= ' WHERE '. implode(' AND ', $this->where);
         }
 
-        if(!empty($this->orderby))
-        {
-            $q .= ' ORDER BY '.$this->orderby;
-        }
-
-        if(!empty($this->limit))
-        {
-            $q .= ' LIMIT '.$this->limit;
-        }
-
         $this->sql = $this->prefix($q);
  
         $res = $this->db->delete($this->sql, $this->getValue());
@@ -450,5 +441,155 @@ class Query
         // Debug $q
         $this->reset();
         return $res;
+    }
+
+    public function getLog()
+    {
+        return $this->db->getLog();
+    }
+
+    public function insertOnce($data, $conditions = [])
+    {
+        $table = $this->table;
+        $id = 0;
+
+        $try = count($conditions) ? $this->detail($conditions) : '';
+
+        if( empty($try) )
+        {
+            $id = $this->table( $table )->insert($data);
+        }
+
+        // silent about the duplicate
+        $this->reset();
+        return $id;
+    }
+
+    public function detail(array $conditions, $select = null)
+    {
+        $try = $this->where($conditions);
+        if(null === $this->select )
+        {
+            if( null === $select ) $select = array_keys($conditions);
+            $try = $this->select($select);
+        }
+        
+        return $try->row();
+    }
+
+    public function truncate($table = null)
+    {
+        if( null === $table )
+        {
+            if( empty($this->table) )
+            {
+                return false;
+            }
+
+            $table = $this->table;
+        }
+
+        return $this->exec( 'TRUNCATE TABLE '. $table );
+    }
+
+    // improve where
+    // support OR / AND
+    protected function subWhere( array $conditions, $key = false)
+    {
+        $ws = [];
+        $vals = [];
+
+        if( $key )
+        {
+            if(  in_array( strtoupper($key), ['OR', 'AND'] ) )
+            {
+                list($ws2, $vals2) = $this->subWhere( $conditions );
+                $ws[] = ' ('. implode( ' '. $key. ' ', $ws2). ') ';
+                $vals = array_merge($vals, $vals2);
+            }
+            else
+            {
+                $format = false;
+                $value = $conditions[1];
+                $operator = $conditions[0];
+
+                if( false !== stripos($conditions[0], 'LIKE') )
+                {
+                    $format = '%__%';
+                }
+
+                if(isset($conditions[2]))
+                {
+                    $format = $conditions[2];
+                } 
+                
+                if(is_array($value))
+                {
+                    $arr = [];
+                    foreach($value as $val)
+                    {
+                        $arr[] = $this->qq($key). ' '. $operator. ' ?'; 
+                        if( $format )
+                        {
+                            $value = str_replace('__', $val, $format);
+                        }
+                        $vals[] = $value;
+                    }
+                    $ws[] = implode( ' OR ', $arr);
+                }
+                else
+                {
+                    if( $format )
+                    {
+                        $value = str_replace('__', $value, $format);
+                    }
+                    $ws[] = $this->qq($key). ' '. $operator. ' ?'; 
+                    $vals[] = $value;
+                }
+            }
+        }
+        else
+        {   
+            foreach($conditions as $kk => $val)
+            {
+                if(is_array($val))
+                {
+                    list($w, $v) = is_numeric($kk) ?  $this->subWhere( $val ) : $this->subWhere( $val, $kk );
+                    $ws = array_merge($ws, $w);
+                    $vals = array_merge($vals, $v);
+                }
+                elseif(is_numeric($kk))
+                {
+                    $ws[] = $val;
+                }
+                else
+                {
+                    $ws[] = $this->qq($kk).' = ?';
+                    $vals[] = $val;
+                }
+            }
+        }
+
+        return [ $ws, $vals ];
+    }
+
+    public function where($conditions)
+    {
+        if(FncArray::ifReady($conditions))
+        {
+            list($ws, $vals) = $this->subWhere($conditions); 
+            foreach($ws as $wh)
+            {
+                //if(!is_string($wh)) die('Invalid condition ');
+                $this->where($wh);
+            }
+            $this->value($vals);
+        }
+        elseif(is_string($conditions))
+        {
+            $this->where[] = $conditions;
+        }
+        
+        return $this;
     }
 }

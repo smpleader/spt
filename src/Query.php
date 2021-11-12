@@ -468,7 +468,7 @@ class Query
     public function detail(array $conditions, $select = null)
     {
         $try = $this->where($conditions);
-        if(null === $this->select )
+        if( empty($this->fields) )
         {
             if( null === $select ) $select = array_keys($conditions);
             $try = $this->select($select);

@@ -46,9 +46,16 @@ class Router extends StaticObj
         $arr = [];
         foreach($sitemap as $key=>$inside)
         {
-            if(($key == '/' || empty($key)) && $parentSlug == '')
+            if($key == '/' || empty($key))
             {
-                static::set('home', $inside); 
+                if( $parentSlug == '' )
+                {
+                    static::set('home', $inside);
+                }
+                else
+                {
+                    $arr[$parentSlug. $key] = $inside;
+                }
             }
             elseif(strpos($key, '/') === 0)
             {

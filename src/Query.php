@@ -25,6 +25,8 @@ class Query
     protected $orderby;
     protected $groupby;
     protected $limit;
+    protected $countTotal;
+    protected $total;
 
     public function __construct(PDOWrapper $db, $prefix, $fquota='`')
     {
@@ -45,6 +47,8 @@ class Query
         $this->orderby = '';
         $this->groupby = '';
         $this->limit = '';
+        $this->countTotal = false;
+        $this->total = 0;
     }
 
     protected function prefix($q)
@@ -83,6 +87,17 @@ class Query
     public function isConnected()
     {
         return $this->db->connected;
+    }
+
+    public function total()
+    {
+        return $this->total;
+    }
+
+    public function countTotal($boolean = null)
+    {
+        if( null === $boolean) return $this->countTotal;
+        $this->countTotal = $boolean;
     }
 
     public function table($name)
@@ -250,12 +265,12 @@ class Query
         return $this;
     }
 
-    protected function buildSelect($getTotal=false)
+    protected function buildSelect()
     { 
         if(empty($this->table)) Response::_404('Invalid table');
         if(empty($this->fields)) $this->fields[] = '*';
 
-        $q = $getTotal ? 'SELECT COUNT(*) FROM '.$this->table : 'SELECT '. implode(',', $this->fields). ' FROM '.$this->table;
+        $q = $this->countTotal ? 'SELECT COUNT(*) FROM '.$this->table : 'SELECT '. implode(',', $this->fields). ' FROM '.$this->table;
 
         if(count($this->join))
         {
@@ -295,7 +310,7 @@ class Query
         return $data;
     }
 
-    public function list($start='0', $limit='20', $getTotal=false)
+    public function list($start='0', $limit='20')
     {
         if(empty($start) && empty($limit))
         {
@@ -309,14 +324,11 @@ class Query
         $this->buildSelect();
         $data = $this->db->fetchAll($this->query, $this->getValue());
 
-        if(false !== $getTotal)
+        if($this->countTotal)
         {
             $this->limit(''); // reset to count
-            $this->buildSelect(true);
-            $data = [
-                'total' => $this->db->fetchColumn($this->query, $this->getValue()),
-                'data' => $data
-            ];
+            $this->buildSelect();
+            $this->total = $this->db->fetchColumn($this->query, $this->getValue();
         }
 
         $this->reset();

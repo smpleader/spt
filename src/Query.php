@@ -539,12 +539,20 @@ class Query
                 }
                 else
                 {
-                    if( $format )
+                    if('IN' == $operator && is_array($value))
                     {
-                        $value = str_replace('__', $value, $format);
+                        $ws[] = $this->qq($key). ' IN ( ? )'; 
+                        $vals[] = implode(',', $value);
                     }
-                    $ws[] = $this->qq($key). ' '. $operator. ' ?'; 
-                    $vals[] = $value;
+                    else
+                    {
+                        if( $format )
+                        {
+                            $value = str_replace('__', $value, $format);
+                        }
+                        $ws[] = $this->qq($key). ' '. $operator. ' ?'; 
+                        $vals[] = $value;
+                    }
                 }
             }
         }

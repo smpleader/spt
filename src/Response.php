@@ -27,8 +27,8 @@ class Response extends StaticObj
         {
             echo $content;
         }
-        
-        exit(0);
+
+        ( defined('PHPUNIT_RUNNING') && PHPUNIT_RUNNING == 1 ) ||  exit(0);
     }
 
     // Okie

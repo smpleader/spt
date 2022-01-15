@@ -73,6 +73,14 @@ class Util{
                 case 'GET':
                     $from = $_GET;
                     break;
+                case 'server':
+                case 'SERVER':
+                    $from = $_SERVER;
+                    break;
+                case 'session':
+                case 'SESSION':
+                    $from = $_SESSION;
+                    break;
                 default:
                     $find = static::get($var, $type, 'post');
                     return $find === null ? static::get($var, $type, 'get') : $find;

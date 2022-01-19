@@ -613,19 +613,11 @@ class Query
         return $this;
     }
     
-    public function fetchAll($sql, $parameters = array())
+    public function getStructure()
     {
-        $this->query = $this->prefix($sql);
-        $res = $this->db->fetchAll($this->query, $parameters);
-        // Debug $q
-        $this->reset();
-        return $res;
-    }
-
-    public function query($sql, $parameters = array())
-    {
-        $this->query = $this->prefix($sql);
-        $res = $this->db->query($this->query, $parameters);
+        $q = "SHOW COLUMNS FROM ". $this->table;
+        $this->query = $this->prefix($q);
+        $res = $this->db->fetchAll($this->query);
         // Debug $q
         $this->reset();
         return $res;

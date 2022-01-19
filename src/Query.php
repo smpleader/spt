@@ -328,7 +328,7 @@ class Query
         {
             $this->limit(''); // reset to count
             $this->buildSelect();
-            $this->total = $this->db->fetchColumn($this->query, $this->getValue();
+            $this->total = $this->db->fetchColumn($this->query, $this->getValue());
         }
 
         $this->reset();
@@ -600,7 +600,6 @@ class Query
             list($ws, $vals) = $this->subWhere($conditions); 
             foreach($ws as $wh)
             {
-                //if(!is_string($wh)) die('Invalid condition ');
                 $this->where($wh);
             }
             $this->value($vals);

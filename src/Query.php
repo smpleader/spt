@@ -615,10 +615,20 @@ class Query
     
     public function getStructure()
     {
-        $q = "SHOW COLUMNS FROM ". $this->table;
+        if( null === $table )
+        {
+            if( empty($this->table) )
+            {
+                return false;
+            }
+
+            $table = $this->table;
+        }
+        
+        $q = "SHOW COLUMNS FROM ". $table;
         $this->query = $this->prefix($q);
         $res = $this->db->fetchAll($this->query);
-        // Debug $q
+
         $this->reset();
         return $res;
     }

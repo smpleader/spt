@@ -613,7 +613,7 @@ class Query
         return $this;
     }
     
-    public function getStructure()
+    public function structureTable()
     {
         if( empty($this->table) )
         {
@@ -625,6 +625,57 @@ class Query
         $q = "SHOW COLUMNS FROM ". $table;
         $this->query = $this->prefix($q);
         $res = $this->db->fetchAll($this->query);
+
+        $this->reset();
+        return $res;
+    }
+
+    public function dropTable()
+    {
+        if( empty($this->table) )
+        {
+            return false;
+        }
+
+        $table = $this->table;
+        
+        $q = "DROP TABLE IF EXISTS ". $table;
+        $this->query = $this->prefix($q);
+        $res = $this->db->fetchAll($this->query);
+
+        $this->reset();
+        return $res;
+    }
+
+    public function createTable($sql)
+    {
+        if( empty($this->table) || !$sql)
+        {
+            return false;
+        }
+
+        $table = $this->table;
+        
+        $q = "CREATE TABLE ". $table. " (". $sql. ");";
+        $this->query = $this->prefix($q);
+        $res = $this->exec($this->query);
+
+        $this->reset();
+        return $res;
+    }
+
+    public function alterTable($sql)
+    {
+        if( empty($this->table) || !$sql)
+        {
+            return false;
+        }
+
+        $table = $this->table;
+        
+        $q = "ALTER TABLE ". $table. " \n". $sql. ";";
+        $this->query = $this->prefix($q);
+        $res = $this->exec($this->query);
 
         $this->reset();
         return $res;

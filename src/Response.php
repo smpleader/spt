@@ -169,7 +169,7 @@ class Response extends StaticObj
         static::_($msg, '504');
     }
 
-    public static function redirect($url)
+    public static function redirect(string $url, $callback = null)
     {
         if(headers_sent())
         {
@@ -179,6 +179,14 @@ class Response extends StaticObj
         {
             header('Location: '.$url);
         }
+
+        if( is_callable($callback) )  $callback($url);
+
+        if( defined('PHPUNIT_RUNNING') && PHPUNIT_RUNNING == 1 )
+        {
+            return $url;
+        }
+        
         exit(0);
     }
 }

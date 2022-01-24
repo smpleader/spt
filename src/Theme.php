@@ -10,6 +10,8 @@
 
 namespace SPT;
 
+use SPT\Support\String Str;
+
 class Theme extends StaticObj
 {
     static protected $_vars = array();
@@ -36,7 +38,7 @@ class Theme extends StaticObj
 
     public static function addInline(string $type, string $lines)
     {
-        $key = 'inline'. Util::uc($type);
+        $key = 'inline'. Str::uc($type);
         static::$_vars[$key][] = $lines;
     }
 

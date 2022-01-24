@@ -10,6 +10,9 @@
 
 namespace SPT;
 
+use SPT\Support\Array Arr;
+use SPT\Extends\Pdo PDOWrapper;
+
 class Query
 {
     protected $db;
@@ -53,7 +56,7 @@ class Query
 
     protected function prefix($q)
     {
-        if(FncArray::ifReady($this->prefix))
+        if(Arr::isReady($this->prefix))
         {
             foreach($this->prefix as $find=>$replace)
             {
@@ -108,7 +111,7 @@ class Query
 
     public function select($fields)
     {
-        if(FncArray::ifReady($fields))
+        if(Arr::isReady($fields))
         {
             $this->fields[] = $this->qq. implode($this->qq. ','.$this->qq, $fields).$this->qq;
         }
@@ -125,10 +128,9 @@ class Query
         return $this;
     }
 
-
     /*public function where($conditions){
 
-        if(FncArray::ifReady($conditions))
+        if(Arr::isReady($conditions))
         {
             foreach($conditions as $key=>$val)
             {
@@ -194,7 +196,7 @@ class Query
 
     public function orderby($order){
 
-        if(FncArray::ifReady($order))
+        if(Arr::isReady($order))
         {
             $this->orderby = implode(' ', $order);
         }
@@ -208,7 +210,7 @@ class Query
 
     public function groupby($group){
 
-        if(FncArray::ifReady($group))
+        if(Arr::isReady($group))
         {
             $this->groupby = implode(', ', $group);
         }
@@ -222,7 +224,7 @@ class Query
 
     public function limit($limit){
 
-        if(FncArray::ifReady($limit))
+        if(Arr::isReady($limit))
         {
             $this->limit = implode(', ', $limit);
         }
@@ -236,7 +238,7 @@ class Query
 
     public function join($joins){
 
-        if(FncArray::ifReady($joins))
+        if(Arr::isReady($joins))
         {
             foreach($joins as $j)
             {
@@ -244,7 +246,7 @@ class Query
                 {
                     $this->join[] = $j;
                 }
-                elseif(FncArray::ifReady($j))
+                elseif(Arr::isReady($j))
                 {
                     if(count($j) == 2)
                     {
@@ -595,7 +597,7 @@ class Query
 
     public function where($conditions)
     {
-        if(FncArray::ifReady($conditions))
+        if(Arr::isReady($conditions))
         {
             list($ws, $vals) = $this->subWhere($conditions); 
             foreach($ws as $wh)

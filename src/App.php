@@ -100,7 +100,7 @@ class App extends StaticObj
     }
 
     public static function execute($router){
-
+        // placeholder
     }
 
     public static function setTimeout($int){

@@ -11,7 +11,6 @@
 namespace SPT;
 
 use SPT\StaticObj;
-use SPT\Config;
 
 class Router extends StaticObj
 {

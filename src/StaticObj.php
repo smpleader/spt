@@ -10,6 +10,8 @@
 
 namespace SPT;
 
+use SPT\Support\Array Arr;
+
 class StaticObj 
 {
     static function set($key, $value, $overwrite = true)
@@ -32,6 +34,6 @@ class StaticObj
 
     static function importArr(array $arr)
     {
-        FncArray::merge(static::$_vars, $arr);
+        Arr::merge(static::$_vars, $arr);
     }
 }

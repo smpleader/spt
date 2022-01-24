@@ -10,57 +10,8 @@
 
 namespace SPT;
 
-class Util{
-
-    public static function genToken( $type = 'alnum', $length = 12 )
-    {
-        switch ( $type ) {
-            case 'alnum':
-                $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                break;
-            case 'alpha':
-                $pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                break;
-            case 'hexdec':
-                $pool = '0123456789abcdef';
-                break;
-            case 'numeric':
-                $pool = '0123456789';
-                break;
-            case 'nozero':
-                $pool = '123456789';
-                break;
-            case 'distinct':
-                $pool = '2345679ACDEFHJKLMNPRSTUVWXYZ';
-                break;
-            default:
-                $pool = (string) $type;
-                break;
-        }
-
-
-        $crypto_rand_secure = function ( $min, $max ) {
-            $range = $max - $min;
-            if ( $range < 0 ) return $min; // not so random...
-            $log    = log( $range, 2 );
-            $bytes  = (int) ( $log / 8 ) + 1; // length in bytes
-            $bits   = (int) $log + 1; // length in bits
-            $filter = (int) ( 1 << $bits ) - 1; // set all lower bits to 1
-            do {
-                $rnd = hexdec( bin2hex( openssl_random_pseudo_bytes( $bytes ) ) );
-                $rnd = $rnd & $filter; // discard irrelevant bits
-            } while ( $rnd >= $range );
-            return $min + $rnd;
-        };
-
-        $token = "";
-        $max   = strlen( $pool );
-        for ( $i = 0; $i < $length; $i++ ) {
-            $token .= $pool[$crypto_rand_secure( 0, $max )];
-        }
-        return $token;
-    }
-
+class Util
+{
     public static function get($var, $type='', $from='get'){
 
         if(is_string($from)){
@@ -122,11 +73,6 @@ class Util{
         }
     }
 
-    public static function uc( $word )
-    {
-        return ucfirst( strtolower($word) );
-    }
-
     public static function getClientIp() {
         $ipaddress = '';
         if (getenv('X-Real-IP'))
@@ -146,44 +92,6 @@ class Util{
         else
             $ipaddress = 'UNKNOWN';
         return $ipaddress;
-    }
-
-    public static function jdecode($string, $asArray=false)
-    {
-        $body = @json_decode($string, $asArray);
-
-        if(json_last_error() !== JSON_ERROR_NONE)
-        {
-            $err = '';
-            switch (json_last_error()) {
-                case JSON_ERROR_NONE:
-                    $err = ' - No errors';
-                break;
-                case JSON_ERROR_DEPTH:
-                    $err = ' - Maximum stack depth exceeded';
-                break;
-                case JSON_ERROR_STATE_MISMATCH:
-                    $err = ' - Underflow or the modes mismatch';
-                break;
-                case JSON_ERROR_CTRL_CHAR:
-                    $err = ' - Unexpected control character found';
-                break;
-                case JSON_ERROR_SYNTAX:
-                    $err = ' - Syntax error, malformed JSON';
-                break;
-                case JSON_ERROR_UTF8:
-                    $err = ' - Malformed UTF-8 characters, possibly incorrectly encoded';
-                break;
-                default:
-                    $err = ' - Unknown error';
-                break;
-            }
-            // TODO: block bad IP
-            // TODO: log this issue 
-            Log::add($err);
-            return '';
-        }
-        return $body;
     }
 
     public static function input($key, $default = '', $filter = '')
@@ -209,7 +117,7 @@ class Util{
             }
         }
 
-        $try = self::get( $key, $type, $storage );
+        $try = static::get( $key, $type, $storage );
         return null === $try ? $default : $try;
     }
 }

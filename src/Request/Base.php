@@ -45,6 +45,11 @@ class Base
 		return $default;
 	}
 
+    protected function getAll()
+    {
+        return $this->data;
+    }
+
     public function getMethod()
 	{
 		return isset($_SERVER) ? null : strtoupper($_SERVER['REQUEST_METHOD']);

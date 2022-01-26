@@ -10,7 +10,7 @@
 
 namespace SPT\Storage;
 
-class FileArray extends File
+class FileJson extends File
 {
     public function __construct(string $path)
     {

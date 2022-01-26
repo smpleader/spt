@@ -12,17 +12,16 @@ namespace SPT\Session;
 
 use SPT\Entity;
 use SPT\Query; 
-use SPT\User\Instance as UserInstance; 
 
 class Database extends Entity
 { 
     protected $table = 'spt_options';
     protected $pk = 'id';
+    protected $cache;
 
-    public function __construct(Query $query, UserInstance $user, array $options = [])
+    public function __construct(Query $query, array $options = [])
     {
         $this->db = $query;
-        $this->user = $user;
 
         if(isset($options['table']))
         {
@@ -73,13 +72,18 @@ class Database extends Entity
         }
 
         $this->db->update(['data'=>$data, 'serialized'=>$serialized], ['name'=>$name]);
+
+        $this->cache[$name] = $value;
     }
 
     public function __get($name)
 	{
+        if(isset($this->cache[$name])) return $this->cache[$name];
+
 		if ($try = $this->db->findOne(['name'=>$name], 'data, datatype'))
 		{
-            return $try->serialized ? unserialize($try->data) : $try->data;
+            $this->cache[$name] = $try->serialized ? unserialize($try->data) : $try->data;
+            return $this->cache[$name];
 		}
 
         throw new Exception('Unknown Storage Property '.$name);

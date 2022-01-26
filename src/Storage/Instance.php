@@ -15,6 +15,7 @@ use SPT\Storage\Adapter as StorageAdapter;
 class Instance
 {
     private $adapter;
+    
     public function init(StorageAdapter $adapter)
     {
         $this->adapter = $adapter;

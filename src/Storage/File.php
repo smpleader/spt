@@ -10,8 +10,6 @@
 
 namespace SPT\Storage;
 
-use SPT\Storage\Adapter as StorageAdapter;
-
 class File
 {
     private $data;

@@ -12,6 +12,6 @@ namespace SPT\Storage;
 
 interface Adapter
 {
-    public function get(string $key);
+    public function get(string $key, $default);
     public function set(string $key, $value);
 }

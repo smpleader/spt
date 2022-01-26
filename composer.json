@@ -21,7 +21,8 @@
     },
     "autoload": {
         "files": [
-            "src/Log.php"
+            "src/Log.php",
+            "src/Factory.php"
         ],
         "psr-4": {
             "SPT\\": "src/"

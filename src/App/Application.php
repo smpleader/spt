@@ -23,6 +23,7 @@ class Application extends BaseObj implements Adapter
 
     public function factory(string $key)
     {
+        $key = strtolower($key);
         if(in_array($key, ['config', 'router', 'query', 'request', 'user']))
         {
             if(!is_object($this->{$key}))

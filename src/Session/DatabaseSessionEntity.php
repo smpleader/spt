@@ -12,22 +12,26 @@ namespace SPT\Session;
 
 use SPT\Entity;
 use SPT\Query; 
-use SPT\User\Instance as UserInstance;
 use SPT\Session\Adapter as SessionAdapter;
 
 class DatabaseSessionEntity extends Entity
 { 
     protected $table = 'spt_sessions';
     protected $pk = 'session_id';
+    protected $user;
 
-    public function __construct(Query $query, UserInstance $user, array $options = [])
+    public function __construct(Query $query, array $options = [])
     {
         $this->db = $query;
-        $this->user = $user;
 
         if(isset($options['table']))
         {
             $this->table = $options['table'];
+        }
+
+        if(isset($options['user']))
+        {
+            $this->user = $options['user'];
         }
 
         if(isset($options['pk']))

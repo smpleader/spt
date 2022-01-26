@@ -10,7 +10,7 @@
 
 namespace SPT\Support;
 
-class Array
+class FncArray
 {
     public static function merge(&$arr1, $arr2)
     {

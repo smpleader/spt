@@ -10,7 +10,7 @@
 
 namespace SPT\User;
 
-use SPT\User\Adapter UserAdapter;
+use SPT\User\Adapter as UserAdapter;
 
 class Instance
 {

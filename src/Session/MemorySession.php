@@ -10,7 +10,7 @@
 
 namespace SPT\Session;
 
-use SPT\Session\Adapter SessionAdapter;
+use SPT\Session\Adapter as SessionAdapter;
 
 class MemorySession implements SessionAdapter
 {

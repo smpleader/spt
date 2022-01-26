@@ -10,7 +10,7 @@
 
 namespace SPT\Support;
 
-class Datetime
+class FncDatetime
 {
     public static function uc( $word )
     {

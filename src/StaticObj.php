@@ -10,7 +10,7 @@
 
 namespace SPT;
 
-use SPT\Support\Array Arr;
+use SPT\Support\Array as Arr;
 
 class StaticObj 
 {

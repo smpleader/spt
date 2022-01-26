@@ -12,8 +12,8 @@ namespace SPT\Session;
 
 use SPT\Entity;
 use SPT\Query; 
-use SPT\User\Instance UserInstance;
-use SPT\Session\Adapter SessionAdapter;
+use SPT\User\Instance as UserInstance;
+use SPT\Session\Adapter as SessionAdapter;
 
 class DatabaseSessionEntity extends Entity
 { 

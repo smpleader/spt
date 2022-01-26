@@ -10,8 +10,8 @@
 
 namespace SPT;
 
-use SPT\Support\Array Arr;
-use SPT\Extends\Pdo PDOWrapper;
+use SPT\Support\Array as Arr;
+use SPT\Extends\Pdo as PDOWrapper;
 
 class Query
 {

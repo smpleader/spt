@@ -10,7 +10,7 @@
 
 namespace SPT\Support;
 
-class Object
+class FncObject
 {
     public static function merge(&$obj1, $obj2)
     {

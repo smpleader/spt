@@ -11,9 +11,9 @@ namespace App\libraries\Core;
 
 use SPT\Log; 
 use SPT\Query; 
-use SPT\Support\Number;
-use SPT\Support\Datetime;
-use SPT\Support\String;
+use SPT\Support\FncNumber;
+use SPT\Support\FncDatetime;
+use SPT\Support\FncString;
 use SPT\User\Instance UserInstance;
 
 class Entity
@@ -337,12 +337,12 @@ class Entity
         switch($arr[$field['type']])
         {
             case 'string': 
-                return String::radomize($field['limit']);
+                return FncString::radomize($field['limit']);
             case 'int': 
                 $absolute = isset($field['option']) && ($field['option'] == 'unsigned';
-                return Number::radomize($field['type'], $absolute); 
+                return FncNumber::radomize($field['type'], $absolute); 
             case 'datetime': 
-                return Datetime::radomize($field['type']);
+                return FncDatetime::radomize($field['type']);
         }
     }
 }

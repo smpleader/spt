@@ -10,7 +10,7 @@
 
 namespace SPT\Support;
 
-class String
+class FncString
 {
     public static function uc( $word )
     {

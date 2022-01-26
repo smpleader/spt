@@ -10,7 +10,7 @@
 
 namespace SPT;
 
-use SPT\Support\String Str;
+use SPT\Support\FncString;
 
 class Theme extends StaticObj
 {
@@ -38,7 +38,7 @@ class Theme extends StaticObj
 
     public static function addInline(string $type, string $lines)
     {
-        $key = 'inline'. Str::uc($type);
+        $key = 'inline'. FncString::uc($type);
         static::$_vars[$key][] = $lines;
     }
 

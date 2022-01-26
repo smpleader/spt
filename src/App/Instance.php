@@ -10,7 +10,7 @@
 
 namespace SPT\Application;
 
-use SPT\Application\Adapter ApplicationAdapter;
+use SPT\Application\Adapter as ApplicationAdapter;
 
 class Instance
 {

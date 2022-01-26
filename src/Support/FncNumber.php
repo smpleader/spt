@@ -10,7 +10,7 @@
 
 namespace SPT\Support;
 
-class Number
+class FncNumber
 {
     public static function radomize($type, $absolute = false, $min = 0, $max = 1000000000)
     {

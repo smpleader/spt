@@ -286,7 +286,7 @@ class Entity
             }
             else
             {
-                return $this->db->createTable($fields_build), $this->table);
+                return $this->db->createTable($fields_build, $this->table);
             }
         }
         

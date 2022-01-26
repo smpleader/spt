@@ -18,7 +18,7 @@ use SPT\Session\Adapter SessionAdapter;
 class DatabaseSessionEntity extends Entity
 { 
     protected $table = 'spt_sessions';
-    protected $pk = 'id';
+    protected $pk = 'session_id';
 
     public function __construct(Query $query, UserInstance $user, array $options = [])
     {
@@ -42,18 +42,16 @@ class DatabaseSessionEntity extends Entity
     {
         return [
             $this->pk => [
-                'type' => 'int',
-                'pk' => 1,
-                'option' => 'unsigned',
-                'extra' => 'auto_increment',
+                'type' => 'varbinary', 
+                'length' => 192,
             ],
-            'name' => [
-                'type' => 'varchar',
-                'limit' => 50,
+            'time' => [
+                'type' => 'int',
+                'limit' => 11,
             ],
             'username' => [
                 'type' => 'varchar',
-                'limit' => 60,
+                'limit' => 150,
             ],
             'user_id' => [
                 'type' => 'int',
@@ -67,7 +65,7 @@ class DatabaseSessionEntity extends Entity
 
     public function getRow($isArray = true)
     {
-        $row = $this->db->table( $this->table )->detail([ $this->pk => $this->user->get('session_id')]);
+        $row = $this->db->table( $this->table )->detail([ $this->pk => $this->user->id()]);
         return $isArray ? (array) $row : $row;
     }
 }

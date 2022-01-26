@@ -254,7 +254,7 @@ class Entity
             }
         }
         
-        $fields_build = array_values($query);
+        $fields_build = array_filter(array_values($query));
 
         $update_pk = false;
         foreach($pk_db as $item)

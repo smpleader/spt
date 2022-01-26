@@ -31,6 +31,7 @@ class Application extends BaseObj implements Adapter
                 // didn't setup properly
                 throw new Exception('Invalid Factory Object '.$key);
             } 
+
             return $this->{$key};
         }
         return false;
@@ -51,11 +52,24 @@ class Application extends BaseObj implements Adapter
 
     public function execute()
     {
+        defined('APP_PATH') || die('App did not get setup constants');
         // create config
+        $this->config = new SPT\Storage\FileArray(APP_PATH_CONFIG);
         // create request
         $this->request = new SPT\Request\Base();
         // create router
+        $this->router = ..
         // create query
+        $this->query = new SPT\Query(
+            new SPT\Extend\Pdo(
+                $this->config->db['host'],
+                $this->config->db['username'],
+                $this->config->db['passwd'],
+                $this->config->db['database'],
+                [],
+                $this->config->db['debug']
+            ), ['#__'=>  $this->config->db['prefix']]
+        )
         // process app
     }
 }

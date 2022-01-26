@@ -12,8 +12,6 @@ namespace SPT\App;
 
 interface Adapter
 {
-    public function get(string $key);
-    public function set(string $key, $value);
     public function factory(string $key);
     public function execute();
 }

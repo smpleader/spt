@@ -16,9 +16,9 @@ use SPT\Query;
 class DatabaseSession implements SessionAdapter
 {
     private $session = array();
-    private $table = '';
+    private $table;
 
-    public function __construct(string $table = 'spt_session')
+    public function __construct(DatabaseSessionEntity $table)
     {
         $this->table = $table;
         $this->reload();
@@ -26,7 +26,7 @@ class DatabaseSession implements SessionAdapter
 
     public function reload()
     {
-        // connect the database and setup
+        $this->session = $this->table->getRow();
     }
 
     public function get(string $key)

@@ -13,8 +13,7 @@ use SPT\Log;
 use SPT\Query; 
 use SPT\Support\FncNumber;
 use SPT\Support\FncDatetime;
-use SPT\Support\FncString;
-use SPT\User\Instance as UserInstance;
+use SPT\Support\FncString; 
 
 class Entity
 {
@@ -22,10 +21,19 @@ class Entity
     protected $table;
     protected $pk; 
 
-    public function __construct(Query $query, UserInstance $user, array $options = [])
+    public function __construct(Query $query, array $options = [])
     {
         $this->db = $query;
-        $this->user = $user;
+        
+        if(isset($options['table']))
+        {
+            $this->table = $options['table'];
+        }
+
+        if(isset($options['pk']))
+        {
+            $this->pk = $options['pk'];
+        }
     }
 
     public function logs()

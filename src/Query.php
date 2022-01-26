@@ -36,6 +36,7 @@ class Query
         $this->db = $db;
         $this->prefix = $prefix;
         $this->qq = $fquota;
+        $this->total = 0;
         $this->reset();
     }
 
@@ -51,7 +52,6 @@ class Query
         $this->groupby = '';
         $this->limit = '';
         $this->countTotal = false;
-        $this->total = 0;
     }
 
     protected function prefix($q)
@@ -94,7 +94,9 @@ class Query
 
     public function total()
     {
-        return $this->total;
+        $total = $this->total;
+        $this->total = 0;
+        return $total;
     }
 
     public function countTotal($boolean = null)

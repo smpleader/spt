@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Extends;
+namespace SPT\Extend;
 
 use \SPT\Triat\Log;
 

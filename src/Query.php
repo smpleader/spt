@@ -11,7 +11,7 @@
 namespace SPT;
 
 use SPT\Support\FncArray as Arr;
-use SPT\Extends\Pdo as PDOWrapper;
+use SPT\Extend\Pdo as PDOWrapper;
 
 class Query
 {

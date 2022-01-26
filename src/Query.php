@@ -10,7 +10,7 @@
 
 namespace SPT;
 
-use SPT\Support\Array as Arr;
+use SPT\Support\FncArray as Arr;
 use SPT\Extends\Pdo as PDOWrapper;
 
 class Query

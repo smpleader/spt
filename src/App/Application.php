@@ -52,9 +52,10 @@ class Application extends BaseObj implements Adapter
     public function execute()
     {
         // create config
+        // create request
+        $this->request = new SPT\Request\Base();
         // create router
         // create query
-        // create request
         // process app
     }
 }

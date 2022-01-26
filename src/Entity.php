@@ -286,7 +286,7 @@ class Entity
             }
             else
             {
-                return $this->db->createTable($fields_build), $this->table;
+                return $this->db->createTable($fields_build), $this->table);
             }
         }
         
@@ -339,7 +339,7 @@ class Entity
             case 'string': 
                 return FncString::radomize($field['limit']);
             case 'int': 
-                $absolute = isset($field['option']) && ($field['option'] == 'unsigned';
+                $absolute = isset($field['option']) && ($field['option'] == 'unsigned');
                 return FncNumber::radomize($field['type'], $absolute); 
             case 'datetime': 
                 return FncDatetime::radomize($field['type']);

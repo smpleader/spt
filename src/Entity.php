@@ -14,7 +14,7 @@ use SPT\Query;
 use SPT\Support\FncNumber;
 use SPT\Support\FncDatetime;
 use SPT\Support\FncString;
-use SPT\User\Instance UserInstance;
+use SPT\User\Instance as UserInstance;
 
 class Entity
 {

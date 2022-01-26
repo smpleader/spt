@@ -508,6 +508,61 @@ class Query
         return $this->exec( 'TRUNCATE TABLE '. $table );
     }
 
+    public function structureTable($table = null)
+    {
+        if( null === $table )
+        {
+            if( empty($this->table) )
+            {
+                return false;
+            }
+
+            $table = $this->table;
+        }
+        
+        return $this->db->fetchAll( 'SHOW COLUMNS FROM '. $this->prefix($table) );
+    }
+
+    public function alterTable( $fields, $table = null)
+    {
+        if( null === $table )
+        {
+            if( empty($this->table) )
+            {
+                return false;
+            }
+
+            $table = $this->table;
+        }
+
+        if( is_array($fields) )
+        {
+            $fields = implode( ",\n", $fields);
+        }
+
+        return $this->db->exec( 'ALTER TABLE '. $table. " \n". $fields );
+    }
+
+    public function createTable( $fields, $table = null)
+    {
+        if( null === $table )
+        {
+            if( empty($this->table) )
+            {
+                return false;
+            }
+
+            $table = $this->table;
+        }
+
+        if( is_array($fields) )
+        {
+            $fields = implode( ",\n", $fields);
+        }
+
+        return $this->db->exec( 'CREATE TABLE '. $table. " \n(". $fields. "\n)" );
+    }
+
     // improve where
     // support OR / AND
     protected function subWhere( array $conditions, $key = false)

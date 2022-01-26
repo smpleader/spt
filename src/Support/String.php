@@ -16,4 +16,20 @@ class String
     {
         return ucfirst( strtolower($word) );
     }
+
+    public static function radomize(int $limit = 50)
+    {
+        $random = '';
+        $arr = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZz'; 
+
+        $length = rand(0, $limit);
+
+        for($i=0; $i < $length; $i++) 
+        {
+            $random .= $arr[mt_rand(0, 63)];
+        }
+
+        return $random;
+    }
+ 
 }

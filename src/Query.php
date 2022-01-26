@@ -540,7 +540,7 @@ class Query
             $fields = implode( ",\n", $fields);
         }
 
-        return $this->db->exec( 'ALTER TABLE '. $table. " \n". $fields );
+        return $this->exec( 'ALTER TABLE '. $table. " \n". $fields );
     }
 
     public function createTable( $fields, $table = null)
@@ -560,7 +560,7 @@ class Query
             $fields = implode( ",\n", $fields);
         }
 
-        return $this->db->exec( 'CREATE TABLE '. $table. " \n(". $fields. "\n)" );
+        return $this->exec( 'CREATE TABLE '. $table. " \n(". $fields. "\n)" );
     }
 
     // improve where

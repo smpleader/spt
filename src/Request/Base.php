@@ -45,7 +45,7 @@ class Base
 		return $default;
 	}
 
-    protected function getAll()
+    public function getAll()
     {
         return $this->data;
     }

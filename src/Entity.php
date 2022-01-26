@@ -7,7 +7,7 @@
  * @description: Just a basic model
  * 
  */
-namespace App\libraries\Core;
+namespace SPT;
 
 use SPT\Log; 
 use SPT\Query; 

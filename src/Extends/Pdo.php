@@ -12,7 +12,8 @@ namespace SPT\Extends;
 
 use \SPT\Triat\Log;
 
-class PdoWrapper{
+class Pdo
+{
 
 	use Log;
 

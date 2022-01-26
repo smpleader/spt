@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Application;
+namespace SPT\App;
 
 interface Adapter
 {

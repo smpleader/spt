@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Application;
+namespace SPT\App;
 
 use SPT\Application\Adapter as ApplicationAdapter;
 

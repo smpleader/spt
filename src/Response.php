@@ -27,8 +27,6 @@ class Response extends StaticObj
         {
             echo $content;
         }
-
-        ( defined('PHPUNIT_RUNNING') && PHPUNIT_RUNNING == 1 ) ||  exit(0);
     }
 
     // Okie
@@ -169,7 +167,7 @@ class Response extends StaticObj
         static::_($msg, '504');
     }
 
-    public static function redirect(string $url, $callback = null)
+    public static function redirect(string $url, $redirect_status = 302)
     {
         if(headers_sent())
         {
@@ -177,16 +175,7 @@ class Response extends StaticObj
         }
         else
         {
-            header('Location: '.$url);
+            header('Location: '.$url, true, $redirect_status);
         }
-
-        if( is_callable($callback) )  $callback($url);
-
-        if( defined('PHPUNIT_RUNNING') && PHPUNIT_RUNNING == 1 )
-        {
-            return $url;
-        }
-        
-        exit(0);
     }
 }

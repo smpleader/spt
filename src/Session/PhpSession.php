@@ -22,9 +22,9 @@ class PhpSession implements SessionAdapter
         }
     }
 
-    public function get(string $key)
+    public function get(string $key, $default = null)
     {
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : $default;
     }
 
     public function set(string $key, $value)

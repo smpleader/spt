@@ -12,6 +12,6 @@ namespace SPT\Session;
 
 interface Adapter
 {
-    public function get(string $key);
+    public function get(string $key, $default = null);
     public function set(string $key, $value);
 }

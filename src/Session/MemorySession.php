@@ -16,9 +16,9 @@ class MemorySession implements SessionAdapter
 {
     private $session = array();
 
-    public function get(string $key)
+    public function get(string $key, $default = null)
     {
-        return isset($this->session[$key]) ? $this->session[$key] : null;
+        return isset($this->session[$key]) ? $this->session[$key] : $default;
     }
     
     public function set(string $key, $value)

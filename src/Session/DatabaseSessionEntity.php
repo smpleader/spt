@@ -10,7 +10,7 @@
 
 namespace SPT\Session;
 
-use SPT\Entity;
+use SPT\Storage\Entity;
 use SPT\Query; 
 use SPT\Session\Adapter as SessionAdapter;
 

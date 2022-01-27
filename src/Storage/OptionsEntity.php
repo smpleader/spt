@@ -10,10 +10,9 @@
 
 namespace SPT\Storage;
 
-use SPT\Entity;
 use SPT\Query; 
 
-class Database extends Entity
+class OptionsEntity extends Entity
 { 
     protected $table = 'spt_options';
     protected $pk = 'id';

@@ -7,7 +7,7 @@
  * @description: Just a basic model
  * 
  */
-namespace SPT;
+namespace SPT\Storage;
 
 use SPT\Log; 
 use SPT\Query; 

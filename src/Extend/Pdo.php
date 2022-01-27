@@ -14,7 +14,6 @@ use \SPT\Triat\Log;
 
 class Pdo
 {
-
 	use Log;
 
 	protected $connection;

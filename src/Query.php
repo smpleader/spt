@@ -269,12 +269,12 @@ class Query
         return $this;
     }
 
-    protected function buildSelect()
+    protected function buildSelect($buildForCount = false)
     { 
         if(empty($this->table)) Response::_404('Invalid table');
         if(empty($this->fields)) $this->fields[] = '*';
 
-        $q = $this->countTotal ? 'SELECT COUNT(*) FROM '.$this->table : 'SELECT '. implode(',', $this->fields). ' FROM '.$this->table;
+        $q = $buildForCount ? 'SELECT COUNT(*) FROM '.$this->table : 'SELECT '. implode(',', $this->fields). ' FROM '.$this->table;
 
         if(count($this->join))
         {
@@ -331,7 +331,7 @@ class Query
         if($this->countTotal)
         {
             $this->limit(''); // reset to count
-            $this->buildSelect();
+            $this->buildSelect(true);
             $this->total = $this->db->fetchColumn($this->query, $this->getValue());
         }
 

@@ -1,46 +1,32 @@
 <?php
 /**
- * SPT software - Router
+ * SPT software - Route
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: A way to route the site based URL
+ * @description: A way to route the site based URL, todo: replace Router
  * 
  */
 
 namespace SPT;
 
-use SPT\StaticObj;
-
-class Router extends StaticObj
+class Route extends BaseObj
 {
-    static protected $_vars = array();
+    private $nodes;
 
-    /**
-     * singleton
-     */
-    private static $instance;
-    public static function _( $sitemap = [], $subpath = '' ){
-
-        if( static::$instance === null )
-        {
-            static::$instance = new Router();
-            static::set('sitemap', array());
-            static::$instance->parse($subpath);
-        }
-
+    public function init(array $sitemap = [], string $subpath = '')
+    {
+        $this->parse($subpath);
         if( is_array($sitemap) && count($sitemap) ) 
         {
-            $arr = static::get('sitemap');
-            $arr = array_merge($arr, static::flatNodes($sitemap));
-            static::set('sitemap', $arr);
+            $arr = $this->get('sitemap');
+            $arr = array_merge($arr, $this->flatNodes($sitemap));
+            $this->set('sitemap', $arr);
         }
-
-        return static::$instance;
     }
 
     // support nested keys
-    private static function flatNodes($sitemap, $parentSlug='')
+    private function flatNodes($sitemap, $parentSlug='')
     {
         $arr = [];
         foreach($sitemap as $key=>$inside)
@@ -49,7 +35,7 @@ class Router extends StaticObj
             {
                 if( $parentSlug == '' )
                 {
-                    static::set('home', $inside);
+                    $this->set('home', $inside);
                 }
                 else
                 {
@@ -58,7 +44,7 @@ class Router extends StaticObj
             }
             elseif(strpos($key, '/') === 0)
             {
-                $arr = array_merge($arr, static::flatNodes($inside, substr($key, 1)));
+                $arr = array_merge($arr, $this->flatNodes($inside, substr($key, 1)));
             }
             else
             {
@@ -72,18 +58,16 @@ class Router extends StaticObj
         return $arr;
     }
  
-    public static function url($asset = ''){
-        return static::get('root'). $asset;
+    public function url($asset = ''){
+        return $this->get('root'). $asset;
     }
 
-    private $nodes;
-    //public function __construct(){}
 
     public function parse( $siteSubpath = '', $protocol = '')
     {
  
         $p =  ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
-                (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
+                (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443 ) ) ? 'https' : 'http';
 
         if( empty($protocol) )
         {
@@ -101,12 +85,12 @@ class Router extends StaticObj
         $protocol .= '://';
 
         $current = $protocol. $_SERVER['HTTP_HOST'] .$_SERVER['REQUEST_URI'];
-        static::set('current', $current);
+        $this->set('current', $current);
 
         $more = parse_url( $current );
         foreach( $more as $key => $value)
         {
-            static::set( $key, $value);
+            $this->set( $key, $value);
         }
 
         $subPath = trim( $siteSubpath, '/');
@@ -117,31 +101,31 @@ class Router extends StaticObj
         
         $subPath = empty($subPath) ? '/' : '/'. $subPath .'/';
 
-        static::set( 'root', $protocol. $_SERVER['HTTP_HOST']. $subPath );
+        $this->set( 'root', $protocol. $_SERVER['HTTP_HOST']. $subPath );
 
-        static::set( 'actualPath', $actualPath);
+        $this->set( 'actualPath', $actualPath);
 
-        static::set( 'isHome', ($actualPath == '/' || empty($actualPath)) );
+        $this->set( 'isHome', ($actualPath == '/' || empty($actualPath)) );
 
         return;
     }
 
     public function pathFinding( $default, $callback = null)
     {
-        $sitemap = static::get('sitemap');
-        $path = static::get('actualPath');
-        $isHome = static::get('isHome');
-        static::set('sitenode', '');
+        $sitemap = $this->get('sitemap');
+        $path = $this->get('actualPath');
+        $isHome = $this->get('isHome');
+        $this->set('sitenode', '');
         
         if($isHome){
-            $found = static::get('home', '');
+            $found = $this->get('home', '');
             if( $found === '')
             {
                 $found = $default;
             }
             else
             {
-                static::set('sitenode', '/');
+                $this->set('sitenode', '/');
             }
             return $found;
         }
@@ -167,7 +151,7 @@ class Router extends StaticObj
                     if( !is_array($value) || isset($value['fnc']))
                     {
                         $found = $value;
-                        static::set('sitenode', $reg);
+                        $this->set('sitenode', $reg);
                         break;
                     }
                 }
@@ -179,8 +163,8 @@ class Router extends StaticObj
 
     public function praseUrl(array $parameters)
     {
-        $slugs = trim(static::get('actualPath', ''), '/');
-        $sitenote = static::get('sitenode', '');
+        $slugs = trim($this->get('actualPath', ''), '/');
+        $sitenote = $this->get('sitenode', '');
         if( $slugs > $sitenote )
         {
             $slugs = trim(substr($slugs, strlen($sitenote)), '/');
@@ -198,6 +182,5 @@ class Router extends StaticObj
         }
 
         return $vars;
-
     }
 }

@@ -83,7 +83,7 @@ class Router extends StaticObj
     {
  
         $p =  ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
-                (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
+                (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ) ? 'https' : 'http';
 
         if( empty($protocol) )
         {

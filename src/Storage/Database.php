@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Session;
+namespace SPT\Storage;
 
 use SPT\Entity;
 use SPT\Query; 

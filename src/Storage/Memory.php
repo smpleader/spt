@@ -14,7 +14,7 @@ class Memory
 {
     private $data;
 
-    public __set(string $name, mixed $value): void
+    public function __set(string $name, mixed $value): void
     {
         $this->data[$name] = $value;
     }

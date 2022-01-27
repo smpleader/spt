@@ -39,7 +39,7 @@ class OptionsEntity extends Entity
     {
         return [
             $this->pk => [
-                'pk' => 1
+                'pk' => 1,
                 'type' => 'int', 
                 'option' => 'unsigned',
             ],
@@ -57,7 +57,7 @@ class OptionsEntity extends Entity
         ];
     }
 
-    public __set(string $name, mixed $value): void
+    public function __set(string $name, mixed $value): void
     {
         if(is_array($value) || is_object($value))
         {

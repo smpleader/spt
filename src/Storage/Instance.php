@@ -21,9 +21,9 @@ class Instance
         $this->adapter = $adapter;
     }
 
-    public function get(string $key)
+    public function get(string $key, $default = null)
     {
-        return $this->adapter->get($key);
+        return $this->adapter->get($key, $default);
     }
 
     public function set(string $key, $value)

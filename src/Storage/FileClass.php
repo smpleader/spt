@@ -22,7 +22,7 @@ class FileClass
         $this->data = new $className;
     }
 
-    public __set(string $name, mixed $value): void
+    public function __set(string $name, mixed $value): void
     {
         $this->data[$name] = $value;
     }
@@ -45,7 +45,7 @@ class FileClass
         {
             $tabParent =  str_repeat("\t", $deep);
 
-            $str = "$tabParent[\n";
+            $str = "$tabParent\[\n";
 
             $tab =  str_repeat("\t", $deep+1);
             
@@ -70,7 +70,7 @@ class FileClass
                 $str .= "', \n";
             }
 
-            $str .= "$tabParent]";
+            $str .= "$tabParent\]";
 
             return $str;
         }

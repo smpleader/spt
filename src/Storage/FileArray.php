@@ -26,7 +26,7 @@ class FileArray extends File
         {
             $tabParent =  str_repeat("\t", $deep);
 
-            $str = "$tabParent[\n";
+            $str = "$tabParent\[\n";
 
             $tab =  str_repeat("\t", $deep+1);
             
@@ -51,7 +51,7 @@ class FileArray extends File
                 $str .= "', \n";
             }
 
-            $str .= "$tabParent]";
+            $str .= "$tabParent\]";
 
             return $str;
         }

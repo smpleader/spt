@@ -99,10 +99,10 @@ class Query
         return $total;
     }
 
-    public function countTotal($boolean = null)
+    public function countTotal($boolean = true)
     {
-        if( null === $boolean) return $this->countTotal;
         $this->countTotal = $boolean;
+        return $this;
     }
 
     public function table($name)

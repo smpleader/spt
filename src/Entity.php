@@ -344,8 +344,10 @@ class Entity
 
         switch($arr[$field['type']])
         {
+            default: return 0; // a safe result for most of data type
             case 'string': 
-                return FncString::radomize($field['limit']);
+                $limit = isset($field['limit']) ? $field['limit'] : 10;
+                return FncString::radomize($limit);
             case 'int': 
                 $absolute = isset($field['option']) && ($field['option'] == 'unsigned');
                 return FncNumber::radomize($field['type'], $absolute); 

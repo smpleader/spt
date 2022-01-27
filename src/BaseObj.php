@@ -24,7 +24,7 @@ class BaseObj
         return isset($this->_vars[$key]) ? $this->_vars[$key] : $default;
     }
 
-    public function getVars()
+    public function getAll()
     {
         return $this->_vars;
     }

@@ -27,7 +27,7 @@ class StaticObj
         return isset(static::$_vars[$key]) ? static::$_vars[$key] : $default;
     }
 
-    static function getVars()
+    static function getAll()
     {
         return static::$_vars;
     }

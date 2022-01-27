@@ -38,7 +38,7 @@ class File
 			return $this->data[$name];
 		}
 
-        throw new Exception('Unknown Storage Property '.$name);
+        throw new Exception('Unknown Storage '. __CLASS__. 'Property '.$name);
 	}
 
     public function getPath()

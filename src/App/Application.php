@@ -20,11 +20,12 @@ class Application extends BaseObj implements Adapter
     protected $query;
     protected $request;
     protected $user;
+    protected $session;
 
     public function factory(string $key)
     {
         $key = strtolower($key);
-        if(in_array($key, ['config', 'router', 'query', 'request', 'user']))
+        if(in_array($key, ['config', 'router', 'query', 'request', 'user', 'session']))
         {
             if(!is_object($this->{$key}))
             {
@@ -35,6 +36,27 @@ class Application extends BaseObj implements Adapter
             return $this->{$key};
         }
         return false;
+    }
+
+    public function execute()
+    {
+        defined('APP_PATH') || die('App did not get setup constants');
+        // create config, request, router, query, session
+        // process app 
+    }
+
+    public function warning()
+    {
+        die($this->get('system-warning', 'Huh, something goes wrong..'));
+    }
+
+    public function turnDebug($turnOn = false)
+    {
+        if( $turnOn )
+        {
+            error_reporting(E_ALL);
+            ini_set('display_errors', 1);
+        }
     }
 
     public function redirect($url = null)
@@ -48,28 +70,5 @@ class Application extends BaseObj implements Adapter
     public function response($content, $code='200')
     {
         Response::_($content, $code);
-    }
-
-    public function execute()
-    {
-        defined('APP_PATH') || die('App did not get setup constants');
-        // create config
-        $this->config = new SPT\Storage\FileArray(APP_PATH_CONFIG);
-        // create request
-        $this->request = new SPT\Request\Base();
-        // create router
-        $this->router = ..
-        // create query
-        $this->query = new SPT\Query(
-            new SPT\Extend\Pdo(
-                $this->config->db['host'],
-                $this->config->db['username'],
-                $this->config->db['passwd'],
-                $this->config->db['database'],
-                [],
-                $this->config->db['debug']
-            ), ['#__'=>  $this->config->db['prefix']]
-        )
-        // process app
     }
 }

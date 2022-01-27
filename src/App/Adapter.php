@@ -14,4 +14,5 @@ interface Adapter
 {
     public function factory(string $key);
     public function execute();
+    public function warning();
 }

@@ -26,7 +26,7 @@ class FncString
 
         for($i=0; $i < $length; $i++) 
         {
-            $random .= $arr[mt_rand(0, 63)];
+            $random .= $arr[mt_rand(0, 62)];
         }
 
         return $random;

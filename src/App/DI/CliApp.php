@@ -27,10 +27,6 @@ class CliApp extends Application
 			exit(0);
 		}
 
-        // create config
-        // create router
-        // create query
-        // create request
-        // process app
+        parent::execute();
     }
 }

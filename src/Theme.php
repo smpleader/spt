@@ -102,11 +102,6 @@ class Theme extends BaseObj
         return $this->_body;
     }
 
-    /*public function getWidget($name)
-    {
-        return $this->view->_render('widgets.'.$name);
-    }*/
-
     public function echo($type)
     {
         echo implode("\n", $this->generate($type));

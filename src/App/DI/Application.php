@@ -13,6 +13,10 @@ namespace SPT\App\DI;
 use SPT\BaseObj;
 use SPT\Response;
 use SPT\MagicObj;
+use SPT\Query;
+use SPT\Route as Router;
+use SPT\Extend\Pdo as PdoWrapper;
+use SPT\Storage\FileArray;
 use SPT\Storage\FileIni;
 use SPT\Session\PhpSession;
 use SPT\Session\DatabaseSession;
@@ -20,6 +24,7 @@ use SPT\Session\DatabaseSessionEntity;
 use SPT\Session\Instance as Session;
 use SPT\App\Instance as AppIns;
 use SPT\App\Adapter;
+use SPT\Request\Base as Request;
 
 class Application extends BaseObj implements Adapter
 {
@@ -85,25 +90,25 @@ class Application extends BaseObj implements Adapter
         try{
 
             // create request
-            $this->request = new SPT\Request\Base();
+            $this->request = new Request();
 
             // create config
             if(AppIns::path('config'))
             {
-                $this->config = new SPT\Storage\FileArray(AppIns::path('config'));
+                $this->config = new FileArray(AppIns::path('config'));
                 
                 // create router based config
                 if(AppIns::path('config') && isset($this->config->endpoints))
                 {
                     $sitePath = isset($this->config->sitepath) ? $this->config->sitepath : '';
-                    $this->router = new SPT\Route($this->config->endpoints, $sitePath);
+                    $this->router = new Router($this->config->endpoints, $sitePath);
                 }
 
                 // create query
                 if(isset($this->config->db))
                 {
-                    $this->query = new SPT\Query(
-                        new SPT\Extend\Pdo(
+                    $this->query = new Query(
+                        new PdoWrapper(
                             $this->config->db['host'],
                             $this->config->db['username'],
                             $this->config->db['passwd'],

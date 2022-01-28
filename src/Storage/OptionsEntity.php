@@ -85,6 +85,6 @@ class OptionsEntity extends Entity
             return $this->cache[$name];
 		}
 
-        throw new Exception('Unknown Storage Property '.$name);
+        throw new \Exception('Unknown Storage Property '.$name);
 	}
 }

@@ -45,20 +45,12 @@ class Application extends BaseObj implements Adapter
             if(!is_object($this->{$key}))
             {
                 // didn't setup properly
-                throw new Exception('Invalid Factory Object '.$key);
+                throw new \Exception('Invalid Factory Object '.$key);
             } 
 
             return $this->{$key};
         }
         return false;
-    }
-
-    public function warning()
-    {
-        $this->response(
-            $this->get('system-warning', 'Huh, something goes wrong..'),
-            $this->get('errorCode', 400)
-        );
     }
 
     public function turnDebug($turnOn = false)
@@ -98,14 +90,15 @@ class Application extends BaseObj implements Adapter
                 $this->config = new FileArray(AppIns::path('config'));
                 
                 // create router based config
-                if(AppIns::path('config') && isset($this->config->endpoints))
+                if(AppIns::path('config') && $this->config->exists('endpoints'))
                 {
-                    $sitePath = isset($this->config->sitepath) ? $this->config->sitepath : '';
-                    $this->router = new Router($this->config->endpoints, $sitePath);
+                    $sitePath = $this->config->exists('sitepath') ? $this->config->sitepath : '';
+                    $this->router = new Router();
+                    $this->router->init($this->config->endpoints, $sitePath);
                 }
 
                 // create query
-                if(isset($this->config->db))
+                if( $this->config->exists('db') )
                 {
                     $this->query = new Query(
                         new PdoWrapper(
@@ -131,7 +124,7 @@ class Application extends BaseObj implements Adapter
         }
         catch (Exception $e) 
         {
-            $this->response('Caught exception: '.  $e->getMessage(), 500);
+            $this->response('Caught \Exception: '.  $e->getMessage(), 500);
         }
 
         return $this;
@@ -150,11 +143,12 @@ class Application extends BaseObj implements Adapter
         }
     }
 
-    private function processRequest()
+    protected function processRequest()
     {
+        
     }
 
-    private function getController()
+    protected function getController($name)
     {
 
     }

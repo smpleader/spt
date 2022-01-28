@@ -34,7 +34,7 @@ class Header extends Base
         // this is cli ?
         else
         {
-            throw new Exception('Application is running in environment without header request.');
+            throw new \Exception('Application is running in environment without header request.');
         } 
     }
 

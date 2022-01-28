@@ -71,7 +71,7 @@ class Base
 			return $this->inputs[$name];
 		}
 
-        throw new Exception('Unknown Request Object '.$name);
+        throw new \Exception('Unknown Request Object '.$name);
 	}
 
 }

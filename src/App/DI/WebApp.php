@@ -24,7 +24,7 @@ class WebApp extends Application
         exit(0);
     }
 
-    private function routing()
+    protected function routing()
     {
         $intruction = $this->router->pathFinding($this->config->defaultEndpoint);
         $fnc = '';
@@ -53,7 +53,7 @@ class WebApp extends Application
             throw new \Exception('Invalid request', 500);
         }
 
-        $method = $this->header->getRequestMethod();
+        $method = $this->request->header->getRequestMethod();
         if(is_array($fnc))
         {
             if(isset($fnc[$method]))
@@ -93,12 +93,12 @@ class WebApp extends Application
         }
     }
 
-    private function getController($name)
+    protected function getController($name)
     {
         throw new \Exception('You did not create a controller', 500);
     }
 
-    private function processRequest()
+    protected function processRequest()
     {
         try{
 

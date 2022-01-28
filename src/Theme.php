@@ -24,15 +24,6 @@ class Theme extends BaseObj
     {
         $this->themePath = $themePath;
         $this->overrideLayouts = $overrideLayouts;
-
-
-        //defined('THEME_PATH') || throw new Exception('Invalid Theme Constant');
-
-        //$this->setContainer($container);
-        //$config = $container->get('config');
-        //$theme = $config->theme;
-
-        //define('THEME_PATH', APP_PATH. 'views/themes/'. $theme. '/' );
         $this->registerAssets();
     }
 

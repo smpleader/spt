@@ -19,7 +19,7 @@ class Route extends BaseObj
         $this->parse($subpath);
         if( is_array($sitemap) && count($sitemap) ) 
         {
-            $arr = $this->get('sitemap');
+            $arr = $this->get('sitemap', []);
             $arr = array_merge($arr, $this->flatNodes($sitemap));
             $this->set('sitemap', $arr);
         }

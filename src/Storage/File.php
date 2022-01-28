@@ -12,8 +12,8 @@ namespace SPT\Storage;
 
 class File
 {
-    private $data;
-    private $path;
+    protected $data;
+    protected $path;
 
     public function __construct(string $path)
     {
@@ -38,7 +38,7 @@ class File
 			return $this->data[$name];
 		}
 
-        throw new Exception('Unknown Storage '. __CLASS__. 'Property '.$name);
+        throw new \Exception('Unknown Storage '. get_called_class(). ' Property: '.$name);
 	}
 
     public function exists($name)

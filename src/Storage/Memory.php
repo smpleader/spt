@@ -26,6 +26,6 @@ class Memory
 			return $this->data[$name];
 		}
 
-        throw new Exception('Unknown Storage Property '.$name);
+        throw new \Exception('Unknown Storage Property '.$name);
 	}
 }

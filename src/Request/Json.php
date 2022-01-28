@@ -12,7 +12,7 @@ namespace SPT\Request;
 
 class Json extends Base
 {
-	private $_raw;
+	protected $_raw;
     
     public function __construct(array $source = null)
     {   

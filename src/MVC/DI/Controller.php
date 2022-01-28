@@ -12,7 +12,7 @@ namespace SPT\MVC\DI;
 
 use SPT\BaseObj;
 use SPT\App\Adapter as Application;
-use SPT\Application\Instance as AppIns;
+use SPT\App\Instance as AppIns;
 
 class Controller extends BaseObj
 {

@@ -10,7 +10,7 @@
 
 namespace SPT;
 
-use SPT\Application\Instance as AppInstance;
+use SPT\App\Instance as AppInstance;
 
 function spt_factory(string $key)
 {

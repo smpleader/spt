@@ -18,7 +18,8 @@ use SPT\Session\PhpSession;
 use SPT\Session\DatabaseSession;
 use SPT\Session\DatabaseSessionEntity;
 use SPT\Session\Instance as Session;
-use SPT\Application\Instance as AppIns;
+use SPT\App\Instance as AppIns;
+use SPT\App\Adapter;
 
 class Application extends BaseObj implements Adapter
 {

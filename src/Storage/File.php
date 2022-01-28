@@ -41,6 +41,11 @@ class File
         throw new Exception('Unknown Storage '. __CLASS__. 'Property '.$name);
 	}
 
+    public function exists($name)
+    {
+        return isset($this->data[$name]);
+    }
+
     public function getPath()
     {
         return $this->path;

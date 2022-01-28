@@ -11,50 +11,115 @@
 namespace SPT;
 
 use SPT\Support\FncString;
+use SPT\Support\FncArray;
 
-class Theme extends StaticObj
+class Theme extends BaseObj
 {
-    static protected $_vars = array();
+    protected $themePath = '';
+    protected $overrideLayouts = [];
+    protected $_body = '';
+    protected $_assets = [];
 
-    public static function add(string $link, $dependencies = array(), $id = '', $group = '')
+    public function __construct(string $themePath, array $overrideLayouts)
     {
-        if(empty($dependencies)) $dependencies = array();
-        else  $dependencies = (array) $dependencies;
-        $asset = new Asset($link, $dependencies, $group);
-        $type = $asset->get('type');
+        $this->themePath = $themePath;
+        $this->overrideLayouts = $overrideLayouts;
 
-        if(!empty($id))
+
+        //defined('THEME_PATH') || throw new Exception('Invalid Theme Constant');
+
+        //$this->setContainer($container);
+        //$config = $container->get('config');
+        //$theme = $config->theme;
+
+        //define('THEME_PATH', APP_PATH. 'views/themes/'. $theme. '/' );
+        $this->registerAssets();
+    }
+
+    public function getPath()
+    {
+        return $this->themePath;
+    }
+
+    public function registerAssets(string $profile = '', array $list = [])
+    {
+        if( '' === $profile )
         {
-            $asset->set('id', $id );
+            $arr = require_once $this->themePath. 'assets.php';
         }
-        $id = $asset->get('id');
+        else
+        {
+            $arr = [$profile => $list];
+        }
 
-        $key = $group ? $group. ucfirst($type) : $type;
-
-        static::importArr([
-            $key => [ $id => $asset ]
-        ]);
+        $this->_assets = array_merge($this->_assets, $arr);
     }
 
-    public static function addInline(string $type, string $lines)
+    public function prepareAssets(array $profiles)
     {
-        $key = 'inline'. FncString::uc($type);
-        static::$_vars[$key][] = $lines;
+        foreach($profiles as $profile)
+        {
+            if(!isset($this->_assets[$profile]))
+            {
+                echo 'Profile '. $profile. ' not found';
+                continue;
+            }
+
+            foreach($this->_assets[$profile] as $asset)
+            {
+                $this->add($asset);
+            }
+        }
     }
 
-    public static function echo($type)
+    public function getPath( $name )
     {
-        echo implode("\n", static::generate($type));
+        $name = str_replace('.', '/', $name);
+    
+        /*$try = [
+            THEME_PATH. $name. '.php',
+            THEME_PATH. $name. '/index.php',
+            APP_PATH. 'views/'. $name. '.php',
+            APP_PATH. 'views/'. $name. '/index.php'
+        ];*/
+
+        foreach($this->overrideLayouts as $file)
+        {
+            $file = str_replace('__', $name, $file);
+            if(file_exists($file)) return $file;
+        }
+
+        return false;
     }
 
-    public static function generate($type)
+    public function setBody($body)
+    {
+        $this->_body = $body;
+    }
+
+    public function getBody()
+    {
+        return $this->_body;
+    }
+
+    /*public function getWidget($name)
+    {
+        return $this->view->_render('widgets.'.$name);
+    }*/
+
+    public function echo($type)
+    {
+        echo implode("\n", $this->generate($type));
+    }
+
+    public function generate($type)
     {
         $output = []; 
 
         if( 0 === strpos($type, 'inline') )
         {
             $tag = '';
-            $output = static::get($type);
+            $output = $this->get($type);
 
             if(!is_array($output))
             {
@@ -78,21 +143,46 @@ class Theme extends StaticObj
         }
         else
         {
-            $assets = static::get($type);
+            $assets = $this->get($type);
             if( is_array($assets) && count($assets) )
             {
                 foreach($assets as $id => $asset)
                 {
-                    static::createLink($output, $asset->get('type'), $id, $assets);
+                    $this->createLink($output, $asset->get('type'), $id, $assets);
                 }
             }
         }
 
-        return $output; 
-
+        return $output;
     }
 
-    private static function createLink(&$result, $type, $id, &$assets)
+    public function add(string $link, $dependencies = array(), $id = '', $group = '')
+    {
+        if(empty($dependencies)) $dependencies = array();
+        else  $dependencies = (array) $dependencies;
+        $asset = new Asset($link, $dependencies, $group);
+        $type = $asset->get('type');
+
+        if(!empty($id))
+        {
+            $asset->set('id', $id );
+        }
+        $id = $asset->get('id');
+
+        $key = $group ? $group. FncString::uc($type) : $type;
+
+        FncArray::merge($this->_vars[$key], [
+            $key => [ $id => $asset ]
+        ]);
+    }
+
+    public function addInline(string $type, string $lines)
+    {
+        $key = 'inline'. FncString::uc($type);
+        $this->_vars[$key][] = $lines;
+    }
+
+    private function createLink(&$result, $type, $id, &$assets)
     {
         if(!isset($assets[$id]))
         {
@@ -108,7 +198,7 @@ class Theme extends StaticObj
                 {
                     foreach($asset->get('parents') as $pid)
                     {
-                        static::createLink($result, $type, $pid, $assets);
+                        $this->createLink($result, $type, $pid, $assets);
                     }
                 }
     
@@ -126,25 +216,4 @@ class Theme extends StaticObj
             }
         }
     }
-
-    public static function createPage($page='index', $data = array())
-    {
-        include $page. '.php';
-
-        /**
-         *  TODO: use structure define as default.html to generate a page
-         *  $tags = [ 'content', 'css', 'js', 'widget' ]
-         */
-    }
-
-    public static function echoWidget($name, $data = array())
-    {
-        if(file_exists($name. '.php'))
-        {
-            ob_start();
-            include $name. '.php';
-            echo  ob_get_clean();
-        }
-    }
-
 }

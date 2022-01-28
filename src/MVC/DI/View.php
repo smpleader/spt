@@ -170,13 +170,13 @@ class View
 
     public function createPage($layout, $page = 'index')
     {
-        if($this->theme->getPath())
+        if($this->theme->getThemePath())
         {
             $this->theme->setBody(
-                $this->view->_render($layout)
+                $this->_render($layout)
             );
 
-            $file = $this->theme->getPath(). '/'. $page. '.php';
+            $file = $this->theme->getThemePath(). $page. '.php';
             if( false === $file )
             {
                 throw new \Exception('Invalid theme');
@@ -186,7 +186,7 @@ class View
         }
         else
         { 
-            return $this->view->_render($layout);
+            return $this->_render($layout);
         }
     }
 }

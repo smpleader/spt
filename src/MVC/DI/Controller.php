@@ -11,6 +11,7 @@
 namespace SPT\MVC\DI;
 
 use SPT\BaseObj;
+use SPT\Theme;
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 
@@ -26,7 +27,7 @@ class Controller extends BaseObj
 
     public function prepareView()
     {
-        if(AppIns::path('theme') && isset($this->app->config->theme))
+        if(AppIns::path('theme') && $this->app->config->exists('theme'))
         {
             $themePath = AppIns::path('theme'). $this->app->config->theme;
             $overrideLayouts = [
@@ -47,7 +48,7 @@ class Controller extends BaseObj
         
         $this->view = new View(
             $this->app->lang, 
-            new SPT\Theme($themePath, $overrideLayouts)
+            new Theme($themePath, $overrideLayouts)
         );
     }
 

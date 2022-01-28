@@ -27,14 +27,14 @@ class Theme extends BaseObj
         $this->registerAssets();
     }
 
-    public function getPath()
+    public function getThemePath()
     {
         return $this->themePath;
     }
 
     public function registerAssets(string $profile = '', array $list = [])
     {
-        if( '' === $profile )
+        if( '' === $profile && file_exists($this->themePath. '_assets.php'))
         {
             $arr = require_once $this->themePath. '_assets.php';
         }

@@ -33,9 +33,8 @@ class Application extends BaseObj implements Adapter
     protected $query;
     protected $request;
     protected $user;
-    protected $session;
-    protected $theme;
-    protected $lang;
+    protected $session; 
+    public $lang;
 
     public function factory(string $key)
     {

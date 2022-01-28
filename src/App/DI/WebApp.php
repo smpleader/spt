@@ -26,7 +26,8 @@ class WebApp extends Application
 
     protected function routing()
     {
-        $intruction = $this->router->pathFinding($this->config->defaultEndpoint);
+        $defaultEndpoint = $this->config->exists('defaultEndpoint') ? $this->config->defaultEndpoint : '';
+        $intruction = $this->router->pathFinding($defaultEndpoint);
         $fnc = '';
 
         if( is_array($intruction) )

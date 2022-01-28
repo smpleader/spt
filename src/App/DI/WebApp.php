@@ -88,9 +88,8 @@ class WebApp extends Application
 
         $controller->$function();
 
-        switch($this->get('format', 'html'))
+        switch($this->get('format', ''))
         {
-            default:
             case 'html': $controller->toHtml(); break;
             case 'ajax': $controller->toAjax(); break;
             case 'json': $controller->toJson(); break;

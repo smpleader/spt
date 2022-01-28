@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT; 
+namespace SPT\MVC\DI; 
 
 use SPT\BaseObj;
 

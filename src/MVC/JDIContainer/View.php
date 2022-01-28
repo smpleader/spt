@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT; 
+namespace SPT\MVC\JDIContainer; 
 
 use SPT\Lang;
 use Joomla\DI\Container;

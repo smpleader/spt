@@ -10,8 +10,9 @@
 
 namespace SPT\MVC\DI;
 
-use SPT\App\Adapter as Application;
 use SPT\BaseObj;
+use SPT\App\Adapter as Application;
+use SPT\Application\Instance as AppIns;
 
 class Controller extends BaseObj
 {
@@ -21,11 +22,38 @@ class Controller extends BaseObj
     public function __construct(Application $app)
     {
         $this->app = $app; 
-        $this->view = new View($app->lang);
+    }
+
+    public function prepareView()
+    {
+        if(AppIns::path('theme') && isset($this->app->config->theme))
+        {
+            $themePath = AppIns::path('theme'). $this->app->config->theme;
+            $overrideLayouts = [
+                $themePath. '__.php',
+                $themePath. '__/index.php',
+                AppIns::path('view'). '__.php',
+                AppIns::path('view'). '__/index.php'
+            ];
+        }
+        else
+        {
+            $themePath = AppIns::path('view');
+            $overrideLayouts = [
+                AppIns::path('view'). '__.php',
+                AppIns::path('view'). '__/index.php'
+            ];
+        }
+        
+        $this->view = new View(
+            $this->app->lang, 
+            new SPT\Theme($themePath, $overrideLayouts)
+        );
     }
 
     public function display()
     {
+        $this->prepareView();
         $layout = $this->app->get('layout', 'default');
         
         $data = $this->getAll();
@@ -47,6 +75,7 @@ class Controller extends BaseObj
 
     public function toAjax()
     {
+        $this->prepareView();
         $layout = $this->app->get('layout');
 
         $data = $this->getAll();

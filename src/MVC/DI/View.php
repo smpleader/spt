@@ -17,9 +17,9 @@ class View
     protected $theme;
     protected $lang;
 
-    public function __construct($language)
+    public function __construct($language, $theme)
     {
-        $this->theme = new SPT\Theme();
+        $this->theme = $theme; 
         $this->lang = $language;
     }
 
@@ -160,7 +160,7 @@ class View
 
     public function txt($words)
     {
-        return $this->lang->exists($words) ? $this->lang->{$words} : $word;
+        return null == $this->lang ? $words  : ( $this->lang->exists($words) ? $this->lang->{$words} : $word );
     }
 
     public function echo($words)

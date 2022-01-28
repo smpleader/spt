@@ -15,10 +15,12 @@ use SPT\App\Adapter as ApplicationAdapter;
 class Instance
 {
     private static $app;
+    private static $path;
 
-    public static function bootstrap(ApplicationAdapter $app)
+    public static function bootstrap(ApplicationAdapter $app, array $path)
     {
         static::$app = $app;
+        static::$path = $path;
     }
 
     public static function factory(string $key)
@@ -29,5 +31,10 @@ class Instance
     public static function main()
     {
         return static::$app;
+    }
+
+    public static function path($name)
+    {
+        return isset(static::$path[$name]) ? static::$path[$name] : '';
     }
 }

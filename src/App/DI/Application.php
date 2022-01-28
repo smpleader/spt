@@ -8,10 +8,17 @@
  * 
  */
 
-namespace SPT\App;
+namespace SPT\App\DI;
 
 use SPT\BaseObj;
 use SPT\Response;
+use SPT\MagicObj;
+use SPT\Storage\FileIni;
+use SPT\Session\PhpSession;
+use SPT\Session\DatabaseSession;
+use SPT\Session\DatabaseSessionEntity;
+use SPT\Session\Instance as Session;
+use SPT\Application\Instance as AppIns;
 
 class Application extends BaseObj implements Adapter
 {
@@ -40,16 +47,12 @@ class Application extends BaseObj implements Adapter
         return false;
     }
 
-    public function execute()
-    {
-        defined('APP_PATH') || die('App did not get setup constants');
-        // create config, request, router, query, session
-        // process app 
-    }
-
     public function warning()
     {
-        die($this->get('system-warning', 'Huh, something goes wrong..'));
+        $this->response(
+            $this->get('system-warning', 'Huh, something goes wrong..'),
+            $this->get('errorCode', 400)
+        );
     }
 
     public function turnDebug($turnOn = false)
@@ -76,150 +79,73 @@ class Application extends BaseObj implements Adapter
 
     public function execute()
     {
-        defined('APP_PATH') || die('App did not get setup constants');
+        AppIns::path('app') || die('App did not setup properly');
 
         try{
-            // create config
-            $this->config = new SPT\Storage\FileArray(APP_PATH_CONFIG);
-            // create config
-            $this->lang = new SPT\Storage\FileIni(APP_PATH_LANGUAGE);
+
             // create request
             $this->request = new SPT\Request\Base();
-            // create router
-            $this->router = new SPT\Route($this->config->endpoints, $this->config->sitepath);
-            // create query
-            $this->query = new SPT\Query(
-                new SPT\Extend\Pdo(
-                    $this->config->db['host'],
-                    $this->config->db['username'],
-                    $this->config->db['passwd'],
-                    $this->config->db['database'],
-                    [],
-                    $this->config->db['debug']
-                ), ['#__'=>  $this->config->db['prefix']]
-            );
+
+            // create config
+            if(AppIns::path('config'))
+            {
+                $this->config = new SPT\Storage\FileArray(AppIns::path('config'));
+                
+                // create router based config
+                if(AppIns::path('config') && isset($this->config->endpoints))
+                {
+                    $sitePath = isset($this->config->sitepath) ? $this->config->sitepath : '';
+                    $this->router = new SPT\Route($this->config->endpoints, $sitePath);
+                }
+
+                // create query
+                if(isset($this->config->db))
+                {
+                    $this->query = new SPT\Query(
+                        new SPT\Extend\Pdo(
+                            $this->config->db['host'],
+                            $this->config->db['username'],
+                            $this->config->db['passwd'],
+                            $this->config->db['database'],
+                            $this->config->db['options'],
+                            $this->config->db['debug']
+                        ), ['#__'=>  $this->config->db['prefix']]
+                    );
+                }
+            }
+            
+            // create language
+            $this->lang = AppIns::path('language') ? new FileIni(AppIns::path('language')) : new MagicObj('--');
+            
             // create session
-            $this->session = new SPT\Session\PhpSession();
+            $this->prepareSession();
+
             // process app
-            $this->MVC();
+            $this->processRequest();
         }
         catch (Exception $e) 
         {
-            $this->set('system-warning', 'Caught exception: ',  $e->getMessage(), "\n");
-            return $this->warning();
+            $this->response('Caught exception: '.  $e->getMessage(), 500);
         }
 
         return $this;
     }
 
-    public function MVC()
+    public function prepareSession()
     {
-        //try{
-
-            $intruction = $this->router->pathFinding($this->config->defaultEndpoint);
-            $fnc = '';
-
-            if( is_array($intruction) )
-            {
-                $fnc = $intruction['fnc'];
-                unset($intruction['fnc']);
-                foreach($intruction as $key => $value)
-                {
-                    $this->set($key, $value);
-                }
-
-                if(isset($intruction['parameters']))
-                {
-                    $this->set('urlVars', $this->router->praseUrl($intruction['parameters']));
-                    unset($intruction['parameters']);
-                }
-            } 
-            elseif( is_string($intruction) ) 
-            {
-                $fnc = $intruction;
-            } 
-            else 
-            {
-                throw new \Exception('Invalid request', 500);
-            }
-
-            $method = $this->router->getRequestMethod();
-            if(is_array($fnc))
-            {
-                if(isset($fnc[$method]))
-                {
-                    $fnc = $fnc[$method];
-                    $this->set('method', $method);
-                }
-                elseif(isset($fnc['any']))
-                {
-                    $fnc = $fnc['any'];
-                    $this->set('method', 'any');
-                }
-                else
-                {
-                    $this->response(['msg'=>'Not a function'], 404);
-                }
-            }
-
-            $try = explode('.', $fnc);
-            
-            if(count($try) == 2 || $fnc == '')
-            {
-                list($controller, $function) = $try;
-
-                if( false === strpos($controller, '-'))
-                {
-                    $controller = ucfirst($controller). 'Controller';
-                }
-                else
-                {
-                    $c = explode('-', $controller);
-                    $controller = '\App\controllers\\'. $c[0]. '\\'. ucfirst($c[1]). 'Controller';
-                }
-            }
-            else
-            {
-                $function = $fnc;
-                $controller = 'HomeController';
-            }
-            
-            if( $this->getContainer()->has($controller) )
-            {
-                $controller = $this->{$controller};
-            }
-            else
-            {
-                // TODO: create a default controller
-                throw new \RuntimeException('Invalid Class '.$controller, 500);
-            }
-
-            
-            // Language
-            $this->loadCurrentLanguage(); 
-
-            // Support Token
-            App::setTimeout(30);
-            if( null === App::token() || !App::token('isAlive'))
-            {
-                App::token([ Util::genToken(), strtotime('now') ]);
-            } 
-            else 
-            {
-                App::token(strtotime('now'));
-            }
-
-            $controller->$function();
-
-            if( 'display' !== $function )
-            {
-                $controller->display();
-            }
-
-        /*}
-        catch (\Exception $e) 
+        if(empty($this->query))
         {
-            die('[Error] ' . $e->getMessage());
-        }*/
-    } 
+            $this->session =  new PhpSession();
+        }
+        else
+        {
+            // TODO set request ID
+            $this->session = new Session(  new DatabaseSession( new DatabaseSessionEntity($this->query) ) ); 
+        }
+    }
+
+    public function processRequest()
+    {
+    }
+
 }

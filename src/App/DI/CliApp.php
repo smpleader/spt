@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\App;
+namespace SPT\App\DI;
 
 use SPT\BaseObj;
 
@@ -28,5 +28,9 @@ class CliApp extends Application
 		}
 
         parent::execute();
+    }
+
+    public function processRequest()
+    {
     }
 }

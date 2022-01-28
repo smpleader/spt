@@ -8,9 +8,7 @@
  * 
  */
 
-namespace SPT\App;
-
-use SPT\BaseObj;
+namespace SPT\App\DI;
 
 class WebApp extends Application
 {
@@ -26,8 +24,96 @@ class WebApp extends Application
         exit(0);
     }
 
-    public function MVC()
+    private function routing()
     {
+        $intruction = $this->router->pathFinding($this->config->defaultEndpoint);
+        $fnc = '';
 
+        if( is_array($intruction) )
+        {
+            $fnc = $intruction['fnc'];
+            unset($intruction['fnc']);
+            foreach($intruction as $key => $value)
+            {
+                $this->set($key, $value);
+            }
+
+            if(isset($intruction['parameters']))
+            {
+                $this->request->set('urlVars', $this->router->praseUrl($intruction['parameters']));
+                unset($intruction['parameters']);
+            }
+        } 
+        elseif( is_string($intruction) ) 
+        {
+            $fnc = $intruction;
+        } 
+        else 
+        {
+            throw new \Exception('Invalid request', 500);
+        }
+
+        $method = $this->header->getRequestMethod();
+        if(is_array($fnc))
+        {
+            if(isset($fnc[$method]))
+            {
+                $fnc = $fnc[$method];
+                $this->set('method', $method);
+            }
+            elseif(isset($fnc['any']))
+            {
+                $fnc = $fnc['any'];
+                $this->set('method', 'any');
+            }
+            else
+            {
+                throw new \Exception('Not a function', 500);
+            }
+        }
+
+        $try = explode('.', $fnc);
+        
+        if(count($try) == 2 || $fnc == '')
+        {
+            list($controller, $function) = $try;
+
+            if( false === strpos($controller, '-'))
+            {
+                $controller = ucfirst($controller). 'Controller';
+            }
+            else
+            {
+                $c = explode('-', $controller);
+                $controller = '\App\controllers\\'. $c[0]. '\\'. ucfirst($c[1]). 'Controller';
+            }
+        }
+        else
+        {
+            throw new \Exception('Not a controller', 500);
+        }
+
+        $controller->$function();
+
+        if( 'display' !== $function )
+        {
+            $controller->display();
+        }
     }
+
+    public function processRequest()
+    {
+        try{
+
+            // TODO1: check token security timeout
+            // TODO2: support i18n
+            // TODO3: support plugins
+            $this->routing(); 
+
+        }
+        catch (\Exception $e) 
+        {
+            $this->response('[Error] ' . $e->getMessage(), 500);
+        }
+    } 
 }

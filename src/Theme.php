@@ -45,7 +45,7 @@ class Theme extends BaseObj
     {
         if( '' === $profile )
         {
-            $arr = require_once $this->themePath. 'assets.php';
+            $arr = require_once $this->themePath. '_assets.php';
         }
         else
         {
@@ -75,13 +75,6 @@ class Theme extends BaseObj
     public function getPath( $name )
     {
         $name = str_replace('.', '/', $name);
-    
-        /*$try = [
-            THEME_PATH. $name. '.php',
-            THEME_PATH. $name. '/index.php',
-            APP_PATH. 'views/'. $name. '.php',
-            APP_PATH. 'views/'. $name. '/index.php'
-        ];*/
 
         foreach($this->overrideLayouts as $file)
         {

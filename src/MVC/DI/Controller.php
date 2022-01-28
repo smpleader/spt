@@ -52,7 +52,7 @@ class Controller extends BaseObj
         );
     }
 
-    public function display()
+    public function toHtml()
     {
         $this->prepareView();
         $layout = $this->app->get('layout', 'default');

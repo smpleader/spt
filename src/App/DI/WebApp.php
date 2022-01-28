@@ -88,9 +88,12 @@ class WebApp extends Application
 
         $controller->$function();
 
-        if( 'display' !== $function )
+        switch($this->get('format', 'html'))
         {
-            $controller->display();
+            default:
+            case 'html': $controller->toHtml(); break;
+            case 'ajax': $controller->toAjax(); break;
+            case 'json': $controller->toJson(); break;
         }
     }
 

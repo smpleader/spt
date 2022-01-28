@@ -26,7 +26,7 @@ class File
         file_put_contents($this->path, $this->data);
     }
 
-    public function __set(string $name, mixed $value): void
+    public function __set(string $name, $value): void
     {
         $this->data[$name] = $value;
     }

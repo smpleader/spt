@@ -74,24 +74,16 @@ class WebApp extends Application
 
         $try = explode('.', $fnc);
         
-        if(count($try) == 2 || $fnc == '')
+        if(count($try) == 2)
         {
-            list($controller, $function) = $try;
-
-            if( false === strpos($controller, '-'))
-            {
-                $controller = ucfirst($controller). 'Controller';
-            }
-            else
-            {
-                $c = explode('-', $controller);
-                $controller = '\App\controllers\\'. $c[0]. '\\'. ucfirst($c[1]). 'Controller';
-            }
+            list($name, $function) = $try;
         }
         else
         {
             throw new \Exception('Not a controller', 500);
         }
+
+        $controller = $this->getController($name);
 
         $controller->$function();
 
@@ -101,7 +93,12 @@ class WebApp extends Application
         }
     }
 
-    public function processRequest()
+    private function getController($name)
+    {
+        throw new \Exception('You did not create a controller', 500);
+    }
+
+    private function processRequest()
     {
         try{
 

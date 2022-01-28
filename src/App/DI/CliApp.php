@@ -29,8 +29,4 @@ class CliApp extends Application
 
         parent::execute();
     }
-
-    public function processRequest()
-    {
-    }
 }

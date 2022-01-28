@@ -144,8 +144,13 @@ class Application extends BaseObj implements Adapter
         }
     }
 
-    public function processRequest()
+    private function processRequest()
     {
+    }
+
+    private function getController()
+    {
+
     }
 
 }

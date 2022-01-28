@@ -57,9 +57,10 @@ class Controller extends BaseObj
         $this->prepareView();
         $layout = $this->app->get('layout', 'default');
         
-        $data = $this->getAll();
+        $data = $this->getAll(); 
         if(is_array($data) && count($data))
         {
+            $this->view->setIndex($layout); // because we call set before render
             $this->view->set($data);
         } 
 
@@ -82,6 +83,7 @@ class Controller extends BaseObj
         $data = $this->getAll();
         if(is_array($data) && count($data))
         {
+            $this->view->setIndex($layout); // because we call set before render
             $this->view->set($data);
         }
 

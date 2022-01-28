@@ -14,8 +14,11 @@ use SPT\BaseObj;
 
 class View
 { 
-    protected $theme;
-    protected $lang;
+    protected $theme = null;
+    protected $lang = null;
+    protected $_share = [];
+    protected $_vars = [];
+    protected $_index = '_root_';
 
     public function __construct($language, $theme)
     {
@@ -26,7 +29,7 @@ class View
     public function __get($name)
     { 
         if( 'theme' == $name ) return $this->theme;
-        if( isset( $this->_vars[$this->_layout][$name] ) ) return $this->_vars[$this->_layout][$name];
+        if( isset( $this->_vars[$this->_index][$name] ) ) return $this->_vars[$this->_index][$name];
         if( isset( $this->_share[$name] ) ) return $this->_share[$name];
 
         return NULL;
@@ -36,13 +39,7 @@ class View
     {
         if(is_string($sth))
         {
-            if( is_null($value) && is_null($shareable))
-            {
-                // set all variables for current layout
-                $this->_layout = $sth;
-                if(!isset($this->_vars[$sth])) $this->_vars[$sth] = [];
-            }
-            elseif( $shareable )
+            if( $shareable )
             {
                 if(isset($this->_share[$sth]) && is_array($this->_share[$sth]))
                 {
@@ -52,11 +49,12 @@ class View
             }
             else
             {
-                if(isset($this->_vars[$this->_layout][$sth]) && is_array($this->_vars[$this->_layout][$sth]))
+                if(isset($this->_vars[$this->_index][$sth]) && is_array($this->_vars[$this->_index][$sth]))
                 {
-                    $value = array_merge($this->_vars[$this->_layout][$sth], $value);
+                    $value = array_merge($this->_vars[$this->_index][$sth], $value);
                 }
-                $this->_vars[$this->_layout][$sth] = $value;
+
+                $this->_vars[$this->_index][$sth] = $value;
             }
         }
         elseif( is_array($sth) || is_object($sth) )
@@ -70,7 +68,7 @@ class View
 
     public function exists($key)
     {
-        if( isset( $this->_vars[$this->_layout][$key] ) ) return true;
+        if( isset( $this->_vars[$this->_index][$key] ) ) return true;
         if( isset( $this->_share[$key] ) ) return true;
         return false;
     }
@@ -82,24 +80,39 @@ class View
 
     public function _render($layout)
     {
-        if( 0 !== strpos($layout, 'layouts.') &&
-            0 !== strpos($layout, 'widgets.') )
-        {
-            $layout = 'layouts.'. $layout;
-        }
+        $layout = $this->safeName($layout);
 
         if( $file_layout = $this->theme->getPath($layout) )
         {
-            $_keep_layout = $this->_layout;
-            $this->set($layout, null, null);
+            $_keep_layout = $this->_index;
+            $this->setIndex($layout);
             
             $content = $this->include($file_layout);
-            $this->set($_keep_layout, null, null);
+            $this->setIndex($_keep_layout);
 
             return $content;
         }
 
         return 'Layout '.$layout. '  not found' ;
+    }
+
+    public function safeName($layout)
+    {
+        if( 0 !== strpos($layout, 'layouts.') &&
+            0 !== strpos($layout, 'widgets.') )
+        {
+            $layout = 'layouts.'. $layout;
+        }
+        return $layout;
+    }
+
+    public function setIndex($name)
+    {
+        $this->_index = $this->safeName($layout);
+        if(!isset($this->_vars[$this->_index]))
+        {
+            $this->_vars[$this->_index] = [];
+        }
     }
 
     public function form($formName = null)
@@ -170,23 +183,16 @@ class View
 
     public function createPage($layout, $page = 'index')
     {
-        if($this->theme->getThemePath())
+        $file = $this->theme->getThemePath(). $page. '.php';
+        if( !file_exists($file) )
         {
-            $this->theme->setBody(
-                $this->_render($layout)
-            );
+            throw new \Exception('Invalid theme '.$file);
+        }
 
-            $file = $this->theme->getThemePath(). $page. '.php';
-            if( false === $file )
-            {
-                throw new \Exception('Invalid theme');
-            }
-    
-            return $this->include($file);
-        }
-        else
-        { 
-            return $this->_render($layout);
-        }
+        $this->theme->setBody(
+            $this->_render($layout)
+        );
+
+        return $this->include($file); 
     }
 }

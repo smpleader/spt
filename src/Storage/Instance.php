@@ -28,6 +28,6 @@ class Instance
 
     public function set(string $key, $value)
     {
-        return $this->adapter->set($key, $value);
+        $this->adapter->set($key, $value);
     }
 }

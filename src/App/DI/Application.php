@@ -28,12 +28,12 @@ use SPT\Request\Base as Request;
 
 class Application extends BaseObj implements Adapter
 {
-    protected $config;
-    protected $router;
-    protected $query;
-    protected $request;
-    protected $user;
-    protected $session; 
+    public $config;
+    public $router;
+    public $query;
+    public $request;
+    public $user;
+    public $session; 
     public $lang;
 
     public function factory(string $key)
@@ -111,10 +111,7 @@ class Application extends BaseObj implements Adapter
                     );
                 }
             }
-            
-            // create language
-            $this->lang = AppIns::path('language') ? new FileIni(AppIns::path('language')) : new MagicObj('--');
-            
+
             // create session
             $this->prepareSession();
 
@@ -127,6 +124,11 @@ class Application extends BaseObj implements Adapter
         }
 
         return $this;
+    }
+
+    public function prepareLanguage()
+    {
+        $this->lang = AppIns::path('language') ? new FileIni(AppIns::path('language')) : new MagicObj('--');
     }
 
     public function prepareSession()
@@ -147,7 +149,7 @@ class Application extends BaseObj implements Adapter
         
     }
 
-    protected function getController($name)
+    protected function getController(string $name)
     {
 
     }

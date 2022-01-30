@@ -77,23 +77,12 @@ class WebApp extends Application
         
         if(count($try) == 2)
         {
-            list($name, $function) = $try;
+            return $try;
         }
         else
         {
             throw new \Exception('Not a controller', 500);
-        }
-
-        $controller = $this->getController($name);
-
-        $controller->$function();
-
-        switch($this->get('format', ''))
-        {
-            case 'html': $controller->toHtml(); break;
-            case 'ajax': $controller->toAjax(); break;
-            case 'json': $controller->toJson(); break;
-        }
+        }   
     }
 
     protected function getController($name)
@@ -105,10 +94,23 @@ class WebApp extends Application
     {
         try{
 
-            // TODO1: check token security timeout
-            // TODO2: support i18n
+            // TODO1: check token security timeout 
             // TODO3: support plugins
-            $this->routing(); 
+            list($controllerName, $func) = $this->routing(); 
+
+            // create language
+            $this->prepareLanguage();
+
+            $controller = $this->getController($controllerName);
+
+            $controller->$func();
+
+            switch($this->get('format', ''))
+            {
+                case 'html': $controller->toHtml(); break;
+                case 'ajax': $controller->toAjax(); break;
+                case 'json': $controller->toJson(); break;
+            }
 
         }
         catch (\Exception $e) 

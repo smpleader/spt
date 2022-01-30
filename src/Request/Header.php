@@ -53,7 +53,7 @@ class Header extends Base
         // If it's a POST request, check for a method override header
         elseif ($_SERVER['REQUEST_METHOD'] == 'POST')
         {
-            $headers = $this->getRequestHeaders();
+            $headers = $this->data;
             if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], ['PUT', 'DELETE', 'PATCH']))
             {
                 $method = $headers['X-HTTP-Method-Override'];

@@ -60,10 +60,6 @@ class Route extends BaseObj
  
     public function url($asset = '')
     {
-        if( $path = $this->get( 'actualPath', '') )
-        {
-            return $this->get('root'). $path. $asset;
-        }
         return $this->get('root'). $asset;
     }
 

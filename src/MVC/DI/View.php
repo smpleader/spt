@@ -98,8 +98,7 @@ class View
 
     public function safeName($layout)
     {
-        if( 0 !== strpos($layout, 'layouts.') &&
-            0 !== strpos($layout, 'widgets.') )
+        if( 0 !== strpos($layout, 'layouts.') && 0 !== strpos($layout, 'widgets.') )
         {
             $layout = 'layouts.'. $layout;
         }
@@ -108,7 +107,7 @@ class View
 
     public function setIndex($name)
     {
-        $this->_index = $this->safeName($layout);
+        $this->_index = $this->safeName($namw);
         if(!isset($this->_vars[$this->_index]))
         {
             $this->_vars[$this->_index] = [];

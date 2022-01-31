@@ -48,16 +48,19 @@ class ViewModel implements ViewModelAdapter
         return [$layout, $func];
     }
 
-    public function parseFunctions()
+    public function parse()
     {
+        $map = [];
         foreach($this->layouts as $root => $lay)
         {
             list($layout, $func) = $this->parsePath($lay, $root);
-            if(!in_array($func, ['alias', 'parseFunctions', 'parsePath', 'autorun', 'set', 'state']))
+            if(!in_array($func, ['alias', 'parse', 'parsePath', 'autorun', 'set', 'state']))
             {
                 $this->functions[$layout] = $func;
+                $map[] = $layout;
             }
         }
+        return $map;
     }
 
     public function autorun($layout)

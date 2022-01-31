@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Json
+ * SPT software - Filter
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: All function work with Json to simplify the jobs
+ * @description: Alias to filter a variable type
  * 
  */
 

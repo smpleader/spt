@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\ViewModel; 
+namespace SPT\View\VM; 
 
 use SPT\View\Base as ViewParent;
 use SPT\View\HookAdapter;

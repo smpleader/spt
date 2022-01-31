@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SP\ViewModel\VM; 
+namespace SP\View\VM; 
 
 use SPT\Support\Loader;
 use SPT\App\Instance as AppIns;

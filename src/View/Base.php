@@ -42,18 +42,31 @@ class Base implements ViewAdapter
         {
             if( $shareable )
             {
-                if(isset($this->_share[$sth]) && is_array($this->_share[$sth]))
+                if(!isset($this->_share[$sth]))
                 {
-                    $value = array_merge($this->_share[$sth], $value);
+                    $this->_share[$sth] = '';
                 }
+
+                /* consider this ?
+                if(is_array($this->_share[$sth]))
+                {
+                    $value = array_merge($this->_share[$sth], [$sth => $value]);
+                }*/
+                
                 $this->_share[$sth] = $value;
             }
             else
             {
-                if(isset($this->_vars[$this->_index][$sth]) && is_array($this->_vars[$this->_index][$sth]))
+                if(!isset($this->_vars[$this->_index][$sth]))
                 {
-                    $value = array_merge($this->_vars[$this->_index][$sth], $value);
+                    $this->_vars[$this->_index][$sth] = '';
                 }
+
+                /* consider this ?
+                if(is_array($this->_vars[$this->_index][$sth]))
+                {
+                    $value = array_merge($this->_vars[$this->_index][$sth], [$sth => $value]);
+                }*/
 
                 $this->_vars[$this->_index][$sth] = $value;
             }

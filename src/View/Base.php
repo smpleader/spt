@@ -186,7 +186,7 @@ class Base implements ViewAdapter
 
     public function txt($words)
     {
-        return null == $this->lang ? $words  : ( $this->lang->exists($words) ? $this->lang->{$words} : $word );
+        return null == $this->lang ? $words  : ( $this->lang->exists($words) ? $this->lang->{$words} : $words );
     }
 
     public function txtWith()

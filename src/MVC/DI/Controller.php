@@ -11,7 +11,7 @@
 namespace SPT\MVC\DI;
 
 use SPT\BaseObj;
-use SPT\Theme;
+use SPT\Theme; 
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 
@@ -46,7 +46,8 @@ class Controller extends BaseObj
             ];
         }
         
-        $this->view = new View(
+        $this->view = new View();
+        $this->view->init(
             $this->app->lang, 
             new Theme($themePath, $overrideLayouts)
         );

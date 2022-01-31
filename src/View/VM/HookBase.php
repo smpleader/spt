@@ -10,7 +10,7 @@
 
 namespace SP\ViewModel\VM; 
 
-class HookBase implements HookAdapter
+abstract HookBase implements HookAdapter
 {
     protected $viewmodels = [];
     protected $map = [];
@@ -20,7 +20,7 @@ class HookBase implements HookAdapter
         // fill this->map
     }
 
-    private function getVM($view, string $name)
+    private function getVM(string $name)
     {
         // where we load ViewModels
         return false;
@@ -32,8 +32,9 @@ class HookBase implements HookAdapter
         {
             foreach($this->map[$layout] as $name)
             {
-                if($vm = $this->getVM($view, $name))
+                if($vm = $this->getVM($name))
                 {
+                    $vm->setView($view);
                     $vm->autorun($layout);
                 }
             }

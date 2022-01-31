@@ -12,6 +12,7 @@ namespace SPT\ViewModel\VM;
 
 use SPT\Support\Filter; 
 use SPT\App\Adapter as Application;
+use SPT\View\Adapter as View; 
 use SPT\ViewModel\VM\ViewModelAdapter;
 
 class ViewModel implements ViewModelAdapter
@@ -19,6 +20,12 @@ class ViewModel implements ViewModelAdapter
     protected $alias = __CLASS__;
     protected $layouts = [];
     protected $functions = [];
+    protected $view;
+
+    public function setView(View $view)
+    {
+        $this->view = $view;
+    }
 
     public function alias()
     {
@@ -39,6 +46,18 @@ class ViewModel implements ViewModelAdapter
         }
 
         return [$layout, $func];
+    }
+
+    public function parseFunctions()
+    {
+        foreach($this->layouts as $root => $lay)
+        {
+            list($layout, $func) = $this->parsePath($lay, $root);
+            if(!in_array($func, ['alias', 'parseFunctions', 'parsePath', 'autorun', 'set', 'state']))
+            {
+                $this->functions[$layout] = $func;
+            }
+        }
     }
 
     public function autorun($layout)

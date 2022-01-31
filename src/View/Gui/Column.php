@@ -8,9 +8,7 @@
  * 
  */
 
-namespace SPT\Gui;
-
-use SPT\Language as txt;
+namespace SPT\View\Gui;
 
 class Column
 {

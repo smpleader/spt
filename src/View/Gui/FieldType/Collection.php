@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Gui\FieldType;
+namespace SPT\View\Gui\FieldType;
 
 class Collection extends Input
 {

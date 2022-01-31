@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Gui;
+namespace SPT\View\Gui;
 
 class Listing
 { 

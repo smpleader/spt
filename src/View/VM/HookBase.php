@@ -10,7 +10,7 @@
 
 namespace SP\ViewModel\VM; 
 
-class Hook implements HookAdapter
+class HookBase implements HookAdapter
 {
     protected $viewmodels = [];
     protected $map = [];

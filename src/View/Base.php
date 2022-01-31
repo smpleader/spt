@@ -108,7 +108,7 @@ class Base implements ViewAdapter
 
     public function setIndex($name)
     {
-        $this->_index = $this->safeName($namw);
+        $this->_index = $this->safeName($name);
         if(!isset($this->_vars[$this->_index]))
         {
             $this->_vars[$this->_index] = [];

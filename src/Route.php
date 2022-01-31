@@ -10,6 +10,8 @@
 
 namespace SPT;
 
+use SPT\Support\FncArray;
+
 class Route extends BaseObj
 {
     private $nodes;
@@ -113,7 +115,7 @@ class Route extends BaseObj
 
     public function pathFinding( $default, $callback = null)
     {
-        $sitemap = $this->get('sitemap');
+        $sitemap = $this->get('sitemap', []);
         $path = $this->get('actualPath');
         $isHome = $this->get('isHome');
         $this->set('sitenode', '');
@@ -142,7 +144,7 @@ class Route extends BaseObj
         {
             $found = $callback($sitemap, $path);
         } 
-        else 
+        elseif(FncArray::isReady($sitemap)) 
         {
             foreach( $sitemap as $reg=>$value )
             {

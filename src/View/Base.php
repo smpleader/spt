@@ -189,9 +189,27 @@ class Base implements ViewAdapter
         return null == $this->lang ? $words  : ( $this->lang->exists($words) ? $this->lang->{$words} : $word );
     }
 
+    public function txtWith()
+    {
+        $arg_list = func_get_args();
+        if(count($arg_list))
+        {
+            $arg_list[0] = $this->txt($arg_list[0]);
+            return call_user_func_array('sprintf', $arg_list);
+        }
+
+        return '';
+    }
+
     public function echo($words)
     {
         echo $this->txt($words);
+    }
+
+    public function echoWith()
+    {
+        $arg_list = func_get_args();
+        echo call_user_func_array([$this, 'txtWith'], $arg_list);   
     }
 
     public function createPage($layout, $page = 'index')

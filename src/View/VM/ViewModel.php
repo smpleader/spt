@@ -13,7 +13,7 @@ namespace SPT\View\VM;
 use SPT\Support\Filter; 
 use SPT\App\Adapter as Application;
 use SPT\View\Adapter as View; 
-use SPT\ViewModel\VM\ViewModelAdapter;
+use SPT\View\VM\ViewModelAdapter;
 
 class ViewModel implements ViewModelAdapter
 {   

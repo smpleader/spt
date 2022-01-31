@@ -11,7 +11,7 @@
 namespace SPT\View\VM; 
 
 use SPT\View\Base as ViewParent;
-use SPT\View\HookAdapter;
+use SPT\View\VM\HookAdapter;
 use SPT\Theme;
 
 class View extends ViewParent

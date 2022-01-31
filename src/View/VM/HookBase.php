@@ -8,18 +8,23 @@
  * 
  */
 
-namespace SP\View\VM; 
+namespace SPT\View\VM; 
 
 use SPT\Support\Loader;
+use SPT\View\Adapter as View;
+use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 
-abstract HookBase implements HookAdapter
+class HookBase implements HookAdapter
 {
     protected $viewmodels = [];
     protected $map = [];
+    protected $app;
     
-    public function init()
+    public function init(Application $app)
     {
+        $this->app = $app;
+        
         if(AppIns::path('viewmodel'))
         {
             $list = Loader::findClass(AppIns::path('viewmodel'));
@@ -45,13 +50,13 @@ abstract HookBase implements HookAdapter
         }
     }
 
-    private function getVM(string $name)
+    protected function getVM(string $name)
     {
         // where we load ViewModels
         return false;
     }
 
-    public function trigger($view, string $layout, string $hook = '')
+    public function trigger(View $view, string $layout, string $hook = '')
     {
         if( isset($this->map[$layout]))
         {

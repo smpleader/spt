@@ -12,8 +12,8 @@ namespace SPT\View;
 
 interface Adapter
 {
-    public function render();
-    public function set($sth, $value = '', $shareable = false)
-    public function createPage($layout, $page = 'index')
-    protected function include($file)
+    public function render($layout);
+    public function set($sth, $value = '', $shareable = false);
+    public function createPage($layout, $page = 'index');
+    public function include($file);
 }

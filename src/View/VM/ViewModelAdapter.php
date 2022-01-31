@@ -12,6 +12,6 @@ namespace SPT\View\VM;
 
 interface ViewModelAdapter
 {
-    public function autorun(string $layout)
-    public function set($key, $value='', $shareable=false)
+    public function autorun(string $layout);
+    public function set($key, $value='', $shareable=false);
 }

@@ -163,7 +163,7 @@ class Base implements ViewAdapter
         return '<!-- Invalid field '. $name. ' in form '. $formName .' -->';
     }
 
-    protected function include($file)
+    public function include($file)
     {
         ob_start();
         include $file;

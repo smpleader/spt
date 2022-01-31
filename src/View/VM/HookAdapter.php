@@ -12,5 +12,5 @@ namespace SPT\View\VM;
 
 interface HookAdapter
 {
-    public function trigger( string $layout, string $hook = '')
+    public function trigger( string $layout, string $hook = '');
 }

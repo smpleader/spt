@@ -175,34 +175,32 @@ class Theme extends BaseObj
     private function createLink(Asset $sth)
     {
         $result = [];
-        $autoremove = false;
-        if( count($sth->get('parents') ) )
+
+        if(!$sth->get('added', false))
         {
-            foreach($sth->get('parents') as $pid)
+            if( count($sth->get('parents') ) )
             {
-                $assets = $this->get($sth->get('type'));
-                $result[] = $this->createLink($assets[$pid]);
+                foreach($sth->get('parents') as $pid)
+                {
+                    $assets = $this->get($sth->get('type'));
+                    $result = array_merge($result, $this->createLink($assets[$pid]));
+                }
             }
-        }
-
-        switch($sth->get('type'))
-        {
-            case 'css':
-                $autoremove = true;
-                $result[] = '<link rel="stylesheet" type="text/css" href="'. $sth->get('url'). '" >';
-            break;
-            case 'js':
-                $autoremove = true;
-                $result[] = '<script src="'. $sth->get('url'). '" ></script>';
-            break;
-        }
-
-        if($autoremove)
-        {
-            $assets = $this->get($type);
-            unset($assets[$sth->get('type')][$sth->get('id')]);
-            $this->set($type, $assets);
-        }
+    
+            switch($sth->get('type'))
+            {
+                case 'css':
+                    $autoremove = true;
+                    $result[] = '<link rel="stylesheet" type="text/css" href="'. $sth->get('url'). '" >';
+                break;
+                case 'js':
+                    $autoremove = true;
+                    $result[] = '<script src="'. $sth->get('url'). '" ></script>';
+                break;
+            }
+    
+            $sth->set('added', true);
+        } 
 
         return $result;
     }

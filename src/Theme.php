@@ -122,14 +122,7 @@ class Theme extends BaseObj
         }
         else
         {
-            $assets = $this->get($type);
-            if( is_array($assets) && count($assets) )
-            {
-                foreach($assets as $id => $asset)
-                {
-                    $this->createLink($output, $asset->get('type'), $id, $assets);
-                }
-            }
+            $output = $this->createLinkByType($type);
         }
 
         return $output;
@@ -137,22 +130,26 @@ class Theme extends BaseObj
 
     public function add(string $link, $dependencies = array(), $id = '', $group = '')
     {
-        if(empty($dependencies)) $dependencies = array();
-        else  $dependencies = (array) $dependencies;
+        $dependencies = empty($dependencies) ? array() : (array) $dependencies;
         $asset = new Asset($link, $dependencies, $group);
         $type = $asset->get('type');
 
-        if(!empty($id))
+        if(empty($id))
         {
-            $asset->set('id', $id );
+            $id = md5($link);
         }
-        $id = $asset->get('id');
+
+        $asset->set('id', $id );
 
         $key = $group ? $group. FncString::uc($type) : $type;
 
-        FncArray::merge($this->_vars[$key], [
-            $key => [ $id => $asset ]
+        $current = $this->get($key, []);
+
+        FncArray::merge($current, [
+            $id => $asset
         ]);
+
+        $this->set($key, $current);
     }
 
     public function addInline(string $type, string $lines)
@@ -161,38 +158,52 @@ class Theme extends BaseObj
         $this->_vars[$key][] = $lines;
     }
 
-    private function createLink(&$result, $type, $id, &$assets)
+    public function createLinkByType($type)
     {
-        if(!isset($assets[$id]))
+        $result = [];
+        $assets = $this->get($type);
+        if( FncArray::isReady($assets) )
         {
-            $result[] = '<!-- '.$type. ' '. $id.' not found -->';
-        }
-        else
-        {
-            $asset = $assets[$id];
-
-            if( !$assets[$id]->get('added', 0) )
+            foreach($assets as $asset)
             {
-                if( count($asset->get('parents') ) )
-                {
-                    foreach($asset->get('parents') as $pid)
-                    {
-                        $this->createLink($result, $type, $pid, $assets);
-                    }
-                }
-    
-                switch($type)
-                {
-                    case 'css':
-                        $result[] = '<link rel="stylesheet" type="text/css" href="'. $asset->get('url'). '" >';
-                    break;
-                    case 'js':
-                        $result[] = '<script src="'. $asset->get('url'). '" ></script>';
-                    break;
-                }
-    
-                $assets[$id]->set('added', 1); 
+                $result = array_merge($result, $this->createLink($asset));
             }
         }
+        return $result;
+    }
+
+    private function createLink(Asset $sth)
+    {
+        $result = [];
+        $autoremove = false;
+        if( count($sth->get('parents') ) )
+        {
+            foreach($sth->get('parents') as $pid)
+            {
+                $assets = $this->get($sth->get('type'));
+                $result[] = $this->createLink($assets[$pid]);
+            }
+        }
+
+        switch($sth->get('type'))
+        {
+            case 'css':
+                $autoremove = true;
+                $result[] = '<link rel="stylesheet" type="text/css" href="'. $sth->get('url'). '" >';
+            break;
+            case 'js':
+                $autoremove = true;
+                $result[] = '<script src="'. $sth->get('url'). '" ></script>';
+            break;
+        }
+
+        if($autoremove)
+        {
+            $assets = $this->get($type);
+            unset($assets[$sth->get('type')][$sth->get('id')]);
+            $this->set($type, $assets);
+        }
+
+        return $result;
     }
 }

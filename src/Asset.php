@@ -25,7 +25,7 @@ class Asset extends BaseObj
         $y = explode('.', $x);
 
         $this->set('type', array_pop($y));
-        $this->set('id', implode('.', $y));
+        //$this->set('id', implode('.', $y));
         $this->set('parents', $dependencies);
         $this->set('group', $group);
     }

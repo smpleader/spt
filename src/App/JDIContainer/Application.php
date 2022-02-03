@@ -30,17 +30,11 @@ class Application extends Base implements Adapter
 {
     public function factory(string $key)
     {
-        $key = strtolower($key);
-        if(in_array($key, ['config', 'router', 'query', 'request', 'user', 'session', 'theme', 'lange']))
+        if( $this->container->has($name) )
         {
-            if(!is_object($this->{$key}))
-            {
-                // didn't setup properly
-                throw new \Exception('Invalid Factory Object '.$key);
-            } 
-
-            return $this->{$key};
+            return $this->container->get($name);
         }
+        
         return false;
     }
 
@@ -72,35 +66,40 @@ class Application extends Base implements Adapter
 
         try{
 
+            $container = $this->getContainer();
+            $container->share( 'app', $this, true);
+            
             // create request
-            $this->request = new Request();
+            $container->set('request', new Request());
 
             // create config
             if(AppIns::path('config'))
             {
-                $this->config = new FileArray(AppIns::path('config'));
+                $config = new FileArray(AppIns::path('config'));
+                $container->set('config', $config);
                 
                 // create router based config
-                if(AppIns::path('config') && $this->config->exists('endpoints'))
+                if(AppIns::path('config') && $config->exists('endpoints'))
                 {
-                    $sitePath = $this->config->exists('sitepath') ? $this->config->sitepath : '';
-                    $this->router = new Router();
-                    $this->router->init($this->config->endpoints, $sitePath);
+                    $sitePath = $config->exists('sitepath') ? $config->sitepath : '';
+                    $router = new Router();
+                    $router->init($config->endpoints, $sitePath);
+                    $container->set('router', $router);
                 }
 
                 // create query
-                if( $this->config->exists('db') )
+                if( $config->exists('db') )
                 {
-                    $this->query = new Query(
+                    $container->set('query', new Query(
                         new PdoWrapper(
-                            $this->config->db['host'],
-                            $this->config->db['username'],
-                            $this->config->db['passwd'],
-                            $this->config->db['database'],
-                            $this->config->db['options'],
-                            $this->config->db['debug']
-                        ), ['#__'=>  $this->config->db['prefix']]
-                    );
+                            $config->db['host'],
+                            $config->db['username'],
+                            $config->db['passwd'],
+                            $config->db['database'],
+                            $config->db['options'],
+                            $config->db['debug']
+                        ), ['#__'=>  $config->db['prefix']]
+                    ));
                 }
             }
 
@@ -123,20 +122,18 @@ class Application extends Base implements Adapter
 
     public function prepareLanguage()
     {
-        $this->lang = AppIns::path('language') ? new FileIni(AppIns::path('language')) : new MagicObj('--');
+        $this->getContainer()->set('lang', 
+            AppIns::path('language') ? new FileIni(AppIns::path('language')) : new MagicObj('--')
+        );
     }
 
     public function prepareSession()
     {
-        if(empty($this->query))
-        {
-            $this->session =  new PhpSession();
-        }
-        else
-        {
-            // TODO set request ID
-            $this->session = new Session(  new DatabaseSession( new DatabaseSessionEntity($this->query) ) ); 
-        }
+        $this->container->set('session',
+            $this->container->has('query') ? 
+            new Session( new DatabaseSession( new DatabaseSessionEntity($this->query) ) ) :
+            new Session( new PhpSession() )
+        );
     }
 
     protected function processRequest()
@@ -146,11 +143,11 @@ class Application extends Base implements Adapter
 
     protected function getController(string $name)
     {
-
+        throw new \Exception('You did not setup function getController', 500);
     }
 
     protected function prepareServiceProvider()
     {
-        
+
     }
 }

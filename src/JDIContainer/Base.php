@@ -37,4 +37,22 @@ abstract class Base implements ContainerAwareInterface
 
         throw new \RuntimeException('Invalid JDIContainer '.$name, 500);
     }
+
+    protected $_vars = []; 
+
+    public function get($key = null, $default = null)
+    {
+        if( null === $key ) return $this->_vars;
+        return isset( $this->_vars[$key] ) ? $this->_vars[$key] : $default; 
+    }
+
+    public function set($key, $value)
+    {
+        $this->_vars[$key] = $value;
+    }
+
+    public function getAll()
+    {
+        return $this->_vars;
+    }
 }

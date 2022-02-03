@@ -85,11 +85,6 @@ class WebApp extends Application
         }   
     }
 
-    protected function getController($name)
-    {
-        throw new \Exception('You did not create a controller', 500);
-    }
-
     protected function processRequest()
     {
         try{

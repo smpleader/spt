@@ -19,9 +19,9 @@ class Controller extends Base
 {
     public function prepareView()
     {
-        if(AppIns::path('theme') && $this->app->config->exists('theme'))
+        if(AppIns::path('theme') && $this->config->exists('theme'))
         {
-            $themePath = AppIns::path('theme'). $this->app->config->theme;
+            $themePath = AppIns::path('theme'). $this->config->theme;
             $overrideLayouts = [
                 $themePath. '__.php',
                 $themePath. '__/index.php',
@@ -40,7 +40,7 @@ class Controller extends Base
         
         $this->view = new View();
         $this->view->init(
-            $this->app->lang, 
+            $this->lang, 
             new Theme($themePath, $overrideLayouts)
         );
     }

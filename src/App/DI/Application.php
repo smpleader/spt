@@ -151,7 +151,7 @@ class Application extends BaseObj implements Adapter
 
     protected function getController(string $name)
     {
-
+        throw new \Exception('You did not setup function getController', 500);
     }
 
 }

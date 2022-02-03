@@ -22,7 +22,7 @@ class Loader
             {
                 if( is_dir($dir. '/'. $x) )
                 {
-                    $tmp = array_merge( $tmp, $this->findClass($dir. '/'. $x, $x));
+                    $tmp = array_merge( $tmp, static::findClass($dir. '/'. $x, $x));
                 }
                 elseif(!is_link($dir. '/'. $x) && '.php' == substr($x, -4))
                 {

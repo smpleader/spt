@@ -113,12 +113,16 @@ class Route extends BaseObj
         return;
     }
 
-    public function pathFinding( $default, $callback = null)
+    public function pathFinding( $default = false, $callback = null)
     {
         $sitemap = $this->get('sitemap', []);
         $path = $this->get('actualPath');
         $isHome = $this->get('isHome');
         $this->set('sitenode', '');
+        if(empty($default) && isset($sitemap[0]))
+        {
+            $default = $sitemap[0];
+        }
         
         if($isHome){
             $found = $this->get('home', '');

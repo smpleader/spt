@@ -12,15 +12,25 @@ namespace SPT\Storage;
 
 class FileArray extends File
 {
-    public function __construct(string $path)
+    public function import(string $path)
     {
-        $this->path = $path;
-        $this->data = (array) require_once $path;
+        if(!in_array($path, $this->_paths))
+        {
+            $this->_paths[] = $path;
+        }
+
+        $this->_data = 
+    }
+
+    public function parse(string $path)
+    {
+        $arr = (array) require_once $path;
+        $this->_data = array_merge($this->_data, $arr);
     }
 
     public function print($data = null, $deep = 0)
     {
-        if( null === $data ) $data = $this->data;
+        if( null === $data ) $data = $this->_data;
 
         if(count($data))
         {
@@ -61,8 +71,8 @@ class FileArray extends File
         }
     }
 
-    public function toFile()
+    public function toFile(string $path)
     {
-        file_put_contents($this->path, $this->print());
+        file_put_contents($path, $this->print());
     }
 }

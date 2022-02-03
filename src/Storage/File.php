@@ -12,30 +12,39 @@ namespace SPT\Storage;
 
 class File
 {
-    protected $data;
-    protected $path;
+    protected $_data = [];
+    protected $_paths = [];
 
-    public function __construct(string $path)
+    public function import(string $path)
     {
-        $this->path = $path;
-        $this->data = file_get_contents($path);
+        if(!in_array($path, $this->_paths))
+        {
+            $this->_paths[] = $path;
+        }
+
+        $this->parse($path);
     }
 
-    public function toFile()
+    protected function parse(string $path)
     {
-        file_put_contents($this->path, $this->data);
+        $this->_data[] = file_get_contents($path);
+    }
+
+    public function toFile(string $path)
+    {
+        file_put_contents($path, $this->_data);
     }
 
     public function __set(string $name, $value): void
     {
-        $this->data[$name] = $value;
+        $this->_data[$name] = $value;
     }
 
     public function __get($name)
 	{
-		if (isset($this->data[$name]))
+		if (isset($this->_data[$name]))
 		{
-			return $this->data[$name];
+			return $this->_data[$name];
 		}
 
         throw new \Exception('Unknown Storage '. get_called_class(). ' Property: '.$name);
@@ -43,11 +52,11 @@ class File
 
     public function exists($name)
     {
-        return isset($this->data[$name]);
+        return isset($this->_data[$name]);
     }
 
-    public function getPath()
+    public function getPaths()
     {
-        return $this->path;
+        return $this->_paths;
     }
 }

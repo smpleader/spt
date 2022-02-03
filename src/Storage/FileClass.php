@@ -12,26 +12,37 @@ namespace SPT\Storage;
 
 class FileClass
 {
-    protected $data;
-    protected $path;
+    protected $_data;
+    protected $_paths;
 
-    public function __construct(string $path, string $className)
+    public function import(string $path, string $className)
     {
-        $this->path = $path;
-        include $path;
-        $this->data = new $className;
+        $this->_paths[] = $path;
+        try
+        {
+            include $path;
+            $sth = new $className;
+            foreach($sth as $key => $value)
+            {
+                $this->_data->{$key} = $value;
+            }
+        }
+        catch (Exception $e) 
+        {
+            $this->response('Caught \Exception: '.  $e->getMessage(), 500);
+        }
     }
 
     public function __set(string $name, mixed $value): void
     {
-        $this->data[$name] = $value;
+        $this->_data[$name] = $value;
     }
 
     public function __get($name)
 	{
-		if (isset($this->data[$name]))
+		if (isset($this->_data[$name]))
 		{
-			return $this->data[$name];
+			return $this->_data[$name];
 		}
 
         throw new \Exception('Unknown Storage Property '.$name);
@@ -39,13 +50,13 @@ class FileClass
 
     public function print($data = null, $deep = 0)
     {
-        if( null === $data ) $data = $this->data;
+        if( null === $data ) $data = $this->_data;
 
         if(count($data))
         {
             $tabParent =  str_repeat("\t", $deep);
 
-            $str = "$tabParent\[\n";
+            $str = "$tabParent\{\n";
 
             $tab =  str_repeat("\t", $deep+1);
             
@@ -70,7 +81,7 @@ class FileClass
                 $str .= "', \n";
             }
 
-            $str .= "$tabParent\]";
+            $str .= "$tabParent\}";
 
             return $str;
         }
@@ -80,13 +91,13 @@ class FileClass
         }
     }
 
-    public function toFile()
+    public function toFile(string $path)
     {
-        file_put_contents($this->path, $this->print());
+        file_put_contents($path, $this->print());
     }
 
-    public function getPath()
+    public function getPaths()
     {
-        return $this->path;
+        return $this->_paths;
     }
 }

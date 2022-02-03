@@ -14,9 +14,8 @@ use SPT\Support\Filter;
 
 class FileIni extends File
 {
-    public function __construct(string $path)
+    public function parse(string $path)
     {
-        $this->path = $path;
         $raw = file_get_contents($path);
 
         $lines = explode("\n", $raw);
@@ -25,19 +24,19 @@ class FileIni extends File
             $tmp = explode('=', $line);
             $key = array_shift($tmp);
             $key = Filter::cmd($key);
-            $this->data[$key] = implode('=', $tmp);
+            $this->_data[$key] = implode('=', $tmp);
         }
     }
 
-    public function toFile()
+    public function toFile(string $path)
     {
         $str = [];
 
-        foreach($this->data as $key => $value)
+        foreach($this->_data as $key => $value)
         {
             $str[] = $key. '='. $value;
         }
 
-        file_put_contents($this->path, implode("\n", $str));
+        file_put_contents($path, implode("\n", $str));
     }
 }

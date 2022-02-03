@@ -12,14 +12,13 @@ namespace SPT\Storage;
 
 class FileJson extends File
 {
-    public function __construct(string $path)
+    public function parse(string $path)
     {
-        $this->path = $path;
-        $this->data = json_decode(file_get_contents($path));
+        $this->_data = json_decode(file_get_contents($path));
     }
 
-    public function toFile()
+    public function toFile(string $path)
     {
-        file_put_contents($this->path, json_encode($this->data));
+        file_put_contents($path, json_encode($this->_data));
     }
 }

@@ -32,34 +32,48 @@ class ViewModel implements ViewModelAdapter
         return $this->alias;
     }
 
-    protected function parsePath($string, $root)
+    protected function parsePath(string $string, $root = '')
     {
         if(false === strpos($string, '|'))
         {
-            $layout = $root. '.'. $string;
+            $layout = $root ? $root. '.'. $string :  $string;
             $func = end( explode('.', $layout) );
         }
         else
         {
             list( $last, $func) = explode('|', $string);
-            $layout = $root. '.'. $last;
+            $layout = $root ? $root. '.'. $last : $last;
         }
 
-        return [$layout, $func];
+        if(!in_array($func, ['alias', 'parse', 'parsePath', 'autorun', 'set', 'state']))
+        {
+            $this->functions[$layout] = $func;
+            return $layout;
+        }
+
+        return false;
     }
 
-    public function parse()
+    public function parse(array $sth = [], $root = '')
     {
         $map = [];
-        foreach($this->layouts as $root => $lay)
+        if(!count($sth)) $sth = $this->layouts;
+        foreach($sth as $inner => $lay)
         {
-            list($layout, $func) = $this->parsePath($lay, $root);
-            if(!in_array($func, ['alias', 'parse', 'parsePath', 'autorun', 'set', 'state']))
+            if(is_numeric($inner))
             {
-                $this->functions[$layout] = $func;
-                $map[] = $layout;
+                if($found = $this->parsePath($lay, $root))
+                {
+                    $map[] = $found;
+                }
+            }
+            elseif(is_array($lay)) // need to flat the array
+            {
+                $inner = $root ? $root. '.'. $inner : $inner;
+                $map = array_merge($map, $this->parse($lay, $inner));
             }
         }
+
         return $map;
     }
 

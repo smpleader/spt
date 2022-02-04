@@ -78,7 +78,8 @@ class Route extends BaseObj
         foreach($sitemap as $key => $inside)
         {
             if(empty($key)) $key = '/';
-            elseif (strpos($key, '/') !== 0 && empty($parentSlug)) {
+            elseif (strpos($key, '/') !== 0 && empty($parentSlug)) 
+            {
                 $key = '/'. $key;
             }
 

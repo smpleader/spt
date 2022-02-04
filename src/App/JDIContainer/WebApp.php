@@ -85,17 +85,12 @@ class WebApp extends Application
         }   
     }
 
-    protected function getController($name)
-    {
-        throw new \Exception('You did not create a controller', 500);
-    }
-
     protected function processRequest()
     {
         try{
 
             // TODO1: check token security timeout 
-            // TODO3: support plugins
+            // This is for single app
             list($controllerName, $func) = $this->routing(); 
 
             // create language
@@ -117,5 +112,5 @@ class WebApp extends Application
         {
             $this->response('[Error] ' . $e->getMessage(), 500);
         }
-    } 
+    }
 }

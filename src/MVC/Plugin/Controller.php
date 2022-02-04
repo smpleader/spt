@@ -1,6 +1,6 @@
 <?php
 /**
- * SPT software - MVC Controller with a DI Container
+ * SPT software - MVC Controller for Plugin engine
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\MVC\JDIContainer;
+namespace SPT\MVC\Plugin;
 
 use SPT\JDIContainer\Base;
 use SPT\Theme; 

@@ -92,8 +92,8 @@ class Application extends BaseObj implements Adapter
                 if(AppIns::path('config') && $this->config->exists('endpoints'))
                 {
                     $sitePath = $this->config->exists('sitepath') ? $this->config->sitepath : '';
-                    $this->router = new Router();
-                    $this->router->init($this->config->endpoints, $sitePath);
+                    $this->router = new Router($sitePath);
+                    $this->router->import($this->config->endpoints) ;
                 }
 
                 // create query
@@ -128,14 +128,24 @@ class Application extends BaseObj implements Adapter
 
     public function prepareLanguage()
     {
-        $this->lang = AppIns::path('language') ? new FileIni(AppIns::path('language')) : new MagicObj('--');
+        if(AppIns::path('language'))
+        {
+            $lang = new FileIni();
+            $lang->import(AppIns::path('language'));
+        }
+        else
+        {
+            $lang = new MagicObj('--');
+        }
+        
+        $this->lang = $lang;
     }
 
     public function prepareSession()
     {
         if(empty($this->query))
         {
-            $this->session =  new PhpSession();
+            $this->session =  new Session( new PhpSession() );
         }
         else
         {

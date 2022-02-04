@@ -82,8 +82,8 @@ class Application extends Base implements Adapter
                 if(AppIns::path('config') && $config->exists('endpoints'))
                 {
                     $sitePath = $config->exists('sitepath') ? $config->sitepath : '';
-                    $router = new Router();
-                    $router->init($config->endpoints, $sitePath);
+                    $router = new Router($sitePath);
+                    $router->import($config->endpoints);
                     $container->set('router', $router);
                 }
 
@@ -122,9 +122,17 @@ class Application extends Base implements Adapter
 
     public function prepareLanguage()
     {
-        $this->getContainer()->set('lang', 
-            AppIns::path('language') ? new FileIni(AppIns::path('language')) : new MagicObj('--')
-        );
+        if(AppIns::path('language'))
+        {
+            $lang = new FileIni();
+            $lang->import(AppIns::path('language'));
+        }
+        else
+        {
+            $lang = new MagicObj('--');
+        }
+        
+        $this->getContainer()->set('lang', $lang);
     }
 
     public function prepareSession()

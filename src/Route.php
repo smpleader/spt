@@ -16,7 +16,7 @@ class Route extends BaseObj
 {
     private $nodes;
 
-    public function __construct(string $siteSubpath = '',string $protocol = '')
+    public function __construct(string $siteSubpath = '', string $protocol = '')
     {
         $p =  ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
                 (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443 ) ) ? 'https' : 'http';
@@ -75,9 +75,14 @@ class Route extends BaseObj
     private function flatNodes($sitemap, $parentSlug='')
     {
         $arr = [];
-        foreach($sitemap as $key=>$inside)
+        foreach($sitemap as $key => $inside)
         {
-            if($key == '/' || empty($key))
+            if(empty($key)) $key = '/';
+            elseif (strpos($key, '/') !== 0 && empty($parentSlug)) {
+                $key = '/'. $key;
+            }
+
+            if($key == '/' )
             {
                 if( $parentSlug == '' )
                 {
@@ -88,9 +93,9 @@ class Route extends BaseObj
                     $arr[$parentSlug. $key] = $inside;
                 }
             }
-            elseif(strpos($key, '/') === 0)
+            elseif(is_array($inside) && !isset($inside['fnc']))   //)
             {
-                $arr = array_merge($arr, $this->flatNodes($inside, substr($key, 1)));
+                $arr = array_merge($arr, $this->flatNodes($inside, $key ));
             }
             else
             {
@@ -98,6 +103,7 @@ class Route extends BaseObj
                 {
                     $key = $parentSlug. '/'. $key;
                 }
+
                 $arr[$key] = $inside;
             }
         }
@@ -148,7 +154,6 @@ class Route extends BaseObj
         {
             foreach( $sitemap as $reg=>$value )
             {
-                //$reg = str_replace( ['-'], ['\-'], $reg) ;
                 if (preg_match ('#'. $reg. '#i', $path, $matches))
                 {
                     if( !is_array($value) || isset($value['fnc']))

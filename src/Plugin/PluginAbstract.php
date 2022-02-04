@@ -8,7 +8,7 @@
  * 
  */
 
-namespace App\libraries\Core;
+namespace SPT\Plugin;
 
 abstract class PluginAbstract
 {

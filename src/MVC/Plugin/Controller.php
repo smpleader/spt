@@ -19,22 +19,23 @@ class Controller extends Base
 {
     public function prepareView()
     {
+        $view_path = AppIns::path('plugin'). $this->app->get('plugin'). '/views/';
         if(AppIns::path('theme') && $this->config->exists('theme'))
         {
             $themePath = AppIns::path('theme'). $this->config->theme;
             $overrideLayouts = [
                 $themePath. '__.php',
                 $themePath. '__/index.php',
-                AppIns::path('view'). '__.php',
-                AppIns::path('view'). '__/index.php'
+                $view_path. '__.php',
+                $view_path. '__/index.php'
             ];
         }
         else
         {
-            $themePath = AppIns::path('view');
+            $themePath = $view_path;
             $overrideLayouts = [
-                AppIns::path('view'). '__.php',
-                AppIns::path('view'). '__/index.php'
+                $view_path. '__.php',
+                $view_path. '__/index.php'
             ];
         }
         

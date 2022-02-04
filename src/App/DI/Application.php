@@ -143,15 +143,16 @@ class Application extends BaseObj implements Adapter
     }
 
     public function prepareSession()
-    {
+    {   
+        $this->session =  new Session();
         if(empty($this->query))
         {
-            $this->session =  new Session( new PhpSession() );
+            $this->session->init( new PhpSession() );
         }
         else
         {
             // TODO set request ID
-            $this->session = new Session(  new DatabaseSession( new DatabaseSessionEntity($this->query) ) ); 
+            $this->session->init( new DatabaseSession( new DatabaseSessionEntity($this->query) ) ); 
         }
     }
 

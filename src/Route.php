@@ -16,7 +16,7 @@ class Route extends BaseObj
 {
     private $nodes;
 
-    public function __construct(string $subpath = '',string $protocol = '')
+    public function __construct(string $siteSubpath = '',string $protocol = '')
     {
         $p =  ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
                 (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443 ) ) ? 'https' : 'http';

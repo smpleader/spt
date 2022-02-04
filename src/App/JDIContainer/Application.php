@@ -75,8 +75,8 @@ class Application extends Base implements Adapter
             // create config
             if(AppIns::path('config'))
             {
-                $this->config = new FileArray();
-                $this->config->import(AppIns::path('config'));
+                $config = new FileArray();
+                $config->import(AppIns::path('config'));
                 $container->set('config', $config);
                 
                 // create router based config
@@ -135,14 +135,17 @@ class Application extends Base implements Adapter
         
         $this->getContainer()->set('lang', $lang);
     }
-
+    
     public function prepareSession()
     {
-        $this->container->set('session',
-            $this->container->has('query') ? 
-            new Session( new DatabaseSession( new DatabaseSessionEntity($this->query) ) ) :
-            new Session( new PhpSession() )
+        $session = new Session();
+        $container = $this->getContainer();
+        $session->init(
+            $container->has('query') ? 
+            new DatabaseSession( new DatabaseSessionEntity($this->query) ) :
+            new PhpSession()
         );
+        $container->set('session', $session);
     }
 
     protected function processRequest()

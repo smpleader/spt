@@ -10,6 +10,11 @@
 
 namespace SPT\App\JDIContainer;
 
+use SPT\Support\Loader;
+use SPT\Support\FncArray;
+use SPT\Storage\FileIni;
+use SPT\App\Instance as AppIns;
+
 class WebPluginApp extends WebApp
 {
     protected function routing()
@@ -106,7 +111,7 @@ class WebPluginApp extends WebApp
     {
         $container = $this->getContainer();
 
-        $enqueue = new StdClass;
+        $enqueue = new \StdClass;
 
         if(AppIns::path('plugin'))
         {
@@ -138,25 +143,29 @@ class WebPluginApp extends WebApp
                         ];
                     }
 
-                    foreach($list as $type => $settings)
+                    if(FncArray::isReady($list))
                     {
-                        $fnc = 'load'.ucfirst($type);
-                        if(method_exists($plgObject, $fnc))
+                        foreach($list as $type => $settings)
                         {
-                            $plgObject->{$fnc}($container);
-                        }
-                        else
-                        {
-                            $fullPath = isset($settings['path']) ? $settings['path'] : $path. $type;
-                            $aliasList = isset($settings['alias']) ? $settings['alias'] : [];
-                            $this->loadClass($fullPath, $namespace, $aliasList);
+                            $fnc = 'load'.ucfirst($type);
+                            if(method_exists($plgObject, $fnc))
+                            {
+                                $plgObject->{$fnc}($container);
+                            }
+                            else
+                            {
+                                $fullPath = isset($settings['path']) ? $settings['path'] : $path. $type;
+                                $aliasList = isset($settings['alias']) ? $settings['alias'] : [];
+                                $this->loadClass($fullPath, $namespace, $aliasList);
+                            }
                         }
                     }
-
+                    
                     $routing_file = $path. 'routing.php';
                     if(file_exists($routing_file))
                     {
-                        $this->router->import($routing_file);
+                        $routing = (array) require_once $routing_file;
+                        $this->router->import($routing);
                     }
 
                     $enqueue->{$plugin} = $plgObject;
@@ -190,7 +199,8 @@ class WebPluginApp extends WebApp
         // multi language
         $lang = $this->session->get('language', 'en');
         $try = $this->request->get->get('lang', '', 'cmd');
-        if(in_array($try, $this->config->acceptLanguages) && $try != $lang)
+        $acceptLanguages = $this->config->exists('acceptLanguages') ? $this->config->acceptLanguages : ['en']; 
+        if(in_array($try, $acceptLanguages) && $try != $lang)
         {
             $lang = $try;
             $this->session->set('language', $lang);

@@ -19,7 +19,7 @@ class FileArray extends File
             $this->_paths[] = $path;
         }
 
-        $this->_data = 
+        $this->parse($path); 
     }
 
     public function parse(string $path)

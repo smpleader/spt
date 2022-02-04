@@ -75,7 +75,8 @@ class Application extends Base implements Adapter
             // create config
             if(AppIns::path('config'))
             {
-                $config = new FileArray(AppIns::path('config'));
+                $this->config = new FileArray();
+                $this->config->import(AppIns::path('config'));
                 $container->set('config', $config);
                 
                 // create router based config

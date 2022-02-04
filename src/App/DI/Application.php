@@ -86,7 +86,8 @@ class Application extends BaseObj implements Adapter
             // create config
             if(AppIns::path('config'))
             {
-                $this->config = new FileArray(AppIns::path('config'));
+                $this->config = new FileArray();
+                $this->config->import(AppIns::path('config'));
                 
                 // create router based config
                 if(AppIns::path('config') && $this->config->exists('endpoints'))

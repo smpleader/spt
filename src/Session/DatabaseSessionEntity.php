@@ -39,7 +39,7 @@ class DatabaseSessionEntity extends Entity
             $this->pk = $options['pk'];
         }
 
-        $this->db->checkAvailability();
+        $this->checkAvailability();
     }
 
     public function getFields()
@@ -47,7 +47,7 @@ class DatabaseSessionEntity extends Entity
         return [
             $this->pk => [
                 'type' => 'varbinary', 
-                'length' => 192,
+                'limit' => 192,
             ],
             'time' => [
                 'type' => 'int',
@@ -69,7 +69,7 @@ class DatabaseSessionEntity extends Entity
 
     public function getRow($isArray = true)
     {
-        $row = $this->db->table( $this->table )->detail([ $this->pk => $this->user->id()]);
+        $row = $this->db->table( $this->table )->detail([ $this->pk => $this->user->id]);
         return $isArray ? (array) $row : $row;
     }
 }

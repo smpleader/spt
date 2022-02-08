@@ -280,12 +280,12 @@ class Entity
             $fields_build[] = 'DROP PRIMARY KEY';
             $fields_build[] = 'ADD PRIMARY KEY('. $pk .')';
         }
-        elseif (!$fields_db)
+        elseif (!$fields_db && count($pk))
         {
             $pk = implode(",", $pk);
             $fields_build[] = 'PRIMARY KEY('. $pk . ')';
         }
- 
+        
         if (count($fields_build))
         {
             if( $fields_db )

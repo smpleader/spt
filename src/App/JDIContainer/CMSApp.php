@@ -15,7 +15,7 @@ use SPT\Support\FncArray;
 use SPT\Storage\FileIni;
 use SPT\App\Instance as AppIns;
 
-class WebPluginApp extends WebApp
+class CMSApp extends WebApp
 {
     protected function routing()
     {

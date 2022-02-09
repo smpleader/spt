@@ -28,6 +28,11 @@ use SPT\Request\Base as Request;
 
 class Application extends Base implements Adapter
 {
+    public function getNamespace()
+    {
+        return 'SPT\\'.;
+    }
+
     public function factory(string $key)
     {
         if( $this->container->has($name) )

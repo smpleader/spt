@@ -12,6 +12,7 @@ namespace SPT\App;
 
 interface Adapter
 {
+    public function getNamespace();
     public function factory(string $key);
     public function execute();
 }

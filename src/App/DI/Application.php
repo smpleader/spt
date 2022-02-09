@@ -35,6 +35,11 @@ class Application extends BaseObj implements Adapter
     public $user;
     public $session; 
     public $lang;
+    
+    public function getNamespace()
+    {
+        return 'SPT\\'.;
+    }
 
     public function factory(string $key)
     {

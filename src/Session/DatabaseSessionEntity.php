@@ -46,12 +46,11 @@ class DatabaseSessionEntity extends Entity
     {
         return [
             $this->pk => [
-                'type' => 'varbinary', 
+                'type' => 'varbinary',
                 'limit' => 192,
             ],
             'time' => [
                 'type' => 'int',
-                'limit' => 11,
             ],
             'username' => [
                 'type' => 'varchar',
@@ -67,9 +66,8 @@ class DatabaseSessionEntity extends Entity
         ];
     }
 
-    public function getRow($isArray = true)
+    public function getRow($where)
     {
-        $row = $this->db->table( $this->table )->detail([ $this->pk => $this->user->id]);
-        return $isArray ? (array) $row : $row;
+        return $this->db->table($this->table)->detail($where, '*');
     }
 }

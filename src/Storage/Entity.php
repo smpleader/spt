@@ -217,7 +217,14 @@ class Entity
                     if ($key == $field['Field'])
                     {
                         $check = true;
-                        if ($type != $field['Type'] || $is_null != $field['Null'] || $default_value != $field['Default'] || $extra != $field['Extra'])
+                        preg_match("/(\d+)/", $field['Type'], $match);
+                        $number = isset($match[1]) ? $match[1] : '';
+                        if ($number)
+                        {
+                            $type_db = str_replace('('. $number. ')', '', $field['Type']);
+                        }
+                        
+                        if (($type != $field['Type'] && $type_db != $type) || $is_null != $field['Null'] || $default_value != $field['Default'] || $extra != $field['Extra'])
                         {
                             $query[$key] = 'MODIFY '. $key. ' '. $type ;
                             $query[$key] .= $is_null == "NO" ? " NOT NULL" : " NULL";
@@ -244,7 +251,6 @@ class Entity
             }
             
         }
-
         $pk_db = [];
         if ($fields_db)
         {

@@ -157,7 +157,8 @@ class Application extends BaseObj implements Adapter
         else
         {
             // TODO set request ID
-            $this->session->init( new DatabaseSession( new DatabaseSessionEntity($this->query) ) ); 
+            $this->prepareSessionID();
+            $this->session->init( new DatabaseSession( new DatabaseSessionEntity($this->query), $this->session_id ) ); 
         }
     }
 
@@ -169,6 +170,29 @@ class Application extends BaseObj implements Adapter
     protected function getController(string $name)
     {
         throw new \Exception('You did not setup function getController', 500);
+    }
+
+    public function prepareSessionID()
+    {
+        $browser = $this->request->server->get('HTTP_USER_AGENT', '');
+
+        $cli = $this->request->server->get('argv', '') ? true : false;
+        $cookie = $this->request->cookie->get('sid', '');
+        if (!$cookie)
+        {
+            $cookie = rand();
+            if (!$this->request->server->get('argv', ''))
+            {
+                $this->request->cookie->set('sid', $cookie);
+            }
+            else
+            {
+                $this->request->cookie->setCli('sid', $cookie);
+            }
+        }
+        
+        $ip = Util::getClientIp();
+        $this->session_id = md5($ip . $browser . $cookie);
     }
 
 }

@@ -17,12 +17,14 @@ class Cookie extends Base
       $this->data = & $_COOKIE;
     }
 
-    public function set($name, $value, $cli = false)
+    public function set($name, $value)
     {
-      if (!$cli)
-      {
-        setcookie($name, $value);
-      }
+      setcookie($name, $value);
+      parent::set($name, $value);
+    }
+
+    public function setCli($name, $value)
+    {
       parent::set($name, $value);
     }
 }

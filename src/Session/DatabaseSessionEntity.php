@@ -54,11 +54,13 @@ class DatabaseSessionEntity extends Entity
             ],
             'username' => [
                 'type' => 'varchar',
+                'null' => 'YES',
                 'limit' => 150,
             ],
             'user_id' => [
                 'type' => 'int',
                 'option' => 'unsigned',
+                'null' => 'YES'
             ],
             'data'=> [
                 'type' => 'text'

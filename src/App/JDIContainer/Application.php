@@ -145,9 +145,10 @@ class Application extends Base implements Adapter
     {
         $session = new Session();
         $container = $this->getContainer();
+        $this->prepareSessionID();
         $session->init(
             $container->has('query') ? 
-            new DatabaseSession( new DatabaseSessionEntity($this->query) ) :
+            new DatabaseSession( new DatabaseSessionEntity($this->query), $this->session_id) :
             new PhpSession()
         );
         $container->set('session', $session);
@@ -166,5 +167,29 @@ class Application extends Base implements Adapter
     protected function prepareServiceProvider()
     {
 
+    }
+
+    public function prepareSessionID()
+    {
+        $container = $this->getContainer();
+
+        $browser = $this->request->server->get('HTTP_USER_AGENT', '');
+
+        $cookie = $this->request->cookie->get('sid', '');
+        if (!$cookie)
+        {
+            $cookie = rand();
+            if (!$this->request->server->get('argv', ''))
+            {
+                $this->request->cookie->set('sid', $cookie);
+            }
+            else
+            {
+                $this->request->cookie->setCli('sid', $cookie);
+            }
+        }
+        $ip = Util::getClientIp();
+        $session_id = md5($ip . $browser . $cookie);
+        $container->set('session_id', $session_id);   
     }
 }

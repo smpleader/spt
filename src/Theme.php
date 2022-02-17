@@ -58,7 +58,7 @@ class Theme extends BaseObj
 
             foreach($this->_assets[$profile] as $asset)
             {
-                $this->add($asset);
+                call_user_func_array([$this, 'add'], $asset);
             }
         }
     }
@@ -86,9 +86,14 @@ class Theme extends BaseObj
         return $this->_body;
     }
 
-    public function echo($type)
+    public function echo($type, $url = '')
     {
-        echo implode("\n", $this->generate($type));
+        $generate = $this->generate($type);
+        if ($url)
+        {
+            $generate = str_replace('__domain__', $url, $generate);
+        }
+        echo implode("\n", $generate);
     }
 
     public function generate($type)

@@ -12,7 +12,7 @@ namespace SPT\View\Gui;
 
 class Form
 {
-    use SPT\Trait\Index;
+    use SPT\Triat\Index;
 
     protected $record; 
     protected $fields;

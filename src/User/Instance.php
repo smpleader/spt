@@ -10,6 +10,7 @@
 
 namespace SPT\User;
 
+use SPT\Session\Instance as Session;
 use SPT\User\Adapter as UserAdapter;
 
 class Instance
@@ -33,5 +34,10 @@ class Instance
     public function can(string $key)
     {
         return $this->adapter->can($key);
+    }
+
+    public function init(Session $session)
+    {
+        return $this->adapter->init($session);
     }
 }

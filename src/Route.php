@@ -173,7 +173,7 @@ class Route extends BaseObj
     public function praseUrl(array $parameters)
     {
         $slugs = trim($this->get('actualPath', ''), '/');
-        $sitenote = $this->get('sitenode', '');
+        $sitenote = trim($this->get('sitenode', ''), '/');
         if( $slugs > $sitenote )
         {
             $slugs = trim(substr($slugs, strlen($sitenote)), '/');

@@ -19,7 +19,7 @@ class Cookie extends Base
 
     public function set($name, $value)
     {
-      setcookie($name, $value, time() + 3600, '/');
+      setcookie($name, $value, time() + 86400, '/');
       parent::set($name, $value);
     }
 

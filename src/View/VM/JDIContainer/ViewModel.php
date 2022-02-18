@@ -104,11 +104,7 @@ class ViewModel extends Base implements ViewModelAdapter
         }
         else
         {
-            $var = $this->request->{$request}->get($key, $old);
-            if($format)
-            {
-                $var = Filter::{$format}($var);
-            }
+            $var = $this->request->{$request}->get($key, $old, $format);
             $this->session->set($sessionName, $var);
         }
 

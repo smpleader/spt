@@ -10,6 +10,8 @@
 
 namespace SPT\View\VM; 
 
+use SPT\Support\FncString;
+use SPT\Support\Filter;
 use SPT\Support\Loader;
 use SPT\View\Adapter as View;
 use SPT\App\Adapter as Application;
@@ -52,7 +54,25 @@ class HookBase implements HookAdapter
 
     protected function getVM(string $name)
     {
-        // where we load ViewModels
+        $id = Filter::cmd(strtolower($name));
+        if(isset($this->viewmodels[$id]))
+        {
+            return $this->viewmodels[$id];
+        }
+
+        $plugin = AppIns::main()->get('plugin', '');
+
+        $className = empty($plugin) ? 'viewmodels\\'. FncString::uc($name)
+            : $plugin. '\viewmodels\\'. FncString::uc($name);
+
+        $className = AppIns::main()->getName( $className );
+
+        if(class_exists($className))
+        {
+            $this->viewmodels[$id] = new $className($this->app);
+            return $this->viewmodels[$id];
+        }
+
         return false;
     }
 

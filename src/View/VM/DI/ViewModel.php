@@ -12,9 +12,9 @@ namespace SPT\View\VM\DI;
 
 use SPT\Support\Filter; 
 use SPT\App\Adapter as Application;
-use SPT\View\VM\ViewModel as ViewModelBase; 
 use SPT\View\Adapter as View; 
-use \SPT\Trait\ViewModel as ViewModelTrait;
+use SPT\View\VM\ViewModelAdapter;
+use SPT\Reuse\ViewModel as ViewModelTrait;
 
 class ViewModel implements ViewModelAdapter
 {

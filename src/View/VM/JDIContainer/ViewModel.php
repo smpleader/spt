@@ -15,7 +15,7 @@ use SPT\Support\Filter;
 use SPT\App\Adapter as Application;
 use SPT\View\Adapter as View; 
 use SPT\View\VM\ViewModelAdapter;
-use \SPT\Trait\ViewModel as ViewModelTrait;
+use SPT\Reuse\ViewModel as ViewModelTrait;
 
 class ViewModel extends Base implements ViewModelAdapter
 {   

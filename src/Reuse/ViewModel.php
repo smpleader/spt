@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Trait; 
+namespace SPT\Reuse; 
 
 use SPT\Support\Filter; 
 use SPT\App\Adapter as Application;

@@ -124,7 +124,7 @@ class CMSApp extends WebApp
             foreach($plugins as $plugin)
             {
                 $plugin = strtolower($plugin);
-                $namespace = '\Examples\v11_plugins\plugins\\'. $plugin;
+                $namespace = $this->getName('plugins\\'. $plugin);
                 $class =  $namespace. '\plugin';
 
                 if(class_exists($class))

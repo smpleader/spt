@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT;
+namespace SPT\View;
 
 use SPT\Support\FncString;
 use SPT\Support\FncArray;

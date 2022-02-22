@@ -225,4 +225,14 @@ class CMSApp extends WebApp
         
         $this->getContainer()->set('lang', $lang);
     }
+    
+    protected function getController(string $name)
+    {
+        $controllerName = $this->getName( 'plugins\\'. $this->get('plugin', ''). '\controllers\\'.$name);
+        if(!class_exists($controllerName))
+        {
+            throw new \Exception('Controller '. $name. ' not found', 500);
+        }
+        return new $controllerName($this);
+    }
 }

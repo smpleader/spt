@@ -36,9 +36,9 @@ class Application extends BaseObj implements Adapter
     public $session; 
     public $lang;
     
-    public function getNamespace()
+    public function getName(string $extra='')
     {
-        return 'SPT\\'.;
+        return 'SPT\\'. $extra;
     }
 
     public function factory(string $key)
@@ -168,7 +168,12 @@ class Application extends BaseObj implements Adapter
 
     protected function getController(string $name)
     {
-        throw new \Exception('You did not setup function getController', 500);
+        $controllerName = $this->getName('controllers\\'.$name);
+        if(!class_exists($controllerName))
+        {
+            throw new \Exception('Controller '. $name. ' not found', 500);
+        }
+        return new $controllerName($this);
     }
 
 }

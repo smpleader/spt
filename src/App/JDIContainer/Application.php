@@ -28,9 +28,9 @@ use SPT\Request\Base as Request;
 
 class Application extends Base implements Adapter
 {
-    public function getNamespace()
+    public function getName(string $extra='')
     {
-        return 'SPT\\'.;
+        return 'SPT\\'. $extra;
     }
 
     public function factory(string $key)
@@ -157,10 +157,15 @@ class Application extends Base implements Adapter
     {
         
     }
-
+    
     protected function getController(string $name)
     {
-        throw new \Exception('You did not setup function getController', 500);
+        $controllerName = $this->getName('controllers\\'.$name);
+        if(!class_exists($controllerName))
+        {
+            throw new \Exception('Controller '. $name. ' not found', 500);
+        }
+        return new $controllerName($this);
     }
 
     protected function prepareServiceProvider()

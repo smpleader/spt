@@ -8,14 +8,14 @@
  * 
  */
 
-namespace SPT\View\VM; 
+namespace SPT\Trait; 
 
 use SPT\Support\Filter; 
 use SPT\App\Adapter as Application;
 use SPT\View\Adapter as View; 
 use SPT\View\VM\ViewModelAdapter;
 
-class ViewModel implements ViewModelAdapter
+trait ViewModel
 {   
     protected $alias = __CLASS__;
     protected $layouts = [];
@@ -89,24 +89,5 @@ class ViewModel implements ViewModelAdapter
     public function set($key, $value='', $shareable=false)
     {
         $this->view->set($key, $value, $shareable);
-    }
-
-    public function state($key, $default='', $format='cmd', $request='post', $sessionName='')
-    {
-        if(empty($sessionName)) $sessionName = $key;
-
-        $old = $this->session->get($sessionName, $default);
-
-        if( !is_object( $this->request->{$request} ) )
-        {
-            $var = null;
-        }
-        else
-        {
-            $var = $this->request->{$request}->get($key, $old, $format);
-            $this->session->set($sessionName, $var);
-        }
-
-        return $var;
     }
 }

@@ -11,7 +11,7 @@
 namespace SPT\MVC\DI;
 
 use SPT\BaseObj;
-use SPT\Theme; 
+use SPT\View\Theme;  
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 

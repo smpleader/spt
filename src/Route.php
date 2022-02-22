@@ -96,6 +96,10 @@ class Route extends BaseObj
             }
             elseif(is_array($inside) && !isset($inside['fnc']))   //)
             {
+                if($parentSlug != '')
+                {
+                    $key = $parentSlug. '/'. $key;
+                }
                 $arr = array_merge($arr, $this->flatNodes($inside, $key ));
             }
             else

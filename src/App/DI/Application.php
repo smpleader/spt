@@ -25,9 +25,12 @@ use SPT\Session\Instance as Session;
 use SPT\App\Instance as AppIns;
 use SPT\App\Adapter;
 use SPT\Request\Base as Request;
+use SPT\Trait\Application as ApplicationTrait;
 
 class Application extends BaseObj implements Adapter
 {
+    use ApplicationTrait;
+
     public $config;
     public $router;
     public $query;
@@ -35,49 +38,6 @@ class Application extends BaseObj implements Adapter
     public $user;
     public $session; 
     public $lang;
-    
-    public function getName(string $extra='')
-    {
-        return 'SPT\\'. $extra;
-    }
-
-    public function factory(string $key)
-    {
-        $key = strtolower($key);
-        if(in_array($key, ['config', 'router', 'query', 'request', 'user', 'session', 'theme', 'lange']))
-        {
-            if(!is_object($this->{$key}))
-            {
-                // didn't setup properly
-                throw new \Exception('Invalid Factory Object '.$key);
-            } 
-
-            return $this->{$key};
-        }
-        return false;
-    }
-
-    public function turnDebug($turnOn = false)
-    {
-        if( $turnOn )
-        {
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-        }
-    }
-
-    public function redirect($url = null)
-    {
-        $redirect = null === $url ? $this->get('redirect', '/') : $url;
-        $redirect_status = $this->get('redirectStatus', '302');
-
-        Response::redirect($redirect, $redirect_status);
-    }
-
-    public function response($content, $code='200')
-    {
-        Response::_($content, $code);
-    }
 
     public function execute()
     {
@@ -157,27 +117,12 @@ class Application extends BaseObj implements Adapter
         else
         {
             // TODO set request ID
-            $this->session->init( new DatabaseSession( new DatabaseSessionEntity($this->query) ) ); 
+            $this->session->init( new DatabaseSession( new DatabaseSessionEntity($this->query), $this->getToken() ) ); 
         }
     }
 
     protected function processRequest()
     {
         
-    }
-
-    public function getController(string $name)
-    {
-        $controllerName = $this->getName('controllers\\'.$name);
-        if(!class_exists($controllerName))
-        {
-            throw new \Exception('Controller '. $name. ' not found', 500);
-        }
-        return new $controllerName($this);
-    }
-
-    protected function getSecrect()
-    {
-        return rand(0, 9999);
     }
 }

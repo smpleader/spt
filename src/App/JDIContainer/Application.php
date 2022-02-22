@@ -25,46 +25,12 @@ use SPT\Session\Instance as Session;
 use SPT\App\Instance as AppIns;
 use SPT\App\Adapter;
 use SPT\Request\Base as Request;
+use SPT\Trait\Application as ApplicationTrait;
 
 class Application extends Base implements Adapter
 {
-    public function getName(string $extra='')
-    {
-        return 'SPT\\'. $extra;
-    }
-
-    public function factory(string $key)
-    {
-        if( $this->container->has($name) )
-        {
-            return $this->container->get($name);
-        }
-        
-        return false;
-    }
-
-    public function turnDebug($turnOn = false)
-    {
-        if( $turnOn )
-        {
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-        }
-    }
-
-    public function redirect($url = null)
-    {
-        $redirect = null === $url ? $this->get('redirect', '/') : $url;
-        $redirect_status = $this->get('redirectStatus', '302');
-
-        Response::redirect($redirect, $redirect_status);
-    }
-
-    public function response($content, $code='200')
-    {
-        Response::_($content, $code);
-    }
-
+    use ApplicationTrait;
+    
     public function execute()
     {
         AppIns::path('app') || die('App did not setup properly');
@@ -147,7 +113,7 @@ class Application extends Base implements Adapter
         $container = $this->getContainer();
         $session->init(
             $container->has('query') ? 
-            new DatabaseSession( new DatabaseSessionEntity($this->query) ) :
+            new DatabaseSession( new DatabaseSessionEntity($this->query), $this->getToken() ) :
             new PhpSession()
         );
         $container->set('session', $session);
@@ -156,25 +122,10 @@ class Application extends Base implements Adapter
     protected function processRequest()
     {
         
-    }
-    
-    public function getController(string $name)
-    {
-        $controllerName = $this->getName('controllers\\'.$name);
-        if(!class_exists($controllerName))
-        {
-            throw new \Exception('Controller '. $name. ' not found', 500);
-        }
-        return new $controllerName($this);
-    }
+    } 
 
     protected function prepareServiceProvider()
     {
 
-    }
-
-    protected function getSecrect()
-    {
-        return rand(0, 9999);
     }
 }

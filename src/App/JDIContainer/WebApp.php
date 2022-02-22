@@ -10,8 +10,13 @@
 
 namespace SPT\App\JDIContainer;
 
+use SPT\Support\Env;
+use SPT\Support\Token;
+
 class WebApp extends Application
 {
+    private $secrects;
+
     public function redirect($url = null)
     {
         $msg = $this->get('message', '');
@@ -113,4 +118,5 @@ class WebApp extends Application
             $this->response('[Error] ' . $e->getMessage(), 500);
         }
     }
+
 }

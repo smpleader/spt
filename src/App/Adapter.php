@@ -13,7 +13,7 @@ namespace SPT\App;
 interface Adapter
 {
     public function getName(string $name);
-    public function getSecrect();
-    public function factory(string $key);
+    public function getToken(string $context = '');
+    public function response($content, $code = '200');
     public function execute();
 }

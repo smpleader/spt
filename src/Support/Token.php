@@ -59,4 +59,9 @@ class Token
         }
         return $token;
     }
+
+    public static function md5(string $text, int $length = 0)
+    {
+        return 0 === $length ? md5($text) : substr( md5($text), 0, $length );
+    }
 }

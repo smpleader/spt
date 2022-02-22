@@ -78,7 +78,7 @@ class ViewModel extends Base implements ViewModelAdapter
         $this->view->set($key, $value, $shareable);
     }
 
-    public function state($key, $default='', $format='', $request='post', $sessionName='')
+    public function state($key, $default='', $format='cmd', $request='post', $sessionName='')
     {
         if(empty($sessionName)) $sessionName = $key;
 
@@ -90,11 +90,7 @@ class ViewModel extends Base implements ViewModelAdapter
         }
         else
         {
-            $var = $this->request->{$request}->get($key, $old);
-            if($format)
-            {
-                $var = Filter::{$format}($var);
-            }
+            $var = $this->request->{$request}->get($key, $old, $format);
             $this->session->set($sessionName, $var);
         }
 

@@ -20,6 +20,11 @@ class Instance
         $this->adapter = $adapter;
     }
 
+    public function init($settings)
+    {
+        return $this->adapter->init($settings);
+    }
+
     public function id(string $scope = '')
     {
         return $this->adapter->id($scope);

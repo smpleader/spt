@@ -10,10 +10,23 @@
 
 namespace SPT\Request;
 
+use SPT\Support\Env;
+
 class Cookie extends Base
 {    
-    public function __construct(array $source = null)
+  public function __construct(array $source = null)
+  {
+    $this->data = & $_COOKIE;
+  }
+
+  public function set($name, $value)
+  {
+    if(!Env::isCli())
     {
-      $this->data = & $_COOKIE;
+      // TODO should have better way!
+      setcookie($name, $value, time() + 86400, '/');
     }
+
+    parent::set($name, $value);
+  }
 }

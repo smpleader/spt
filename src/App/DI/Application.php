@@ -166,7 +166,7 @@ class Application extends BaseObj implements Adapter
         
     }
 
-    protected function getController(string $name)
+    public function getController(string $name)
     {
         $controllerName = $this->getName('controllers\\'.$name);
         if(!class_exists($controllerName))
@@ -176,4 +176,8 @@ class Application extends BaseObj implements Adapter
         return new $controllerName($this);
     }
 
+    protected function getSecrect()
+    {
+        return rand(0, 9999);
+    }
 }

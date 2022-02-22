@@ -158,7 +158,7 @@ class Application extends Base implements Adapter
         
     }
     
-    protected function getController(string $name)
+    public function getController(string $name)
     {
         $controllerName = $this->getName('controllers\\'.$name);
         if(!class_exists($controllerName))
@@ -171,5 +171,10 @@ class Application extends Base implements Adapter
     protected function prepareServiceProvider()
     {
 
+    }
+
+    protected function getSecrect()
+    {
+        return rand(0, 9999);
     }
 }

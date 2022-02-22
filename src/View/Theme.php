@@ -10,6 +10,7 @@
 
 namespace SPT\View;
 
+use SPT\BaseObj;
 use SPT\Support\FncString;
 use SPT\Support\FncArray;
 

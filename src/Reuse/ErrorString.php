@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Triat;
+namespace SPT\Reuse;
 
 trait ErrorString
 { 

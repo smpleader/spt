@@ -8,7 +8,22 @@
  * 
  */
 
-namespace SPT\Triat;
+namespace SPT\Reuse;
+
+use SPT\Response;
+use SPT\MagicObj;
+use SPT\Query;
+use SPT\Route as Router;
+use SPT\Extend\Pdo as PdoWrapper;
+use SPT\Storage\FileArray;
+use SPT\Storage\FileIni;
+use SPT\Session\PhpSession;
+use SPT\Session\DatabaseSession;
+use SPT\Session\DatabaseSessionEntity;
+use SPT\Session\Instance as Session;
+use SPT\App\Instance as AppIns;
+use SPT\App\Adapter;
+use SPT\Request\Base as Request;
 
 trait Application
 {

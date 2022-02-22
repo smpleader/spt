@@ -94,20 +94,29 @@ class Route extends BaseObj
                     $arr[$parentSlug. $key] = $inside;
                 }
             }
-            elseif(is_array($inside) && !isset($inside['fnc']))   //)
-            {
-                $arr = array_merge($arr, $this->flatNodes($inside, $key ));
-            }
             else
             {
-                if($parentSlug != '')
-                {
-                    $key = $parentSlug. '/'. $key;
+                if(!empty($parentSlug)) $key = $parentSlug. '/'. $key;
+                if(is_array($inside))
+                { 
+                    if(isset($inside['fnc']))
+                    {
+                        $arr[$key] = $inside;
+                    }
+                    else
+                    {
+                        $arr = array_merge($arr, $this->flatNodes($inside, $key ));
+                    }
                 }
-
-                $arr[$key] = $inside;
+                else
+                {
+                    $arr[$key] = $inside;
+                }
             }
         }
+        krsort($arr);
+
+
         return $arr;
     }
  
@@ -119,7 +128,7 @@ class Route extends BaseObj
     public function pathFinding( $default = false, $callback = null)
     {
         $sitemap = $this->get('sitemap', []);
-        $path = $this->get('actualPath');
+        $path = rtrim($this->get('actualPath'), '/'); // because of preg_match
         $isHome = $this->get('isHome');
         $this->set('sitenode', '');
         if(empty($default) && isset($sitemap[0]))
@@ -155,14 +164,11 @@ class Route extends BaseObj
         {
             foreach( $sitemap as $reg=>$value )
             {
-                if (preg_match ('#'. $reg. '#i', $path, $matches))
+                if (preg_match ('#^'. $reg. '#i', $path, $matches))
                 {
-                    if( !is_array($value) || isset($value['fnc']))
-                    {
-                        $found = $value;
-                        $this->set('sitenode', $reg);
-                        break;
-                    }
+                    $found = $value;
+                    $this->set('sitenode', $reg);
+                    break;
                 }
             }
         }
@@ -172,8 +178,9 @@ class Route extends BaseObj
 
     public function praseUrl(array $parameters)
     {
-        $slugs = trim($this->get('actualPath', ''), '/');
+        $slugs = $this->get('actualPath', '');
         $sitenote = $this->get('sitenode', '');
+
         if( $slugs > $sitenote )
         {
             $slugs = trim(substr($slugs, strlen($sitenote)), '/');

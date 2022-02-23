@@ -54,17 +54,6 @@ trait Application
         Response::_($content, $code);
     }
 
-    public function getController(string $name)
-    {
-        $controllerName = $this->getName('controllers\\'.$name);
-        if(!class_exists($controllerName))
-        {
-            throw new \Exception('Controller '. $name. ' not found', 500);
-        }
-        
-        return new $controllerName($this);
-    }
-
     public function getToken(string $context = '_app_')
     {
         if('_secrect_' === $context)

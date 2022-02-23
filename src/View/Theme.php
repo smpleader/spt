@@ -11,6 +11,7 @@
 namespace SPT\View;
 
 use SPT\BaseObj;
+use SPT\Asset;
 use SPT\Support\FncString;
 use SPT\Support\FncArray;
 

@@ -8,7 +8,7 @@
  * 
  */
 
-namespace App\libraries\Core;
+namespace SPT;
 
 use SPT\BaseObj;
 use SPT\Reuse\Log;

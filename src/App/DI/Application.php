@@ -136,4 +136,9 @@ class Application extends BaseObj implements Adapter
         
         return new $controllerName($this);
     }
+
+    public function getToken(string $context = '_app_')
+    {
+        return rand(0, 9999);
+    }
 }

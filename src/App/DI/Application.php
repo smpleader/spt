@@ -65,16 +65,21 @@ class Application extends BaseObj implements Adapter
                 // create query
                 if( $this->config->exists('db') )
                 {
-                    $this->query = new Query(
-                        new PdoWrapper(
-                            $this->config->db['host'],
-                            $this->config->db['username'],
-                            $this->config->db['passwd'],
-                            $this->config->db['database'],
-                            $this->config->db['options'],
-                            $this->config->db['debug']
-                        ), ['#__'=>  $this->config->db['prefix']]
+                    $pdo = new PdoWrapper(
+                        $this->config->db['host'],
+                        $this->config->db['username'],
+                        $this->config->db['passwd'],
+                        $this->config->db['database'],
+                        $this->config->db['options'],
+                        $this->config->db['debug']
                     );
+
+                    if(!$pdo->connected)
+                    {
+                        throw new \Exception('Connection failed. '. implode("\n",  $pdo->getLog()), 500); 
+                    }
+
+                    $this->query = new Query( $pdo, ['#__'=>  $this->config->db['prefix']] );
                 }
             }
 

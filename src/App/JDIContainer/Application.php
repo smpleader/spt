@@ -65,16 +65,21 @@ class Application extends Base implements Adapter
                 // create query
                 if( $config->exists('db') )
                 {
-                    $container->set('query', new Query(
-                        new PdoWrapper(
-                            $config->db['host'],
-                            $config->db['username'],
-                            $config->db['passwd'],
-                            $config->db['database'],
-                            $config->db['options'],
-                            $config->db['debug']
-                        ), ['#__'=>  $config->db['prefix']]
-                    ));
+                    $pdo = new PdoWrapper(
+                        $config->db['host'],
+                        $config->db['username'],
+                        $config->db['passwd'],
+                        $config->db['database'],
+                        $config->db['options'],
+                        $config->db['debug']
+                    );
+                    
+                    if(!$pdo->connected)
+                    {
+                        throw new \Exception('Connection failed. '. implode("\n",  $pdo->getLog()), 500); 
+                    }
+
+                    $this->query = new Query( $pdo, ['#__'=>  $this->config->db['prefix']] );
                 }
             }
 

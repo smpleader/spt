@@ -63,7 +63,7 @@ class HookBase implements HookAdapter
         $plugin = AppIns::main()->get('plugin', '');
 
         $className = empty($plugin) ? 'viewmodels\\'. FncString::uc($name)
-            : $plugin. '\viewmodels\\'. FncString::uc($name);
+            : 'plugins\\'. $plugin. '\viewmodels\\'. FncString::uc($name);
 
         $className = AppIns::main()->getName( $className );
 

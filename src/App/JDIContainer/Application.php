@@ -14,6 +14,7 @@ use SPT\JDIContainer\Base;
 use SPT\Response;
 use SPT\MagicObj;
 use SPT\Query;
+use SPT\Support\FncString;
 use SPT\Route as Router;
 use SPT\Extend\Pdo as PdoWrapper;
 use SPT\Storage\FileArray;
@@ -131,7 +132,11 @@ class Application extends Base implements Adapter
 
     public function getController(string $name)
     {
-        $controllerName = $this->getName('controllers\\'.$name);
+        $name = str_replace('-', '\\', $name);
+        $controllerName = empty($this->get('plugin', '')) ? 'controllers\\'. FncString::uc($name)
+            : 'plugins\\'. $this->get('plugin'). '\controllers\\'. FncString::uc($name);
+
+        $controllerName = $this->getName($controllerName);
         if(!class_exists($controllerName))
         {
             throw new \Exception('Controller '. $name. ' not found', 500);

@@ -79,7 +79,7 @@ class Application extends Base implements Adapter
                         throw new \Exception('Connection failed. '. implode("\n",  $pdo->getLog()), 500); 
                     }
 
-                    $this->query = new Query( $pdo, ['#__'=>  $this->config->db['prefix']] );
+                    $container->set('query', new Query( $pdo, ['#__'=>  $config->db['prefix']]));
                 }
             }
 

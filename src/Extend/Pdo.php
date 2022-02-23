@@ -10,11 +10,11 @@
 
 namespace SPT\Extend;
 
-use \SPT\Triat\Log;
+use SPT\Reuse\Log as LogTrait;
 
 class Pdo
 {
-	use Log;
+	use LogTrait;
 
 	protected $connection;
 	public $connected = false; 

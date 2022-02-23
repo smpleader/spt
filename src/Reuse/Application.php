@@ -53,32 +53,4 @@ trait Application
     {
         Response::_($content, $code);
     }
-
-    public function getToken(string $context = '_app_')
-    {
-        if('_secrect_' === $context)
-        {
-            return empty($this->config->exists('secrect')) ? strtotime('now') : $this->config->secrect;
-        }
-
-        if(!isset($this->secrects[$context]))
-        {
-            $browser = $this->request->server->get('HTTP_USER_AGENT', '');
-            $secrect = $this->getToken('_secrect_');
-
-            $cookie = $this->request->cookie->get($secrect, '');
-            if (!$cookie)
-            {
-                $this->request->cookie->set($secrect, $cookie);
-            }
-
-            $this->secrects[$context] = Token::md5(
-                Token::md5($context, 4).
-                Env::getClientIp().
-                $browser. $cookie
-            );
-        } 
-
-        return $this->secrects[$context];
-    }
 }

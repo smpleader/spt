@@ -15,6 +15,8 @@ use SPT\Response;
 use SPT\MagicObj;
 use SPT\Query;
 use SPT\Support\FncString;
+use SPT\Support\Token;
+use SPT\Support\Env;
 use SPT\Route as Router;
 use SPT\Extend\Pdo as PdoWrapper;
 use SPT\Storage\FileArray;
@@ -143,5 +145,51 @@ class Application extends Base implements Adapter
         }
         
         return new $controllerName($this->getContainer());
+    }
+
+    public function getToken(string $context = '_app_')
+    {
+        if('_secrect_' === $context)
+        {
+            return empty($this->config->exists('secrect')) ? strtotime('now') : $this->config->secrect;
+        }
+
+        $container = $this->getContainer();
+        $res = '';
+
+        if( !$container->has('secrects') )
+        {
+            $res = $this->createToken($context);
+            $container->set('secrects', [ $context => $res]);
+        } 
+        else
+        {
+            $secrects = $container->get('secrects');
+            if(!isset($secrects[$context]))
+            {
+                $secrects[$context] = $this->createToken($context);
+            }
+            $res = $secrects[$context];
+        }
+
+        return $res;
+    }
+
+    protected function createToken(string $context)
+    {
+        $browser = $this->request->server->get('HTTP_USER_AGENT', '');
+        $secrect = $this->getToken('_secrect_');
+
+        $cookie = $this->request->cookie->get($secrect, '');
+        if (!$cookie)
+        {
+            $this->request->cookie->set($secrect, $cookie);
+        }
+
+        return Token::md5(
+            Token::md5($context, 4).
+            Env::getClientIp().
+            $browser. $cookie
+        );
     }
 }

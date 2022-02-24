@@ -156,7 +156,8 @@ class CMSApp extends WebApp
                             {
                                 $fullPath = isset($settings['path']) ? $settings['path'] : $path. $type;
                                 $aliasList = isset($settings['alias']) ? $settings['alias'] : [];
-                                $this->loadClass($fullPath, $namespace, $aliasList);
+                                $class_namespace = isset($settings['namespace']) ? $settings['namespace'] : $namespace . '\\' . $type;
+                                $this->loadClass($fullPath, $class_namespace, $aliasList);
                             }
                         }
                     }

@@ -25,7 +25,7 @@ use SPT\Session\Instance as Session;
 use SPT\App\Instance as AppIns;
 use SPT\App\Adapter;
 use SPT\Request\Base as Request;
-use SPT\Reuse\Application as ApplicationTrait;
+use SPT\Traits\Application as ApplicationTrait;
 
 class Application extends BaseObj implements Adapter
 {

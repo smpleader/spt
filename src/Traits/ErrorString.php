@@ -8,14 +8,14 @@
  * 
  */
 
-namespace SPT\Reuse;
+namespace SPT\Traits;
 
-trait ErrorArray
+trait ErrorString
 { 
-    protected $errors = [];
+    protected $error = ''; 
 
-    public function getErrors()
+    public function getError()
     {
-        return $this->errors;
+        return $this->error; 
     }
 }

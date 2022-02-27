@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Reuse;
+namespace SPT\Traits;
 
 trait Singleton
 {

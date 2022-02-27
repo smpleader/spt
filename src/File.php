@@ -11,8 +11,8 @@
 namespace SPT;
 
 use SPT\BaseObj;
-use SPT\Reuse\Log;
-use SPT\Reuse\ErrorString;
+use SPT\Traits\Log;
+use SPT\Traits\ErrorString;
 
 class File extends BaseObj
 {

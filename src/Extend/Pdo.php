@@ -10,7 +10,7 @@
 
 namespace SPT\Extend;
 
-use SPT\Reuse\Log as LogTrait;
+use SPT\Traits\Log as LogTrait;
 
 class Pdo
 {

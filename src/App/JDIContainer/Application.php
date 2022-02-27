@@ -185,8 +185,8 @@ class Application extends Base implements Adapter
         $browser = $this->request->server->get('HTTP_USER_AGENT', '');
         $secrect = $this->getToken('_secrect_');
 
-        $cookie = $this->request->cookie->get($secrect, '');
-        if (!$cookie)
+        $cookie = $this->request->cookie->get($secrect, '_do_not_support_');
+        if ('_do_not_support_' != $cookie)
         {
             $this->request->cookie->set($secrect, $cookie);
         }
@@ -196,5 +196,10 @@ class Application extends Base implements Adapter
             Env::getClientIp().
             $browser. $cookie
         );
+    }
+
+    public function validateToken(string $token, string $context = '_app_')
+    {
+        return $res = $this->getToken($context) && $res === $token;
     }
 }

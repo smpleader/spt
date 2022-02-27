@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\View\VM\DI;
+namespace SPT\View\VM\JDIContainer;
 
 use SPT\Support\FncString;
 use SPT\Support\Filter;

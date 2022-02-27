@@ -12,6 +12,8 @@ namespace SPT\MVC\JDIContainer;
 
 use SPT\JDIContainer\Base;
 use SPT\View\Theme;  
+use SPT\View\VM\View;  
+use SPT\View\VM\JDIContainer\ViewHook;  
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 
@@ -46,10 +48,10 @@ class Controller extends Base
     public function prepareView()
     {
         $this->view = new View();
-        $this->view->init(
+        $this->view->init([
             $this->lang, 
             $this->prepareTheme()
-        );
+        ]);
     }
 
     public function toHtml()

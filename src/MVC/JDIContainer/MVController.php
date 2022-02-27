@@ -22,10 +22,10 @@ class MVController extends Controller
     public function prepareView()
     {   
         $this->view = new View();
-        $this->view->init(
+        $this->view->init([
             $this->lang, 
             $this->prepareTheme(),
             new ViewHook
-        );
+        ]);
     }
 }

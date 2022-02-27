@@ -20,7 +20,7 @@ class View extends ViewParent
 
     public function init(array $params)
     {
-        list($this->theme, $this->lang, $this->hook) = $params;
+        list($this->lang, $this->theme, $this->hook) = $params;
         if(! ($this->hook instanceof HookAdapter) )
         {
             die('Invalid HookView');

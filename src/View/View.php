@@ -16,6 +16,6 @@ class View extends ViewParent
 {
     public function init(array $params)
     {
-        list($this->theme, $this->lang) = $params;
+        list($this->lang, $this->theme) = $params;
     }
 }

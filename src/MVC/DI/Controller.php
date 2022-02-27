@@ -12,6 +12,7 @@ namespace SPT\MVC\DI;
 
 use SPT\BaseObj;
 use SPT\View\Theme;  
+use SPT\View\View;  
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 
@@ -25,32 +26,39 @@ class Controller extends BaseObj
         $this->app = $app; 
     }
 
-    public function prepareView()
+    public function prepareTheme()
     {
+        $viewPath = AppIns::path('plugin') ? AppIns::path('plugin'). $this->app->get('plugin'). '/views/' : AppIns::path('view');
+
         if(AppIns::path('theme') && $this->app->config->exists('theme'))
         {
             $themePath = AppIns::path('theme'). $this->app->config->theme;
             $overrideLayouts = [
                 $themePath. '__.php',
                 $themePath. '__/index.php',
-                AppIns::path('view'). '__.php',
-                AppIns::path('view'). '__/index.php'
+                $viewPath. '__.php',
+                $viewPath. '__/index.php'
             ];
         }
         else
         {
-            $themePath = AppIns::path('view');
+            $themePath = $viewPath;
             $overrideLayouts = [
-                AppIns::path('view'). '__.php',
-                AppIns::path('view'). '__/index.php'
+                $viewPath. '__.php',
+                $viewPath. '__/index.php'
             ];
         }
-        
+
+        return new Theme($themePath, $overrideLayouts);
+    }
+
+    public function prepareView()
+    {
         $this->view = new View();
-        $this->view->init(
+        $this->view->init([
             $this->app->lang, 
-            new Theme($themePath, $overrideLayouts)
-        );
+            $this->prepareTheme()
+        ]);
     }
 
     public function toHtml()

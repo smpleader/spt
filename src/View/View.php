@@ -8,15 +8,14 @@
  * 
  */
 
-namespace SPT\MVC\Plugin;
+namespace SPT\View;
 
 use SPT\View\Base as ViewParent;
 
 class View extends ViewParent
 {
-    public function init($language, $theme)
+    public function init(array $params)
     {
-        $this->theme = $theme; 
-        $this->lang = $language;
+        list($this->theme, $this->lang) = $params;
     }
 }

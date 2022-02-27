@@ -20,12 +20,8 @@ class Base implements ViewAdapter
     protected $_vars = [];
     protected $_index = '_root_';
 
-    /* It's better to stop this for easier dependency injection init()
-    public function __construct($language, $theme)
-    {
-        $this->theme = $theme; 
-        $this->lang = $language;
-    }*/
+    /* Proxy here */
+    public function init(array $params){}
 
     public function __get($name)
     { 

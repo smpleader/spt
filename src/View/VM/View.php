@@ -18,11 +18,13 @@ class View extends ViewParent
 {
     protected $hook;
 
-    public function init($language, $theme, HookAdapter $hook)
+    public function init(array $params)
     {
-        $this->theme = $theme; 
-        $this->lang = $language;
-        $this->hook = $hook;
+        list($this->theme, $this->lang, $this->hook) = $params;
+        if(! ($this->hook instanceof HookAdapter) )
+        {
+            die('Invalid HookView');
+        }
     }
 
     public function _render($layout, $hook = '')

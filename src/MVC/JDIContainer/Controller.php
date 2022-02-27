@@ -17,31 +17,38 @@ use SPT\App\Instance as AppIns;
 
 class Controller extends Base
 {
-    public function prepareView()
+    public function prepareTheme()
     {
+        $viewPath = AppIns::path('plugin') ? AppIns::path('plugin'). $this->app->get('plugin'). '/views/' : AppIns::path('view');
+
         if(AppIns::path('theme') && $this->config->exists('theme'))
         {
             $themePath = AppIns::path('theme'). $this->config->theme;
             $overrideLayouts = [
                 $themePath. '__.php',
                 $themePath. '__/index.php',
-                AppIns::path('view'). '__.php',
-                AppIns::path('view'). '__/index.php'
+                $viewPath. '__.php',
+                $viewPath. '__/index.php'
             ];
         }
         else
         {
             $themePath = AppIns::path('view');
             $overrideLayouts = [
-                AppIns::path('view'). '__.php',
-                AppIns::path('view'). '__/index.php'
+                $viewPath. '__.php',
+                $viewPath. '__/index.php'
             ];
         }
-        
+
+        return new Theme($themePath, $overrideLayouts);
+    }
+
+    public function prepareView()
+    {
         $this->view = new View();
         $this->view->init(
             $this->lang, 
-            new Theme($themePath, $overrideLayouts)
+            $this->prepareTheme()
         );
     }
 

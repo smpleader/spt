@@ -12,7 +12,7 @@ namespace SPT\App\JDIContainer;
 
 use SPT\Support\Loader;
 use SPT\Support\FncArray;
-use SPT\Storage\IniType as FileIni;
+use SPT\Storage\File\IniType as FileIni;
 use SPT\App\Instance as AppIns;
 
 class CMSApp extends WebApp

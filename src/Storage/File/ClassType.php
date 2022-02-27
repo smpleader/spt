@@ -36,16 +36,6 @@ class ClassType extends Base
         // TODO: consider to add property into object 
     }
 
-    public function __get($name)
-	{
-		if (isset($this->_data[$name]))
-		{
-			return $this->_data[$name];
-		}
-
-        throw new \Exception('Unknown Storage Property '.$name);
-	}
-
     public function print($data = null, $deep = 0)
     {
         if( null === $data ) $data = $this->_data;

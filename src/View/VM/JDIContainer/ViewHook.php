@@ -17,6 +17,7 @@ use SPT\View\Adapter as View;
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 use SPT\View\VM\HookAdapter;
+use SPT\View\VM\ViewModelAdapter;
 
 class ViewHook implements HookAdapter
 {

@@ -1,14 +1,14 @@
 <?php
 /**
- * SPT software - Application
+ * SPT software - View Hook
  * 
  * @project: https://github.com/smpleader/spt-boilerplate
  * @author: Pham Minh - smpleader
- * @description: Create a dump view
+ * @description: Create a View Hook
  * 
  */
 
-namespace SPT\View\VM; 
+namespace SPT\View\VM\DI;
 
 use SPT\Support\FncString;
 use SPT\Support\Filter;
@@ -16,8 +16,9 @@ use SPT\Support\Loader;
 use SPT\View\Adapter as View;
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
+use SPT\View\VM\HookAdapter;
 
-class HookBase implements HookAdapter
+class ViewHook implements HookAdapter
 {
     protected $viewmodels = [];
     protected $map = [];

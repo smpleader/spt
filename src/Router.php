@@ -176,7 +176,7 @@ class Router extends BaseObj
         return ( $found === false ) ? $default : $found;
     }
 
-    public function praseUrl(array $parameters)
+    public function parseUrl(array $parameters)
     {
         $slugs = $this->get('actualPath', '');
         $sitenote = $this->get('sitenode', '');

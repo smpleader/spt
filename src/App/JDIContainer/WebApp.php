@@ -44,7 +44,7 @@ class WebApp extends Application
 
             if(isset($intruction['parameters']))
             {
-                $this->request->set('urlVars', $this->router->praseUrl($intruction['parameters']));
+                $this->request->set('urlVars', $this->router->parseUrl($intruction['parameters']));
                 unset($intruction['parameters']);
             }
         } 

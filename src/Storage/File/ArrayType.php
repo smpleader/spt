@@ -12,16 +12,6 @@ namespace SPT\Storage\File;
 
 class ArrayType extends Base
 {
-    public function import(string $path)
-    {
-        if(!in_array($path, $this->_paths))
-        {
-            $this->_paths[] = $path;
-        }
-
-        $this->parse($path); 
-    }
-
     public function parse(string $path)
     {
         $arr = (array) require_once $path;

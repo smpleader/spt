@@ -10,32 +10,30 @@
 
 namespace SPT\Storage\File;
 
-class ClassType
+class ClassType extends Base
 {
-    protected $_data;
-    protected $_paths;
-
-    public function import(string $path, string $className)
+    public function parse(string $path)
     {
-        $this->_paths[] = $path;
+        $className = basename( $path, '.php');
         try
         {
             include $path;
-            $sth = new $className;
-            foreach($sth as $key => $value)
+            if(class_exists($className))
             {
-                $this->_data->{$key} = $value;
+                $sth = new $className;
+                $this->_data[$className] = $sth;
             }
         }
-        catch (Exception $e) 
+        catch (\Exception $e) 
         {
-            $this->response('Caught \Exception: '.  $e->getMessage(), 500);
+            $this->response('Caught Exception: '.  $e->getMessage(), 500);
         }
     }
 
     public function __set(string $name, mixed $value): void
     {
-        $this->_data[$name] = $value;
+        return;
+        // TODO: consider to add property into object 
     }
 
     public function __get($name)
@@ -94,10 +92,5 @@ class ClassType
     public function toFile(string $path)
     {
         file_put_contents($path, $this->print());
-    }
-
-    public function getPaths()
-    {
-        return $this->_paths;
     }
 }

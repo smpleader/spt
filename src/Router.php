@@ -12,7 +12,7 @@ namespace SPT;
 
 use SPT\Support\FncArray;
 
-class Route extends BaseObj
+class Router extends BaseObj
 {
     private $nodes;
 

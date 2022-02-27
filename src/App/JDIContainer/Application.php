@@ -17,7 +17,7 @@ use SPT\Query;
 use SPT\Support\FncString;
 use SPT\Support\Token;
 use SPT\Support\Env;
-use SPT\Route as Router;
+use SPT\Router;
 use SPT\Extend\Pdo as PdoWrapper;
 use SPT\Storage\ArrayType as FileArray;
 use SPT\Storage\IniType as FileIni;

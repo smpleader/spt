@@ -12,8 +12,7 @@ namespace SPT\MVC\JDIContainer;
 
 use SPT\JDIContainer\Base;
 use SPT\View\Theme;  
-use SPT\View\VM\View;  
-use SPT\View\VM\JDIContainer\ViewHook;  
+use SPT\View\View;  
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 

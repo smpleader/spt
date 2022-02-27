@@ -24,7 +24,7 @@ class ViewHook implements HookAdapter
     protected $map = [];
     protected $app;
     
-    public function init(Application $app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
         

@@ -34,7 +34,7 @@ class Controller extends Base
         }
         else
         {
-            $themePath = AppIns::path('view');
+            $themePath = $viewPath;
             $overrideLayouts = [
                 $viewPath. '__.php',
                 $viewPath. '__/index.php'

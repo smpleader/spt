@@ -183,7 +183,7 @@ class CMSApp extends WebApp
         $container = $this->getContainer();
         foreach($inners as $class)
         {
-            if(class_exists($class))
+            if(class_exists($class) && !$container->has($class))
             {
                 $container->share( $class, new $class($container), true);
                 if(isset($aliasList[$class]))

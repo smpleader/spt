@@ -59,7 +59,7 @@ class Application extends Base implements Adapter
                     $sitePath = $config->exists('sitepath') ? $config->sitepath : '';
                     $router = new Router($sitePath);
                     $router->import($config->endpoints);
-                    $container->set('router', $router);
+                    $container->share('router', $router, true);
                 }
 
                 // create query

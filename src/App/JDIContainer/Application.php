@@ -83,11 +83,13 @@ class Application extends Base implements Adapter
                 }
             }
 
-            // prepare Service Provider
-            $this->prepareServiceProvider();
-
             // create session
             $this->prepareSession();
+
+            $this->prepareUser();
+
+            // prepare Service Provider
+            $this->prepareServiceProvider();
 
             // process app
             $this->processRequest();
@@ -127,15 +129,11 @@ class Application extends Base implements Adapter
         $container->set('session', $session);
     }
 
-    protected function processRequest()
-    {
-        
-    } 
+    protected function processRequest(){} 
 
-    protected function prepareServiceProvider()
-    {
+    protected function prepareServiceProvider(){}
 
-    }
+    protected function prepareUser(){}
 
     public function getController(string $name)
     {

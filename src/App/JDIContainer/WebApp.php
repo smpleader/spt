@@ -12,6 +12,8 @@ namespace SPT\App\JDIContainer;
 
 use SPT\Support\Env;
 use SPT\Support\Token;
+use SPT\User\Instance as User;
+use SPT\User\Memory as UserAdapter;
 
 class WebApp extends Application
 {
@@ -117,4 +119,10 @@ class WebApp extends Application
         }
     }
 
+    public function prepareUser()
+    {
+        $user = new User( new UserAdapter() );
+        $user->init($this->session);
+        $this->getContainer()->share('user', $user, true);
+    }
 }

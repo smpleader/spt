@@ -53,9 +53,9 @@ class ViewHook implements HookAdapter
 
     protected function getVM(string $name)
     {
-        $id = Filter::cmd(strtolower($name));
+        $id = Filter::cmd($name);
 
-        if('vm' == substr($id, -2))
+        if('VM' == substr($id, -2))
         {
             $container = $this->app->getContainer();
     

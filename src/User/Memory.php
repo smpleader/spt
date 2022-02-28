@@ -11,9 +11,9 @@
 
 namespace SPT\User;
 
-class Memory
+class Memory implements Adapter
 {
-    $data = [];
+    protected $data = [];
     public function init($settings)
     {
         $this->set('id', rand(1,999));

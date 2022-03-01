@@ -12,7 +12,7 @@ namespace SPT\View\Gui;
 
 class Form
 {
-    use \SPT\Reuse\Index;
+    use \SPT\Traits\Index;
 
     protected $record; 
     protected $fields;

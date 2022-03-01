@@ -12,7 +12,7 @@ namespace SPT\View\Gui;
 
 class Listing
 { 
-    use \SPT\Reuse\Index;
+    use \SPT\Traits\Index;
     
     protected $items;
     protected $total;

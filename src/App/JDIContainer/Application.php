@@ -198,6 +198,7 @@ class Application extends Base implements Adapter
 
     public function validateToken(string $token, string $context = '_app_')
     {
-        return $res = $this->getToken($context) && $res === $token;
+        $res = $this->getToken($context);
+        return $res === $token;
     }
 }

@@ -24,7 +24,7 @@ class Controller extends Base
 
         if(AppIns::path('theme') && $this->config->exists('theme'))
         {
-            $themePath = AppIns::path('theme'). $this->config->theme;
+            $themePath = AppIns::path('theme'). $this->config->theme. '/';
             $overrideLayouts = [
                 $themePath. '__.php',
                 $themePath. '__/index.php',

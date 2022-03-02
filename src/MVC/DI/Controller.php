@@ -32,7 +32,7 @@ class Controller extends BaseObj
 
         if(AppIns::path('theme') && $this->app->config->exists('theme'))
         {
-            $themePath = AppIns::path('theme'). $this->app->config->theme;
+            $themePath = AppIns::path('theme'). $this->app->config->theme. '/';
             $overrideLayouts = [
                 $themePath. '__.php',
                 $themePath. '__/index.php',

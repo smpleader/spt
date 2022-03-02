@@ -198,29 +198,29 @@ class CMSApp extends WebApp
     public function prepareLanguage()
     {
         // multi language
-        $lang = $this->session->get('language', 'en');
+        $languageName = $this->session->get('language', 'en');
         $try = $this->request->get->get('lang', '', 'cmd');
         $acceptLanguages = $this->config->exists('acceptLanguages') ? $this->config->acceptLanguages : ['en']; 
         if(in_array($try, $acceptLanguages) && $try != $lang)
         {
-            $lang = $try;
+            $languageName = $try;
             $this->session->set('language', $lang);
         }
 
-        $this->lang =  new FileIni();
+        $lang =  new FileIni();
 
-        $path = AppIns::path('plugin'). 'core/'.  $lang. '.ini';
+        $path = AppIns::path('plugin'). 'core/'.  $languageName. '.ini';
         if(file_exists($path))
         {
-            $this->lang->import($path);
+            $lang->import($path);
         }
 
         if($this->get('plugin', 'core') != 'core')
         {
-            $path = AppIns::path('plugin'). $this->get('plugin'). '/'. $lang. '.ini';
+            $path = AppIns::path('plugin'). $this->get('plugin'). '/'. $languageName. '.ini';
             if(file_exists($path))
             {
-                $this->lang->import($path);
+                $lang->import($path);
             }
         }
         

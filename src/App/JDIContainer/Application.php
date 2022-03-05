@@ -183,16 +183,15 @@ class Application extends Base implements Adapter
         $browser = $this->request->server->get('HTTP_USER_AGENT', '');
         $secrect = $this->getToken('_secrect_');
 
-        $cookie = $this->request->cookie->get($secrect, '_do_not_support_');
-        if ('_do_not_support_' != $cookie)
+        $cookie = $this->request->cookie->get($secrect, '_do_not_set_');
+        if ('_do_not_set_' != $cookie)
         {
+            $cookie = Token::md5( rand(199999, strtotime('now')), 8);
             $this->request->cookie->set($secrect, $cookie);
         }
 
         return Token::md5(
-            Token::md5($context, 4).
-            Env::getClientIp().
-            $browser. $cookie
+            Token::md5($context, 4). Env::getClientIp(). $browser. $cookie
         );
     }
 

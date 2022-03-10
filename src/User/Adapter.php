@@ -12,8 +12,7 @@ namespace SPT\User;
 
 interface Adapter
 {
-    public function init($settings);
-    public function id(string $scope);
+    public function init($settings); 
     public function get(string $key);
     public function can(string $permission_key);
 }

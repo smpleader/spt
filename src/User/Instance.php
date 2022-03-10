@@ -15,19 +15,26 @@ use SPT\User\Adapter as UserAdapter;
 class Instance
 {
     private $adapter;
-    public function __construct(UserAdapter $adapter)
+    public function __construct(UserAdapter $adapter, array $middleWares = [])
     {
         $this->adapter = $adapter;
+
+        if(count($middleWares))
+        {
+            foreach($middleWares as $type => $mw)
+            {
+                if('adapter' != $type)
+                {
+                    $key = strtolower($key). 'MW';
+                    $this->{$key} = $mv;
+                }
+            }
+        }
     }
 
     public function init($settings)
     {
         return $this->adapter->init($settings);
-    }
-
-    public function id(string $scope = '')
-    {
-        return $this->adapter->id($scope);
     }
 
     public function get(string $key)
@@ -37,6 +44,11 @@ class Instance
 
     public function can(string $key)
     {
+        if(property_exists($this, 'permissionMW'))
+        {
+            return $this->permissionMW->allow($key, $this->adapter);
+        }
+
         return $this->adapter->can($key);
     }
 }

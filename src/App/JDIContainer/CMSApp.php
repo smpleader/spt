@@ -133,41 +133,17 @@ class CMSApp extends WebApp
                     $plgObject = new $class;
                     $list = $plgObject->register();
 
-                    if(is_bool($list)) // auto load
-                    {
-                        $list = [
-                            'libraries' => [],
-                            'models' => [],
-                            'entities' => [],
-                            'viewmodels' => []
-                        ];
-                    }
+                    $this->beforeLoadServiceProviderClass($plgObject, $list, $path);
 
                     if(FncArray::isReady($list))
                     {
                         foreach($list as $type => $settings)
                         {
-                            $fnc = 'load'.ucfirst($type);
-                            if(method_exists($plgObject, $fnc))
-                            {
-                                $plgObject->{$fnc}($container);
-                            }
-                            else
-                            {
-                                $fullPath = isset($settings['path']) ? $settings['path'] : $path. $type;
-                                $aliasList = isset($settings['alias']) ? $settings['alias'] : [];
-                                $class_namespace = isset($settings['namespace']) ? $settings['namespace'] : $namespace. '\\'. $type;
-                                $this->loadClass($fullPath, $class_namespace, $aliasList);
-                            }
+                            $this->loadServiceProviderClass($plgObject, $type, $settings, $path);
                         }
                     }
-                    
-                    $routing_file = $path. 'routing.php';
-                    if(file_exists($routing_file))
-                    {
-                        $routing = (array) require_once $routing_file;
-                        $this->router->import($routing);
-                    }
+
+                    $this->afterLoadServiceProviderClass($plgObject, $list, $path);
 
                     $enqueue->{$plugin} = $plgObject;
                 }
@@ -175,6 +151,45 @@ class CMSApp extends WebApp
         }
 
         $container->set('plugin', $enqueue);
+    }
+
+    protected function loadServiceProviderClass($plgObject, $type, $settings, $path)
+    {
+        $fnc = 'load'.ucfirst($type);
+        if(method_exists($plgObject, $fnc))
+        {
+            $plgObject->{$fnc}($container);
+        }
+        else
+        {
+            $fullPath = isset($settings['path']) ? $settings['path'] : $path. $type;
+            $aliasList = isset($settings['alias']) ? $settings['alias'] : [];
+            $class_namespace = isset($settings['namespace']) ? $settings['namespace'] : $namespace. '\\'. $type;
+            $this->loadClass($fullPath, $class_namespace, $aliasList);
+        }
+    }
+
+    protected function beforeLoadServiceProviderClass($plgObject, &$list, $path)
+    {
+        if(is_bool($list)) // auto load
+        {
+            $list = [
+                'libraries' => [],
+                'models' => [],
+                'entities' => [],
+                'viewmodels' => []
+            ];
+        }
+    }
+
+    protected function afterLoadServiceProviderClass($plgObject, &$list, $path)
+    {
+        $routing_file = $path. 'routing.php';
+        if(file_exists($routing_file))
+        {
+            $routing = (array) require_once $routing_file;
+            $this->router->import($routing);
+        }
     }
 
     protected function loadClass(string $path, string $namespace, array $aliasList)

@@ -184,7 +184,7 @@ class Application extends Base implements Adapter
         $secrect = $this->getToken('_secrect_');
 
         $cookie = $this->request->cookie->get($secrect, '_do_not_set_');
-        if ('_do_not_set_' != $cookie)
+        if ('_do_not_set_' == $cookie)
         {
             $cookie = Token::md5( rand(199999, strtotime('now')), 8);
             $this->request->cookie->set($secrect, $cookie);

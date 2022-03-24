@@ -155,6 +155,7 @@ class CMSApp extends WebApp
 
     protected function loadServiceProviderClass($plgObject, $type, $settings, $path)
     {
+        $container = $this->getContainer();
         $fnc = 'load'.ucfirst($type);
         if(method_exists($plgObject, $fnc))
         {

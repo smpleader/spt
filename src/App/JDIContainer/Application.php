@@ -45,6 +45,7 @@ class Application extends Base implements Adapter
             
             // create request
             $container->set('request', new Request());
+            $container->set('middleWares', []);
 
             // create config
             if(AppIns::path('config'))

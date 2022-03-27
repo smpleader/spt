@@ -4,15 +4,16 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: A way to route the site based URL
+ * @description: A way to route the site based URL from an array of endpoints
  * 
  */
 
 namespace SPT\Router;
 
+use SPT\BaseObj;
 use SPT\Support\FncArray;
 
-class Base extends BaseObj
+class ArrayEndpoint extends BaseObj
 {
     protected $nodes;
 

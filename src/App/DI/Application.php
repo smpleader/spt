@@ -14,7 +14,7 @@ use SPT\BaseObj;
 use SPT\Response;
 use SPT\MagicObj;
 use SPT\Query;
-use SPT\Router;
+use SPT\Router\ArrayEndpoint as Router;
 use SPT\Extend\Pdo as PdoWrapper;
 use SPT\Storage\File\ArrayType as FileArray;
 use SPT\Storage\File\IniType as FileIni;

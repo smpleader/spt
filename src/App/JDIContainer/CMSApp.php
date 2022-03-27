@@ -139,7 +139,7 @@ class CMSApp extends WebApp
                     {
                         foreach($list as $type => $settings)
                         {
-                            $this->loadServiceProviderClass($plgObject, $type, $settings, $path);
+                            $this->loadServiceProviderClass($plgObject, $namespace, $type, $settings, $path);
                         }
                     }
 
@@ -153,7 +153,7 @@ class CMSApp extends WebApp
         $container->set('plugin', $enqueue);
     }
 
-    protected function loadServiceProviderClass($plgObject, $type, $settings, $path)
+    protected function loadServiceProviderClass($plgObject, $namespace, $type, $settings, $path)
     {
         $container = $this->getContainer();
         $fnc = 'load'.ucfirst($type);

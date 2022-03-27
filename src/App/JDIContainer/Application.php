@@ -52,35 +52,15 @@ class Application extends Base implements Adapter
                 $config = new FileArray();
                 $config->import(AppIns::path('config'));
                 $container->set('config', $config);
-                
-                // create router based config
-                if(AppIns::path('config') && $config->exists('endpoints'))
-                {
-                    $sitePath = $config->exists('sitepath') ? $config->sitepath : '';
-                    $router = new Router($sitePath);
-                    $router->import($config->endpoints);
-                    $container->share('router', $router, true);
-                }
 
                 // create query
                 if( $config->exists('db') )
                 {
-                    $pdo = new PdoWrapper(
-                        $config->db['host'],
-                        $config->db['username'],
-                        $config->db['passwd'],
-                        $config->db['database'],
-                        $config->db['options'],
-                        $config->db['debug']
-                    );
-                    
-                    if(!$pdo->connected)
-                    {
-                        throw new \Exception('Connection failed. '. implode("\n",  $pdo->getLog()), 500); 
-                    }
-
-                    $container->set('query', new Query( $pdo, ['#__'=>  $config->db['prefix']]));
+                    $this->prepareDB($config);
                 }
+                
+                // create router based config
+                $this->prepareRouter($config);
             }
 
             // create session
@@ -100,6 +80,37 @@ class Application extends Base implements Adapter
         }
 
         return $this;
+    }
+
+    public function prepareRouter($config)
+    {
+        if($config->exists('endpoints'))
+        {
+            $sitePath = $config->exists('sitepath') ? $config->sitepath : '';
+            $router = new Router($sitePath);
+            $router->import($config->endpoints);
+            $this->getContainer()->share('router', $router, true);
+        }
+    }
+
+    public function prepareDB($config)
+    {
+        $pdo = new PdoWrapper(
+            $config->db['host'],
+            $config->db['username'],
+            $config->db['passwd'],
+            $config->db['database'],
+            $config->db['options'],
+            $config->db['debug']
+        );
+        
+        if(!$pdo->connected)
+        {
+            throw new \Exception('Connection failed. '. implode("\n",  $pdo->getLog()), 500); 
+        }
+
+        $this->getContainer()->set('query', new Query( $pdo, ['#__'=>  $config->db['prefix']]));
+
     }
 
     public function prepareLanguage()

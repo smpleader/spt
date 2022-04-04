@@ -29,7 +29,7 @@ final class Dispatcher
             foreach(static::$dispatches[$name] as $register)
             {
                 list($object, $nameFnc) = $register;
-                $try = \SPT\App\Instance::main()->factory($object);
+                $try = \SPT\App\Instance::factory($object);
 
                 if( $try && method_exists( $try, $nameFnc))
                 {

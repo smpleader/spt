@@ -10,6 +10,7 @@
 
 namespace SPT\App\JDIContainer;
 
+use SPT\Dispatcher;
 use SPT\Support\Env;
 use SPT\Support\Token;
 use SPT\User\Instance as User;
@@ -31,54 +32,23 @@ class WebApp extends Application
 
     protected function routing()
     {
-        $defaultEndpoint = $this->config->exists('defaultEndpoint') ? $this->config->defaultEndpoint : '';
-        $intruction = $this->router->pathFinding($defaultEndpoint);
-        $fnc = '';
+        list($todo, $params) = $this->router->parse($this->config, $this->request);
 
-        if( is_array($intruction) )
+        if(count($params))
         {
-            $fnc = $intruction['fnc'];
-            unset($intruction['fnc']);
-            foreach($intruction as $key => $value)
+            foreach($params as $key => $value)
             {
                 $this->set($key, $value);
             }
-
-            if(isset($intruction['parameters']))
-            {
-                $this->request->set('urlVars', $this->router->parseUrl($intruction['parameters']));
-                unset($intruction['parameters']);
-            }
-        } 
-        elseif( is_string($intruction) ) 
-        {
-            $fnc = $intruction;
-        } 
-        else 
-        {
-            throw new \Exception('Invalid request', 500);
         }
 
-        $method = $this->request->header->getRequestMethod();
-        if(is_array($fnc))
+        $try = Dispatcher::fire('permission', $todo);
+        if( !$try )
         {
-            if(isset($fnc[$method]))
-            {
-                $fnc = $fnc[$method];
-                $this->set('method', $method);
-            }
-            elseif(isset($fnc['any']))
-            {
-                $fnc = $fnc['any'];
-                $this->set('method', 'any');
-            }
-            else
-            {
-                throw new \Exception('Not a function', 500);
-            }
+            throw new \Exception('You are not allowed.', 403);
         }
 
-        $try = explode('.', $fnc);
+        $try = explode('.', $todo);
         
         if(count($try) == 2)
         {
@@ -87,7 +57,7 @@ class WebApp extends Application
         else
         {
             throw new \Exception('Not a controller', 500);
-        }   
+        }
     }
 
     protected function processRequest()

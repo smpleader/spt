@@ -33,9 +33,14 @@ final class Dispatcher
 
                 if( $try && method_exists( $try, $nameFnc))
                 {
-                    call_user_func_array([$try, $nameFnc],  $params);
+                    if( true !== call_user_func_array([$try, $nameFnc],  $params) )
+                    {
+                        return false;
+                    }
                 }
             }
         }
+
+        return true;
     }
 }

@@ -200,4 +200,58 @@ class ArrayEndpoint extends BaseObj
 
         return $vars;
     }
+
+    public function parse($config, $request)
+    {
+        $defaultEndpoint = $config->exists('defaultEndpoint') ? $config->defaultEndpoint : '';
+        $intruction = $this->pathFinding($defaultEndpoint);
+        $fnc = '';
+        $parameters = [];
+
+        if( is_array($intruction) )
+        {
+            $fnc = $intruction['fnc'];
+            unset($intruction['fnc']); 
+
+            if(isset($intruction['parameters']))
+            {
+                $request->set('urlVars', $this->parseUrl($intruction['parameters']));
+                unset($intruction['parameters']);
+            }
+
+            if(count($intruction))
+            {
+                $parameters = $intruction;
+            }
+        } 
+        elseif( is_string($intruction) ) 
+        {
+            $fnc = $intruction;
+        } 
+        else 
+        {
+            throw new \Exception('Invalid request', 500);
+        }
+
+        if(is_array($fnc))
+        {
+            $method = $request->header->getRequestMethod();
+            if(isset($fnc[$method]))
+            {
+                $fnc = $fnc[$method];
+                $parameters['method'] = $method;
+            }
+            elseif(isset($fnc['any']))
+            {
+                $fnc = $fnc['any'];
+                $parameters['method'] = 'any';
+            }
+            else
+            {
+                throw new \Exception('Not a function', 500);
+            }
+        }
+
+        return [$fnc, $parameters];
+    }
 }

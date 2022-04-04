@@ -25,7 +25,17 @@ class Instance
 
     public static function factory(string $key)
     {
-        return static::$app->factory($key);
+        if( static::$app->has($key) )
+        {
+            return static::$app->{$key};
+        }
+
+        return null;
+    }
+
+    public static function has(string $key)
+    {
+        return static::$app->has($key);
     }
     
     public static function main()

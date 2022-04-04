@@ -39,6 +39,11 @@ class Application extends BaseObj implements Adapter
     public $session; 
     public $lang;
 
+    public function has(string $name)
+    {
+        return in_array($name, ['config', 'router', 'query', 'user', 'session', 'lang']);
+    }
+
     public function execute()
     {
         AppIns::path('app') || die('App did not setup properly');

@@ -12,6 +12,7 @@ namespace SPT\App;
 
 interface Adapter
 {
+    public function has(string $name);
     public function getName(string $name);
     public function getToken(string $context = '');
     public function response($content, $code = '200');

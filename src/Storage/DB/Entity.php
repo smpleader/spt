@@ -376,4 +376,10 @@ class Entity
 
         return $exist ? $this->update($data, $where) : $this->add($data);
     }
+    
+    public function removeBulks(array $ids, $field = null)
+    {
+        if( empty($field) ) $field = $this->pk;
+        $this->db->table( $this->table )->delete([ $field => $ids]);
+    }
 }

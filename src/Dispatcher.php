@@ -13,6 +13,7 @@ namespace SPT;
 final class Dispatcher
 {
     static private $dispatches;
+    static private $log;
 
     public static function register($event, $object, $func)
     {
@@ -33,8 +34,10 @@ final class Dispatcher
 
                 if( $try && method_exists( $try, $nameFnc))
                 {
-                    if( true !== call_user_func_array([$try, $nameFnc],  $params) )
+                    $result = call_user_func_array([$try, $nameFnc],  $params);
+                    if( true !== $result )
                     {
+                        static::$log = $result;
                         return false;
                     }
                 }
@@ -42,5 +45,10 @@ final class Dispatcher
         }
 
         return true;
+    }
+
+    public static function log()
+    {
+        return static::$log
     }
 }

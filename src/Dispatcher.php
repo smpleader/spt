@@ -14,6 +14,7 @@ final class Dispatcher
 {
     static private $dispatches;
     static private $log;
+    static private $current;
 
     public static function register($event, $object, $func)
     {
@@ -25,8 +26,9 @@ final class Dispatcher
     {
         $params = func_get_args();
         $name = array_shift($params);
-        if(isset( static::$dispatches[$name]))
+        if(isset( static::$dispatches[$name]) || static::$current != $name )
         {
+            static::$current = $name;
             foreach(static::$dispatches[$name] as $register)
             {
                 list($object, $nameFnc) = $register;
@@ -42,6 +44,7 @@ final class Dispatcher
                     }
                 }
             }
+            static::$current = null;
         }
 
         return true;

@@ -37,6 +37,7 @@ class SitemapEntity extends Entity
             'id' => [
                 'pk' => 1,
                 'type' => 'bigint', 
+                'extra' => 'auto_increment',
                 'option' => 'unsigned',
                 'limit' => 20
             ],
@@ -52,7 +53,7 @@ class SitemapEntity extends Entity
                 'type' => 'varchar',
                 'limit' => 245,
             ], 
-            'func' => [
+            'fnc' => [
                 'type' => 'varchar',
                 'limit' => 245,
             ],
@@ -98,7 +99,7 @@ class SitemapEntity extends Entity
             'settings' => '[]',
             'object_id' => 0,
             'object' => $data['object'],
-            'permission' => '',
+            'permission' => '[]',
             'method' => 'GET',
             'page' => ''
         ];

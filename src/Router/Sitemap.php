@@ -16,8 +16,8 @@ use SPT\Support\FncArray;
 
 class Sitemap extends BaseObj
 {
-    private $nodes; 
-    private $table;
+    protected $nodes; 
+    protected $table;
 
     public function __construct(SitemapEntity $entity, $config, Request $request)
     {
@@ -80,36 +80,61 @@ class Sitemap extends BaseObj
         $found = $isHome ? $this->table->findOne(['page' => 'home', 'published' => 1])
                      : $this->table->findOne(['slug' => $path, 'published' => 1, 'method' => $method]);
 
-        $this->set('sitenode', $found);
-        return ( $found === false ) ? $default : $found;
-    }
+        if ($found === false)
+        {
+            //Support find endpoint of restApi
+            $found = $this->table->findOne(['slug' => $path, 'published' => 1, 'method' => '*']);
+            if ($found)
+            {
+                $found['fnc'] = json_decode($found['fnc'], true);
+            }
+        }
 
-    public function url($asset = '')
-    {
-        return $this->get('root'). $asset;
-    }
+        if ( $found === false ) return $default;
+
+        $found['settings'] = json_decode($found['settings'], true);
+        $found['permission'] = json_decode($found['permission'], true);
+
+        $this->set('sitenode', $found);
+
+        return $found;
+    } 
 
     public function parse($config, $request)
     {
+        $method = $request->header->getRequestMethod();
         $defaultEndpoint = $config->exists('defaultEndpoint') ? $config->defaultEndpoint : '';
-        $intruction = $this->pathFinding($defaultEndpoint);
+        $intruction = $this->pathFinding($defaultEndpoint, $method);
         $fnc = '';
         $parameters = [];
 
         if( is_array($intruction) )
         {
             $fnc = $intruction['fnc'];
-            unset($intruction['fnc']); 
 
-            if(isset($intruction['parameters']))
+            foreach(['settings', 'permission', 'object', 'object_id', 'method'] as $key)
             {
-                $request->set('urlVars', $this->parseUrl($intruction['parameters']));
-                unset($intruction['parameters']);
+                $parameters[$key] = $intruction[$key];
             }
 
-            if(count($intruction))
+            $parameters['page_type'] = $intruction['page'];
+
+            if(is_array($fnc))
             {
-                $parameters = $intruction;
+                if(isset($fnc[$method]))
+                {
+                    $fnc = $fnc[$method];
+                    $parameters['method'] = $method;
+                }
+                elseif(isset($fnc['any']))
+                {
+                    $fnc = $fnc['any'];
+                    $parameters['method'] = 'any';
+                }
+                else
+                {
+                    throw new \Exception('Not a function', 500);
+                }
             }
         } 
         elseif( is_string($intruction) ) 
@@ -119,25 +144,6 @@ class Sitemap extends BaseObj
         else 
         {
             throw new \Exception('Invalid request', 500);
-        }
-
-        if(is_array($fnc))
-        {
-            $method = $request->header->getRequestMethod();
-            if(isset($fnc[$method]))
-            {
-                $fnc = $fnc[$method];
-                $parameters['method'] = $method;
-            }
-            elseif(isset($fnc['any']))
-            {
-                $fnc = $fnc['any'];
-                $parameters['method'] = 'any';
-            }
-            else
-            {
-                throw new \Exception('Not a function', 500);
-            }
         }
 
         return [$fnc, $parameters];

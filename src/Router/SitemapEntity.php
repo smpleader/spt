@@ -101,10 +101,11 @@ class SitemapEntity extends Entity
             'object' => $data['object'],
             'permission' => '[]',
             'method' => 'GET',
-            'page' => ''
+            'page' => '',
+            'published' => 1
         ];
 
-        if(isset($data['page'])) $endpoint['page'] = json_encode($data['page']);
+        if(isset($data['page'])) $endpoint['page'] = $data['page'];
         if(isset($data['settings'])) $endpoint['settings'] = json_encode($data['settings']);
         if(isset($data['permission'])) $endpoint['permission'] = json_encode($data['permission']);
 

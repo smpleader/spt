@@ -10,7 +10,6 @@
 
 namespace SPT\Router;
 
-use SPT\BaseObj;
 use SPT\Request\Base as Request;
 use SPT\Support\FncArray;
 

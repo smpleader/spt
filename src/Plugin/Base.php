@@ -12,7 +12,7 @@ namespace SPT\Plugin;
 
 use SPT\App\Adapter as Application;
 
-class Base implements PluginAbstract
+class Base extends PluginAbstract
 {
     protected $app;
 

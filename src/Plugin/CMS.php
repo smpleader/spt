@@ -42,6 +42,7 @@ class CMS extends Base
                 $value['slug'] = $key;
                 $value['plugin'] = $plugin['name'];
                 $data = $this->app->SitemapEntity->endpointsFromArray($value);
+                $endpoints = array_merge($data, $endpoints);
             }
     
             foreach ($endpoints as $endpoint)
@@ -51,7 +52,8 @@ class CMS extends Base
         }
 
         $newData = $plugin;
-        $newData['settings'] = json_encode($this->getSettings());
+        $newData['settings'] = '{}'; 
+        $newData['active'] = 1; 
         $this->app->PluginEntity->add( $newData );
     }
 

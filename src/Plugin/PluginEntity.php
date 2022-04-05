@@ -26,7 +26,7 @@ class PluginEntity extends Entity
                 'extra' => 'auto_increment',
                 'option' => 'unsigned',
             ],
-            'plugin' => [
+            'name' => [
                 'type' => 'varchar',
                 'limit' => 255,
             ],

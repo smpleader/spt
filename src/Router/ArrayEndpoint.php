@@ -73,7 +73,7 @@ class ArrayEndpoint extends BaseObj
     }
 
     // support nested keys
-    protected function flatNodes($sitemap, $parentSlug='')
+    public function flatNodes($sitemap, $parentSlug='')
     {
         $arr = [];
         foreach($sitemap as $key => $inside)

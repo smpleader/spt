@@ -14,9 +14,9 @@ abstract class PluginAbstract
 {
     // declare in service provider
     abstract public function register();
-    abstract public function info();
-    abstract public function config();
-    abstract public function assets();
+    abstract public function getInfo();
+    abstract public function getSettings();
+    abstract public function registerAssets();
 
     // hook in manage
     abstract public function install();

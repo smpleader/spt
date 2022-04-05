@@ -28,7 +28,7 @@ class SitemapEntity extends Entity
             $this->table = $options['table'];
         }
 
-        $this->db->checkAvailability();
+        $this->checkAvailability();
     }
 
     public function getFields()

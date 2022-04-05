@@ -14,7 +14,7 @@ use SPT\BaseObj;
 use SPT\Request\Base as Request;
 use SPT\Support\FncArray;
 
-class Sitemap extends BaseObj
+class Sitemap extends Base
 {
     protected $nodes; 
     protected $table;

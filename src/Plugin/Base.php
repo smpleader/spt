@@ -33,7 +33,7 @@ class Base implements PluginAbstract
             'name' => 'plgBase',
             'version' => '0.0.1',
             'schema_version' => '0.0.1'
-        ]
+        ];
     }
 
     public function getSettings()

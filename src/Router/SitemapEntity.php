@@ -92,7 +92,7 @@ class SitemapEntity extends Entity
             'slug' => $this->getUniqueSlug($data['slug']),
             'title' => $data['title'],
             'plugin' => $data['plugin'],
-            'settings' => '[]';
+            'settings' => '[]',
             'object_id' => 0,
             'object' => $data['object'],
             'permission' => '',

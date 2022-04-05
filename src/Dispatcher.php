@@ -52,6 +52,6 @@ final class Dispatcher
 
     public static function log()
     {
-        return static::$log
+        return static::$log;
     }
 }

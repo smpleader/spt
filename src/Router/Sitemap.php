@@ -77,8 +77,8 @@ class Sitemap extends BaseObj
         $path = trim($this->get('actualPath'), '/'); 
         $isHome = $this->get('isHome');
         
-        $found = $isHome ? $this->table->findOne(['page' => 'home', 'published' => 1]) : ;
-                    $this->table->findOne(['slug' => $path, 'published' => 1, 'method' => $method]);
+        $found = $isHome ? $this->table->findOne(['page' => 'home', 'published' => 1])
+                     : $this->table->findOne(['slug' => $path, 'published' => 1, 'method' => $method]);
 
         $this->set('sitenode', $found);
         return ( $found === false ) ? $default : $found;

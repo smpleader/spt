@@ -15,11 +15,11 @@ class CMS extends Base
     public function getInfo()
     {
         return [
-            'title' => 'Plugin CMS'
+            'title' => 'Plugin CMS',
             'name' => 'plgCMS',
             'version' => '0.0.2',
             'schema_version' => '0.0.2'
-        ]
+        ];
     }
 
     public function registerRouter()

@@ -26,7 +26,7 @@ final class Dispatcher
     {
         $params = func_get_args();
         $name = array_shift($params);
-        if(isset( static::$dispatches[$name]) || static::$current != $name )
+        if(isset( static::$dispatches[$name]) && static::$current != $name )
         {
             static::$current = $name;
             foreach(static::$dispatches[$name] as $register)

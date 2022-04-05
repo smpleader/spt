@@ -31,9 +31,8 @@ class CMS extends Base
     public function install(){
 
         $plugin = $this->getInfo();
-        $slug = $this->app->config->exists('sitepath') ? $this->app->config->sitepath : '';
         $arr = $this->registerRouter();
-        $arr = $this->app->router->flatNodes($arr, $slug);
+        $arr = $this->app->router->flatNodes($arr);
         $endpoints = [];
         if(count($arr))
         {
@@ -60,7 +59,7 @@ class CMS extends Base
     public function upgrade()
     {
         $plugin = $this->getInfo();
-        $record = $this->app->PluginEntity->findOne(['plugin' => $plugin['name']]);
+        $record = $this->app->PluginEntity->findOne(['name' => $plugin['name']]);
         if ($plugin['version'] != $record['version'])
         {
             $record['version'] = $plugin['version'];
@@ -81,7 +80,7 @@ class CMS extends Base
         }
 
         // records in table plugin 
-        $plugin = $this->app->PluginEntity->findOne(['plugin' => $plugin['name']]);
+        $plugin = $this->app->PluginEntity->findOne(['name' => $plugin['name']]);
         $this->app->PluginEntity->remove($plugin['id']);
         return true;
     }

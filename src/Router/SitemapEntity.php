@@ -78,6 +78,9 @@ class SitemapEntity extends Entity
             'settings' => [
                 'type' => 'text'
             ],
+            'permission' => [
+                'type' => 'text'
+            ],
             'published' => [
                 'type' => 'int',
                 'limit' => 1,

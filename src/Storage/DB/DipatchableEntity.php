@@ -8,7 +8,7 @@
  * 
  */
 
-namespace Examples\v13_sitemap\libraries\entities;
+namespace SPT\Storage\DB;
 
 use SPT\Query; 
 use SPT\Dispatcher;

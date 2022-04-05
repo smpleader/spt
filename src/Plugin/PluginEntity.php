@@ -8,7 +8,7 @@
  * 
  */
 
-namespace Examples\v13_sitemap\libraries\plugin;
+namespace SPT\Plugin;
 
 use  SPT\Storage\DB\Entity;
 

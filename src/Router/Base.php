@@ -33,14 +33,13 @@ class Base extends BaseObj
         $arr = [];
         foreach($sitemap as $key => $inside)
         {
-            /* TODO: recheck the standardlized format of a slug 
             if(empty($key)) $key = '/';
             elseif (strpos($key, '/') !== 0 && empty($parentSlug)) 
             {
                 $key = '/'. $key;
-            }*/
+            }
 
-            if($key == '') // '/' )
+            if($key == '/' )
             {
                 if( $parentSlug == '' )
                 {

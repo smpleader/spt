@@ -100,7 +100,7 @@ class CMSApp extends WebApp
                 if(class_exists($class))
                 {
                     $path = AppIns::path('plugin'). $plugin. '/';
-                    $plgObject = new $class;
+                    $plgObject = new $class($this);
                     $list = $plgObject->register();
 
                     $this->beforeLoadServiceProviderClass($plgObject, $list, $path);

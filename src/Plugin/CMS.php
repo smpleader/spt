@@ -38,7 +38,7 @@ class CMS extends Base
         {
             foreach($arr as $key => $value)
             {
-                $value['slug'] = $key;
+                $value['slug'] = trim($key, '/');
                 $value['plugin'] = $plugin['name'];
                 $data = $this->app->SitemapEntity->endpointsFromArray($value);
                 $endpoints = array_merge($data, $endpoints);

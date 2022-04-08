@@ -15,7 +15,7 @@ abstract class Middleware
     /**
      * @var Middleware
      */
-    private $next;
+    protected $next;
 
     /**
      * This method can be used to build a chain of middleware objects.

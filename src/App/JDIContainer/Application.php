@@ -135,9 +135,8 @@ class Application extends Base implements Adapter
     
     public function prepareSession()
     {
-        $session = new Session();
         $container = $this->getContainer();
-        $session->init(
+        $session = new Session(
             $container->has('query') ? 
             new DatabaseSession( new DatabaseSessionEntity($this->query), $this->getToken() ) :
             new PhpSession()

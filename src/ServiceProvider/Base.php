@@ -56,8 +56,6 @@ class Base implements ServiceProviderInterface
         return [$class, $alias];
     }
 
-    public function init(){} 
-
     public function register(Container $container)
     {
         /* example for a placeholder

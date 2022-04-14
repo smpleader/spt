@@ -26,7 +26,7 @@ class DatabaseSession implements SessionAdapter
         $this->reload();
     }
 
-    public function reload()
+    public function reload($username = '', $userid = 0)
     {
         $data = $this->table->findOne( ['session_id' =>  $this->session_id]);
         $this->session = $data ? (array) json_decode($data['data']) : [];
@@ -35,9 +35,19 @@ class DatabaseSession implements SessionAdapter
         {
             $this->table->add( [
                 'session_id' =>  $this->session_id,
-                'time' => strtotime("now"),
+                'created_at' => strtotime("now"),
                 'data' => '',
+                'username' => $username,
+                'user_id' => $userid 
             ]);
+        }
+        elseif( !empty($username) && !empty($userid ) )
+        {
+            $this->table->update([
+                'modified_at' => strtotime("now"),
+                'username' => $username,
+                'user_id' => $userid 
+            ], ['session_id' =>  $this->session_id]);
         }
     }
 
@@ -51,7 +61,7 @@ class DatabaseSession implements SessionAdapter
     {
         $this->session[$key] = $value;
         $try = $this->table->update([
-            'time' => strtotime("now"),
+            'modified_at' => strtotime("now"),
             'data' => json_encode($this->session),
         ], ['session_id' =>  $this->session_id]);
     }

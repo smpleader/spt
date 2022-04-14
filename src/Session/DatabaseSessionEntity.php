@@ -49,8 +49,15 @@ class DatabaseSessionEntity extends Entity
                 'type' => 'varbinary',
                 'limit' => 192,
             ],
-            'time' => [
+            'created_at' => [
                 'type' => 'int',
+                'option' => 'unsigned',
+                'length' => 10,
+            ],
+            'modified_at' => [
+                'type' => 'int',
+                'option' => 'unsigned',
+                'length' => 10,
             ],
             'username' => [
                 'type' => 'varchar',

@@ -17,13 +17,12 @@ class Base extends ConfigurableDI
 {
     protected $session;
     protected $data;
-    protected $context;
 
     public function init($options)
     {
         parent::init($options);
 
-        $storage = empty($this->context) ? '_user' : $this->context;
+        $storage = $this->getContext();
         $this->data = (array) $this->session->get( $storage );
         
         if( empty($this->data) )
@@ -65,7 +64,7 @@ class Base extends ConfigurableDI
     public function set(string $key, $value)
     {
         $this->data[$key] = $value;
-        $storage = empty($this->context) ? '_user' : $this->context;
+        $storage = $this->getContext();
         $this->session->set($storage, $this->data);
     }
 
@@ -77,7 +76,7 @@ class Base extends ConfigurableDI
     public function reset()
     {
         $this->data = $this->getDefault();
-        $storage = empty($this->context) ? '_user' : $this->context;
+        $storage = $this->getContext();
         $this->session->set($storage, $this->data);
     }
 }

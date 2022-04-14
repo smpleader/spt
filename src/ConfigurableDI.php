@@ -12,6 +12,12 @@ namespace SPT;
 
 abstract class ConfigurableDI 
 {
+    protected $context;
+    public function getContext()
+    {
+        return empty($this->context) ? static::class : $this->context;
+    }
+
     public function init(array $options)
     {
         foreach($this->getMutableFields() as $key => $type)

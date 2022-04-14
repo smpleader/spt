@@ -18,14 +18,6 @@ abstract class Instance
         $this->adapter = $adapter;
     }
 
-    /* this is an idea about init:
-    public function init()
-    {
-        $options = func_get_args();
-        call_user_func_array([$this->adapter, 'init'], $options);
-        return $this->adapter;
-    }*/
-
     public function __call($method, $arguments)
     {
         if(method_exists($this->adapter, $method))

@@ -28,15 +28,4 @@ class BaseObj
     {
         return $this->_vars;
     }
-
-    public function init(array $vars )
-    { 
-        foreach($vars as $key => $val)
-        {
-            if( !is_numeric($key) )
-            {
-                $this->set($key, $val);
-            }
-        } 
-    }
 }

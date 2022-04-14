@@ -24,7 +24,7 @@ class Base extends ConfigurableDI
         parent::init($options);
 
         $storage = empty($this->context) ? '_user' : $this->context;
-        $this->data = $this->session->get( $storage );
+        $this->data = (array) $this->session->get( $storage );
         
         if( empty($this->data) )
         {
@@ -54,23 +54,30 @@ class Base extends ConfigurableDI
 
     public function is(string $group)
     {
-        return is_array($this->_vars['groups']) ? in_array($group, $this->_vars['groups']) : false;
+        return is_array($this->data['groups']) ? in_array($group, $this->data['groups']) : false;
     }
 
     public function can(string $permission)
     {
-        return is_array($this->_vars['permission']) ? in_array($permission, $this->_vars['permission']) : false;
+        return is_array($this->data['permission']) ? in_array($permission, $this->data['permission']) : false;
     }
 
-    public function set($key, $value)
+    public function set(string $key, $value)
     {
         $this->data[$key] = $value;
         $storage = empty($this->context) ? '_user' : $this->context;
-        $this->session->update($storage, $this->data);
+        $this->session->set($storage, $this->data);
     }
 
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         return isset($this->data[$key]) ? $this->data[$key] : $default;
+    }
+
+    public function reset()
+    {
+        $this->data = $this->getDefault();
+        $storage = empty($this->context) ? '_user' : $this->context;
+        $this->session->set($storage, $this->data);
     }
 }

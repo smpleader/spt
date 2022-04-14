@@ -15,7 +15,12 @@ abstract class ConfigurableDI
     protected $context;
     public function getContext()
     {
-        return empty($this->context) ? static::class : $this->context;
+        if( empty($this->context) )
+        {
+            $arr = explode('\\', static::class);
+            $this->context = end($arr);
+        }
+        return $this->context;
     }
 
     public function init(array $options)

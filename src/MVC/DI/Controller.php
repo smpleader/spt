@@ -12,7 +12,7 @@ namespace SPT\MVC\DI;
 
 use SPT\BaseObj;
 use SPT\View\Theme;  
-use SPT\View\View;  
+use SPT\View\Base as View;  
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 
@@ -56,8 +56,8 @@ class Controller extends BaseObj
     {
         $this->view = new View();
         $this->view->init([
-            $this->app->lang, 
-            $this->prepareTheme()
+            'lang' => $this->app->lang, 
+            'theme' => $this->prepareTheme()
         ]);
     }
 

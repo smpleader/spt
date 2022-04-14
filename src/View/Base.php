@@ -11,17 +11,15 @@
 namespace SPT\View;
 
 use SPT\View\Adapter as ViewAdapter;
+use SPT\ConfigurableDI;
 
-class Base implements ViewAdapter
+class Base extends ConfigurableDI implements ViewAdapter
 { 
     protected $theme = null;
     protected $lang = null;
     protected $_share = [];
     protected $_vars = [];
     protected $_index = '_root_';
-
-    /* Proxy here */
-    public function init(array $params){}
 
     public function __get($name)
     { 
@@ -30,6 +28,14 @@ class Base implements ViewAdapter
         if( isset( $this->_share[$name] ) ) return $this->_share[$name];
 
         return NULL;
+    }
+
+    protected function getMutableFields(): array
+    {
+        return [
+            'lang' => '',
+            'theme' => '\SPT\View\Theme'
+        ];
     }
 
     public function set($sth, $value = '', $shareable = false)

@@ -18,13 +18,13 @@ class View extends ViewParent
 {
     protected $hook;
 
-    public function init(array $params)
+    protected function getMutableFields(): array
     {
-        list($this->lang, $this->theme, $this->hook) = $params;
-        if(! ($this->hook instanceof HookAdapter) )
-        {
-            die('Invalid HookView');
-        }
+        return [
+            'lang' => '',
+            'theme' => '\SPT\View\Theme',
+            'hook' => '\SPT\View\VM\HookAdapter',
+        ];
     }
 
     public function _render($layout, $hook = '')

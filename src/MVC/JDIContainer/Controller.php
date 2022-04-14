@@ -12,7 +12,7 @@ namespace SPT\MVC\JDIContainer;
 
 use SPT\JDIContainer\Base;
 use SPT\View\Theme;  
-use SPT\View\View;  
+use SPT\View\Base as View;  
 use SPT\App\Adapter as Application;
 use SPT\App\Instance as AppIns;
 
@@ -48,8 +48,8 @@ class Controller extends Base
     {
         $this->view = new View();
         $this->view->init([
-            $this->lang, 
-            $this->prepareTheme()
+            'lang' => $this->lang, 
+            'theme' => $this->prepareTheme()
         ]);
     }
 

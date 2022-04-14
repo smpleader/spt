@@ -23,9 +23,9 @@ class MVController extends Controller
     {   
         $this->view = new View();
         $this->view->init([
-            $this->app->lang, 
-            $this->prepareTheme(),
-            new ViewHook($this->app)
+            'lang' => $this->app->lang, 
+            'theme' => $this->prepareTheme(),
+            'hook' => new ViewHook($this->app)
         ]);
     }
 }

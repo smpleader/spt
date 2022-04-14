@@ -29,9 +29,9 @@ class DatabaseSession implements SessionAdapter
     public function reload($username = '', $userid = 0)
     {
         $data = $this->table->findOne( ['session_id' =>  $this->session_id]);
-        $this->session = $data ? (array) json_decode($data['data']) : [];
+        $this->session = $data ? json_decode($data['data'], true) : [];
         
-        if(empty($this->session))
+        if(empty($data))
         {
             $this->table->add( [
                 'session_id' =>  $this->session_id,

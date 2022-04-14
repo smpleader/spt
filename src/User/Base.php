@@ -11,11 +11,34 @@
 
 namespace SPT\User;
 
-use SPT\BaseObj;
+use SPT\ConfigurableDI;
 
-abstract class Base
+class Base extends ConfigurableDI
 {
-    abstract function init()   
+    protected $session;
+    protected $data;
+    protected $context;
+
+    public function init($options)
+    {
+        parent::init($options);
+
+        $storage = empty($this->context) ? '_user' : $this->context;
+        $this->data = $this->session->get( $storage );
+        
+        if( empty($this->data) )
+        {
+            $this->data = $this->getDefault();
+        }
+    }
+
+    public function getMutableFields(): array
+    {
+        return [
+            'session' => '\SPT\Session\Instance'
+        ];
+    }
+
     public function getDefault()
     {
         return [
@@ -37,5 +60,17 @@ abstract class Base
     public function can(string $permission)
     {
         return is_array($this->_vars['permission']) ? in_array($permission, $this->_vars['permission']) : false;
+    }
+
+    public function set($key, $value)
+    {
+        $this->data[$key] = $value;
+        $storage = empty($this->context) ? '_user' : $this->context;
+        $this->session->update($storage, $this->data);
+    }
+
+    public function get($key, $default = null)
+    {
+        return isset($this->data[$key]) ? $this->data[$key] : $default;
     }
 }

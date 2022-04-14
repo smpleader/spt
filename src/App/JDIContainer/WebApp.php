@@ -14,7 +14,7 @@ use SPT\Dispatcher;
 use SPT\Support\Env;
 use SPT\Support\Token;
 use SPT\User\Instance as User;
-use SPT\User\Memory as UserAdapter;
+use SPT\User\SPT as UserAdapter;
 
 class WebApp extends Application
 {
@@ -92,7 +92,7 @@ class WebApp extends Application
     public function prepareUser()
     {
         $user = new User( new UserAdapter() );
-        $user->init($this->session);
+        $user->init(['session' => $this->session]);
         $this->getContainer()->share('user', $user, true);
     }
 }

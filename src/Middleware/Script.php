@@ -1,16 +1,16 @@
 <?php
 /**
- * SPT software - Application Instance
+ * SPT software - Middleware script
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Application Instance
+ * @description: Middleware script Abstract
  * 
  */
 
-namespace SPT;
+namespace SPT\Middleware;
 
-abstract class Middleware
+abstract class Script
 {
     /**
      * @var Middleware
@@ -27,6 +27,9 @@ abstract class Middleware
         return $next;
     }
 
+    /**
+     * This method demo how the function for a chain
+     */
     public function test($input): bool
     {
         if (!$this->next) {

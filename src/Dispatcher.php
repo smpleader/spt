@@ -16,12 +16,18 @@ final class Dispatcher
     static private $log;
     static private $current;
 
-    public static function register($event, $object, $func)
+    public static function register(string $event, $object, string $func)
     {
         if(!isset(static::$dispatches[$event])) static::$dispatches[$event] = [];
         static::$dispatches[$event][] = [ $object, $func ];
     }
 
+    /**
+     * @return: 
+     *      null => nothing to do
+     *      true => processed successfully
+     *      false => something goes wrong
+     */
     public static function fire()
     {
         $params = func_get_args();
@@ -40,6 +46,7 @@ final class Dispatcher
                     if( true !== $result )
                     {
                         static::$log = $result;
+                        static::$current = null;
                         return false;
                     }
                 }

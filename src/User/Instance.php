@@ -10,45 +10,13 @@
 
 namespace SPT\User;
 
-use SPT\User\Adapter as UserAdapter;
+use SPT\User\Base as UserAdapter;
+use SPT\Instance as Ins;
 
-class Instance
+class Instance extends Ins
 {
-    private $adapter;
-    public function __construct(UserAdapter $adapter, array $middleWares = [])
+    public function __construct(UserAdapter $adapter)
     {
         $this->adapter = $adapter;
-
-        if(count($middleWares))
-        {
-            foreach($middleWares as $type => $mw)
-            {
-                if('adapter' != $type)
-                {
-                    $key = strtolower($key). 'MW';
-                    $this->{$key} = $mv;
-                }
-            }
-        }
-    }
-
-    public function init($settings)
-    {
-        return $this->adapter->init($settings);
-    }
-
-    public function get(string $key)
-    {
-        return $this->adapter->get($key);
-    }
-
-    public function can(string $key)
-    {
-        if(property_exists($this, 'permissionMW'))
-        {
-            return $this->permissionMW->allow($key, $this->adapter);
-        }
-
-        return $this->adapter->can($key);
     }
 }

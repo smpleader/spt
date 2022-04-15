@@ -15,22 +15,26 @@ class Loader
     public static function findClass($dir, $namespace='')
     {
         $tmp = [];
-        $objects = scandir($dir);
-        foreach ($objects as $x) 
-        { 
-            if ($x != '.' && $x != '..')
-            {
-                if( is_dir($dir. '/'. $x) )
+        if( is_dir($dir) )
+        {
+            $objects = scandir($dir);
+            foreach ($objects as $x) 
+            { 
+                if ($x != '.' && $x != '..')
                 {
-                    $tmp = array_merge( $tmp, static::findClass($dir. '/'. $x, $x));
-                }
-                elseif(!is_link($dir. '/'. $x) && '.php' == substr($x, -4))
-                {
-                    $x = substr($x, 0, (strlen($x) - 4));
-                    $tmp[] = empty( $namespace ) ? $x : $namespace. '\\'.$x;
+                    if( is_dir($dir. '/'. $x) )
+                    {
+                        $tmp = array_merge( $tmp, static::findClass($dir. '/'. $x, $x));
+                    }
+                    elseif(!is_link($dir. '/'. $x) && '.php' == substr($x, -4))
+                    {
+                        $x = substr($x, 0, (strlen($x) - 4));
+                        $tmp[] = empty( $namespace ) ? $x : $namespace. '\\'.$x;
+                    }
                 }
             }
         }
+        
         return $tmp;
     }
 }

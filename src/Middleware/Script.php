@@ -13,14 +13,14 @@ namespace SPT\Middleware;
 abstract class Script
 {
     /**
-     * @var Middleware
+     * @var Middleware Script
      */
     protected $next;
 
     /**
      * This method can be used to build a chain of middleware objects.
      */
-    public function linkWith(Middleware $next): Middleware
+    public function linkWith(Script $next): Script
     {
         $this->next = $next;
 

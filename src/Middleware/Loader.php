@@ -9,6 +9,7 @@
  */
 
 namespace SPT\Middleware;
+
 use SPT\App\Instance as AppIns;
 
 class Loader
@@ -25,15 +26,17 @@ class Loader
 
     public function ready()
     {
-        return $this->script instanceof Middleware;
+        return $this->script instanceof Script;
     }
 
-    public function prepare(array $loader)
+    public function prepare(array $loaderList)
     {
-        foreach($loader as $name)
+        foreach($loaderList as $name)
         {
-            if(class_exists($namespace.'\\'.$name) && is_a($namespace.'\\'.$name, '\SPT\Middleware')
-            { 
+            $className = $this->namespace.'\\'.$name;
+            if(class_exists($className) && is_subclass_of($className, '\SPT\Middleware\Script'))
+            {
+                $clss = new $className;
                 if( null === $this->script )
                 {
                     $this->script = $clss; 

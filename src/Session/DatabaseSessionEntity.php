@@ -70,7 +70,7 @@ class DatabaseSessionEntity extends Entity
                 'null' => 'YES'
             ],
             'data'=> [
-                'type' => 'text'
+                'type' => 'mediumtext'
             ],
         ];
     }

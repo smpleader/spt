@@ -26,7 +26,7 @@ class DatabaseSession implements SessionAdapter
         $this->reload();
     }
 
-    public function reload($username = '', $userid = 0)
+    public function reload($username = false, $userid = 0)
     {
         $data = $this->table->findOne( ['session_id' =>  $this->session_id]);
         $this->session = $data ? json_decode($data['data'], true) : [];
@@ -41,7 +41,7 @@ class DatabaseSession implements SessionAdapter
                 'user_id' => $userid 
             ]);
         }
-        elseif( !empty($username) && !empty($userid ) )
+        elseif( false !== $username )
         {
             $this->table->update([
                 'modified_at' => strtotime("now"),

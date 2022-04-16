@@ -78,5 +78,6 @@ class Base extends ConfigurableDI
         $this->data = $this->getDefault();
         $storage = $this->getContext();
         $this->session->set($storage, $this->data);
+        $this->session->reload('guest', 0);
     }
 }

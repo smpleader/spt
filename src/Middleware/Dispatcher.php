@@ -16,7 +16,7 @@ final class Dispatcher
     static private $log;
     static private $current;
 
-    public static function register(string $type, MiddlewareLoader $middlewareLoader)
+    public static function register(string $type, Loader $middlewareLoader)
     {
         if(!isset(static::$dispatchers[$type])) static::$dispatchers[$type] = [];
         static::$dispatchers[$type][] = $middlewareLoader;
@@ -40,7 +40,7 @@ final class Dispatcher
 
         $type = array_shift($params);
         $loader = array_shift($params);
-        if(isset( static::$dispatchers[$type] ) && static::$current != $type )
+        if(is_array( static::$dispatchers[$type] ) && static::$current != $type )
         {
             static::$current = $type;
             foreach(static::$dispatchers[$type] as $mw)
@@ -49,7 +49,7 @@ final class Dispatcher
                 if( $mw->ready() )
                 {
                     $result = $mw->execute($params);
-                    if(true !== $result)
+                    if(false === $result)
                     {
                         static::$log = $result;
                         static::$current = null;

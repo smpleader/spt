@@ -16,7 +16,7 @@ use SPT\Session\Adapter as SessionAdapter;
 
 class DatabaseSessionEntity extends Entity
 { 
-    protected $table = 'spt_sessions';
+    protected $table = '#__spt_sessions';
     protected $pk = 'session_id';
     protected $user;
 

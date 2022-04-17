@@ -15,7 +15,7 @@ use SPT\Storage\DB\Entity;
 
 class SitemapEntity extends Entity
 { 
-    protected $table = 'spt_sitemap';
+    protected $table = '#__spt_sitemap';
     protected $pk = 'id';
     protected $cache;
 

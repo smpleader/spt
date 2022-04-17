@@ -15,6 +15,9 @@ use SPT\Support\Loader;
 use SPT\Support\FncArray;
 use SPT\Storage\File\IniType as FileIni;
 use SPT\App\Instance as AppIns;
+use SPT\User\Instance as User;
+use SPT\User\SPT\User as UserAdapter;
+use SPT\User\SPT\UserEntity;
 
 class CMSApp extends WebApp
 {
@@ -211,6 +214,16 @@ class CMSApp extends WebApp
         }
         
         $this->getContainer()->set('lang', $lang);
+    }
+
+    public function prepareUser()
+    {
+        $user = new User( new UserAdapter() );
+        $user->init([
+            'session' => $this->session,
+            'entity' => new  UserEntity($this->query)
+        ]);
+        $this->getContainer()->share('user', $user, true);
     }
     
 }

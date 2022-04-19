@@ -36,6 +36,7 @@ class DatabaseSession implements SessionAdapter
             $this->table->add( [
                 'session_id' =>  $this->session_id,
                 'created_at' => strtotime("now"),
+                'modified_at' => strtotime("now"),
                 'data' => '',
                 'username' => $username,
                 'user_id' => $userid 

@@ -52,7 +52,7 @@ class Base
 
     public function getMethod()
 	{
-		return isset($_SERVER) ? null : strtoupper($_SERVER['REQUEST_METHOD']);
+		return !isset($_SERVER) ? null : strtoupper($_SERVER['REQUEST_METHOD']);
 	}
 
     public function __get($name)

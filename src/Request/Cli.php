@@ -16,7 +16,7 @@ class Cli extends Base
     
     public function __construct(array $source = null)
     {
-		$argv = $_SERVER['argv'];
+		$argv = $_SERVER['argv'] ?? [];
 
 		$this->executable = array_shift($argv);
 

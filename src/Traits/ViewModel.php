@@ -37,7 +37,8 @@ trait ViewModel
         if(false === strpos($string, '|'))
         {
             $layout = $root ? $root. '.'. $string :  $string;
-            $func = end( explode('.', $layout) );
+            $tmp = explode('.', $layout);
+            $func = end( $tmp );
         }
         else
         {

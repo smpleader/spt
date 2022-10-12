@@ -84,7 +84,7 @@ class Application extends Base implements Adapter
 
     public function has(string $name)
     {
-        return $this->getContainer()->has($name);
+        return $this->getContainer()->exists($name);
     }
 
     public function prepareRouter($config)

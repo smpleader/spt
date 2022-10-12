@@ -130,7 +130,7 @@ class Application extends Base implements Adapter
     {
         $container = $this->getContainer();
         $session = new Session(
-            $container->has('query') ? 
+            $container->exists('query') ? 
             new DatabaseSession( new DatabaseSessionEntity($this->query), $this->getToken() ) :
             new PhpSession()
         );
@@ -168,7 +168,7 @@ class Application extends Base implements Adapter
         $container = $this->getContainer();
         $res = '';
 
-        if( !$container->has('secrects') )
+        if( !$container->exists('secrects') )
         {
             $res = $this->createToken($context);
             $container->set('secrects', [ $context => $res]);

@@ -30,7 +30,7 @@ abstract class Base implements ContainerAwareInterface
     { 
         if( 'container' == $name ) return $this->container;
         
-        if( $this->container->has($name) )
+        if( $this->container->exists($name) )
         {
             return $this->container->get($name);
         }

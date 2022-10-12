@@ -63,7 +63,7 @@ class ViewHook implements HookAdapter
         {
             $container = $this->app->getContainer();
     
-            if($container->has($id))
+            if($container->exists($id))
             {
                 $try = $container->get($id);
                 if( $try instanceof ViewModelAdapter)

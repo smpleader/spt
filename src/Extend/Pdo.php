@@ -19,8 +19,26 @@ class Pdo
 	protected $connection;
 	public $connected = false; 
 
-	function __construct($host, $username, $password, $database, $parameters=array()){
+	function __construct(array $config, $parameters=array()){
 		
+		$arr = ['host', 'username', 'password', 'database'];
+		foreach($arr as $key)
+		{
+			$$key = $config[$key] ?? '';
+		}
+
+		if(empty($parameters))
+		{
+			if(isset($config['options']))
+			{
+				$parameters = (array) $config['options'];
+			}
+			else if(isset($config['parameters']))
+			{
+				$parameters = (array) $config['parameters'];
+			}	
+		}
+
 		try{ 
 			$this->connected = true;
 

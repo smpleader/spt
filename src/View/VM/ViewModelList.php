@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\View\VM\JDIContainer; 
+namespace SPT\View\VM; 
 
 use SPT\JDIContainer\Base;
 use SPT\Support\Filter; 

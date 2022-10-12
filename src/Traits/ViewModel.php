@@ -17,7 +17,7 @@ use SPT\View\VM\ViewModelAdapter;
 
 trait ViewModel
 {   
-    protected $alias = __CLASS__;
+    protected $alias = '';
     protected $layouts = [];
     protected $functions = [];
     protected $view;

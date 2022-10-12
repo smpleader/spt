@@ -14,6 +14,7 @@ use SPT\Support\Filter;
 use SPT\App\Adapter as Application;
 use SPT\View\Adapter as View; 
 use SPT\View\VM\ViewModelAdapter;
+use SPT\View\VM\ViewModelList;
 use SPT\Traits\ViewModel as ViewModelTrait;
 
 class ViewModel implements ViewModelAdapter
@@ -24,6 +25,13 @@ class ViewModel implements ViewModelAdapter
 
     public function __construct(Application $app)
     {
+        if(empty($this->alias))
+        {
+            $tmp = get_class($this);
+            $tmp = explode('\\', $tmp);
+            $this->alias = end($tmp);
+        }
+        ViewModelList::add($this->alias);
         $this->app = $app;
     }
 

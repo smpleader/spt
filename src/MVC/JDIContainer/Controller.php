@@ -22,9 +22,15 @@ class Controller extends Base
     {
         $viewPath = AppIns::path('plugin') ? AppIns::path('plugin'). $this->app->get('plugin'). '/views/' : AppIns::path('view');
 
-        if(AppIns::path('theme') && $this->config->exists('theme'))
+        $theme = $this->app->get('theme', '');
+        if(empty($theme) && $this->config->exists('theme'))
         {
-            $themePath = AppIns::path('theme'). $this->config->theme. '/';
+            $theme = $this->config->theme;
+        }
+        
+        if(AppIns::path('theme') && $theme)
+        {
+            $themePath = AppIns::path('theme'). $theme. '/';
             $overrideLayouts = [
                 $themePath. '__.php',
                 $themePath. '__/index.php',

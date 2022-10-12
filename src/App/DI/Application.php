@@ -70,14 +70,7 @@ class Application extends BaseObj implements Adapter
                 // create query
                 if( $this->config->exists('db') )
                 {
-                    $pdo = new PdoWrapper(
-                        $this->config->db['host'],
-                        $this->config->db['username'],
-                        $this->config->db['passwd'],
-                        $this->config->db['database'],
-                        $this->config->db['options'],
-                        $this->config->db['debug']
-                    );
+                    $pdo = new PdoWrapper( $this->config->db );
 
                     if(!$pdo->connected)
                     {

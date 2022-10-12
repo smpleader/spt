@@ -100,14 +100,7 @@ class Application extends Base implements Adapter
 
     public function prepareDB($config)
     {
-        $pdo = new PdoWrapper(
-            $config->db['host'],
-            $config->db['username'],
-            $config->db['passwd'],
-            $config->db['database'],
-            $config->db['options'],
-            $config->db['debug']
-        );
+        $pdo = new PdoWrapper( $config->db );
         
         if(!$pdo->connected)
         {

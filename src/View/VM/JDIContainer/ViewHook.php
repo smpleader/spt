@@ -29,22 +29,26 @@ class ViewHook implements HookAdapter
     {
         $this->app = $app;
         // the loader much be set when load a plugin
-
         $container = $this->app->getContainer();
-        foreach($container->getKeys() as $name)
+        
+        foreach(ViewModelList::data() as $name)
         {
-            if($vm = $this->getVm($name))
+            if($container->exists($name))
             {
-                $layouts = $vm->parse();
-                foreach($layouts as $layout)
+                $vm = $container->get($name);
+                if( $vm instanceof ViewModelAdapter)
                 {
-                    if(isset($this->map[$layout]))
+                    $layouts = $vm->parse();
+                    foreach($layouts as $layout)
                     {
-                        $this->map[$layout][] = $name;
-                    }
-                    else
-                    {
-                        $this->map[$layout] = [$name];
+                        if(isset($this->map[$layout]))
+                        {
+                            $this->map[$layout][] = $name;
+                        }
+                        else
+                        {
+                            $this->map[$layout] = [$name];
+                        }
                     }
                 }
             }

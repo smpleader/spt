@@ -10,6 +10,7 @@
 
 namespace SPT\View\VM\JDIContainer; 
 
+use Joomla\DI\Container;
 use SPT\JDIContainer\Base;
 use SPT\Support\Filter; 
 use SPT\App\Adapter as Application;
@@ -20,6 +21,12 @@ use SPT\Traits\ViewModel as ViewModelTrait;
 class ViewModel extends Base implements ViewModelAdapter
 {   
     use ViewModelTrait; 
+
+    public function __construct(Container $container)
+    {
+        ViewModelList::add($this->alias);
+        parent::__construct($container);
+    }
 
     public function state($key, $default='', $format='cmd', $request='post', $sessionName='')
     {

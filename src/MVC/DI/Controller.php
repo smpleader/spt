@@ -31,9 +31,9 @@ class Controller extends BaseObj
         $viewPath = AppIns::path('plugin') ? AppIns::path('plugin'). $this->app->get('plugin'). '/views/' : AppIns::path('view');
 
         $theme = $this->app->get('theme', '');
-        if(empty($theme) && $this->config->exists('theme'))
+        if(empty($theme) && $this->app->config->exists('theme'))
         {
-            $theme = $this->config->theme;
+            $theme = $this->app->config->theme;
         }
 
         if(AppIns::path('theme') && $theme)

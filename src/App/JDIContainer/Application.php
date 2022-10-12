@@ -100,15 +100,21 @@ class Application extends Base implements Adapter
 
     public function prepareDB($config)
     {
-        $pdo = new PdoWrapper( $config->db );
+        try{
+            $pdo = new PdoWrapper( $config->db );
         
-        if(!$pdo->connected)
+            if(!$pdo->connected)
+            {
+                $tmp = $pdo->getLog();
+                throw new \Exception('Connection failed. '. $tmp[1], 500); 
+            }
+
+            $this->getContainer()->set('query', new Query( $pdo, ['#__'=>  $config->db['prefix']]));
+        } 
+        catch(\Exception $e) 
         {
-            throw new \Exception('Connection failed. '. implode("\n",  $pdo->getLog()), 500); 
+            die( $e->getMessage() );
         }
-
-        $this->getContainer()->set('query', new Query( $pdo, ['#__'=>  $config->db['prefix']]));
-
     }
 
     public function prepareLanguage()

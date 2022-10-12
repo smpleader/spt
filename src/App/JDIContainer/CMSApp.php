@@ -161,8 +161,12 @@ class CMSApp extends WebApp
         $routing_file = $path. 'routing.php';
         if(file_exists($routing_file))
         {
-            $routing = (array) require_once $routing_file;
-            $this->router->import($routing);
+            $routing = require_once $routing_file;
+            if(!is_bool($routing))
+            {
+                $routing = (array) $routing;
+                $this->router->import($routing);
+            } 
         }
     }
 

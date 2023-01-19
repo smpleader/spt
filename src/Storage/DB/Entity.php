@@ -221,6 +221,8 @@ class Entity
                         $check = true;
                         preg_match("/(\d+)/", $field['Type'], $match);
                         $number = isset($match[1]) ? $match[1] : '';
+                        $type_db = $field['Type'];
+                        
                         if ($number)
                         {
                             $type_db = str_replace('('. $number. ')', '', $field['Type']);

@@ -136,9 +136,8 @@ class ArrayEndpoint extends Base
         return $vars;
     }
 
-    public function parse($config, $request)
+    public function parse($defaultEndpoint, $request)
     {
-        $defaultEndpoint = $config->exists('defaultEndpoint') ? $config->defaultEndpoint : '';
         $intruction = $this->pathFinding($defaultEndpoint);
         $fnc = '';
         $parameters = [];

@@ -40,12 +40,6 @@ class Simple implements IApp
         // setup container
     }
 
-    private $endpoints = [];
-    public function registerEndpoints(array $endpoints)
-    {
-        $this->endpoints = array_merge($this->endpoints, $endpoints);
-    }
-
     private $config;
     public function loadConfig(string $configPath = '')
     {
@@ -63,7 +57,7 @@ class Simple implements IApp
         {
             if (!$item->isDot() && $item->isDir()) 
             { 
-                $plgRegister = $this->namespace. '\\'. $item->getBasename(). '\\registeres\\'. $event; // $item->getFilename();
+                $plgRegister = $this->namespace. '\\'. $item->getBasename(). '\\registers\\'. $event; // $item->getFilename();
                 if(class_exists($plgRegister) && method_exists($plgRegister, $execute))
                 {
                     $result = $plgRegister::$execute($this);
@@ -113,10 +107,9 @@ class Simple implements IApp
 
         $this->loadPlugins('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
             $router->import($endpoints);
-        });
+        }); 
 
         list($todo, $params) = $router->parse($this->get('defaultEndpoint', false), $this->request);
-
         $try = explode('.', $todo);
         
         if(count($try) !== 3)

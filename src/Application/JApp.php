@@ -4,7 +4,7 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: An application context
+ * @description: A web application based Joomla container
  * 
  */
 
@@ -14,9 +14,9 @@ use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response;
 
-class Simple extends Core
+class JApp extends Simple
 {
-    protected function prepareEnvironment()
+    private function prepareEnvironment()
     {
         // secrect key
         // terminal or router
@@ -59,9 +59,8 @@ class Simple extends Core
 
             list($plugin, $controllerName, $func) = $try;
             $plugin = strtolower($plugin);
-            $this->set('currentPlugin', $plugin);
 
-            $plgRegister = $this->namespace. '\\plugins\\'. $plugin. '\\registers\\Dispatcher';
+            $plgRegister = $this->namespace. '\\'. $plugin. '\\registers\\Dispatcher';
             if(!class_exists($plgRegister))
             {
                 throw new \Exception('Invalid plugin '. $plugin);

@@ -18,15 +18,17 @@ class Simple implements IApp
 {
     private $namespace;
     private $request;
-    public $router;
+    private $router;
+    private $pluginPath;
 
     public function __construct(string $pluginPath, string $configPath = '', string $namespace = '')
     {
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
+        $this->pluginPath = $pluginPath;
 
         $this->loadConfig($configPath); 
         $this->prepareEnvironment();
-        $this->loadPlugins($pluginPath);
+        $this->loadPlugins('bootstrap', 'initialize');
         return $this;
     }
 
@@ -54,17 +56,25 @@ class Simple implements IApp
         }
     }
 
-    public function loadPlugins(string $pluginPath)
+    public function loadPlugins(string $event, string $execute, $closure = null)
     {
-        // TODO cache this + load from db
-        foreach(new \DirectoryIterator($pluginPath) as $item) 
+        $event = ucfirst(strtolower($event));
+        foreach(new \DirectoryIterator($this->pluginPath) as $item) 
         {
             if (!$item->isDot() && $item->isDir()) 
             { 
-                $plgRegister = $this->namespace. '\\'. $item->getBasename(). '\\Register'; // $item->getFilename();
-                if(class_exists($plgRegister))
+                $plgRegister = $this->namespace. '\\'. $item->getBasename(). '\\registeres\\'. $event; // $item->getFilename();
+                if(class_exists($plgRegister) && method_exists($plgRegister, $execute))
                 {
-                    $plgRegister::bootstrap($this);
+                    $result = $plgRegister::$execute($this);
+                    if(null !== $closure && is_callable($closure))
+                    {
+                        $ok = $closure( $result );
+                        if(false === $ok)
+                        {
+                            die('Got an issue with plugin '. $item->getBasename(). ' when call '. $event .'.' . $execute);
+                        }
+                    }
                 }
             }
         }
@@ -94,13 +104,17 @@ class Simple implements IApp
 		}
 
         // load CommandLine to start the work
+        $this->loadPlugins('cli', 'registerCommands');
     }
 
     public function runWebApp(string $themePath = '')
     {
         $router = new Router($this->get('subpath', ''));
 
-        $router->import($this->endpoints);
+        $this->loadPlugins('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
+            $router->import($endpoints);
+        });
+
         list($todo, $params) = $router->parse($this->get('defaultEndpoint', false), $this->request);
 
         $try = explode('.', $todo);
@@ -118,13 +132,6 @@ class Simple implements IApp
             }
         }
 
-        /* TODO: dispatcher load this from params
-        $try = Dispatcher::fire('permission', $todo);
-        if( !$try )
-        {
-            throw new \Exception('You are not allowed.', 403);
-        }*/
-
         try{
 
             $this->router = $router;
@@ -137,7 +144,15 @@ class Simple implements IApp
             list($plugin, $controllerName, $func) = $try;
             $plugin = strtolower($plugin);
 
-            $plgRegister = $this->namespace. '\\'. $plugin. '\Register';
+            $plgRegister = $this->namespace. '\\'. $plugin. '\\registers\\Dispatcher';
+            if(!class_exists($plgRegister))
+            {
+                throw new \Exception('Invalid plugin '. $plugin);
+            }
+            if(!method_exists($plgRegister, 'dispatch'))
+            {
+                throw new \Exception('Invalid dispatcher of plugin '. $plugin);
+            }
             
             return $plgRegister::dispatch($this, $controllerName, $func);
 

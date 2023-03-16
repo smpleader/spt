@@ -12,7 +12,7 @@ namespace SPT\Application;
 
 interface IApp
 {
-    function loadPlugins(string $pluginPath);
+    function loadPlugins(string $event, string $execute, $closure = null);
     function loadConfig(string $configPath);
     function executeCommandLine(string $templatePath);
     function runWebApp(string $templatePath);

@@ -16,6 +16,12 @@ use SPT\Response;
 
 class Simple extends Core
 {
+    protected $request;
+    public function request()
+    {
+        return $this->request;
+    }
+
     protected function prepareEnvironment()
     {
         // secrect key
@@ -52,7 +58,7 @@ class Simple extends Core
 
             $this->router = $router;
 
-            if(!$themePath)
+            if($themePath)
             {
                 $this->set('themePath', $themePath);
             }
@@ -78,5 +84,10 @@ class Simple extends Core
         {
             Response::_500('[Error] ' . $e->getMessage());
         }
+    }
+
+    public function url(string $subpath = '')
+    {
+        return  $this->router->url($subpath);
     }
 }

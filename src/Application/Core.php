@@ -11,13 +11,11 @@
 namespace SPT\Application;
  
 use SPT\Router\ArrayEndpoint as Router;
-use SPT\Request\Base as Request;
 use SPT\Response;
 
 class Core implements IApp
 {
     protected $namespace;
-    protected $request;
     protected $router;
     protected $pluginPath;
 
@@ -30,6 +28,16 @@ class Core implements IApp
         $this->prepareEnvironment();
         $this->loadPlugins('bootstrap', 'initialize');
         return $this;
+    }
+
+    public function getPluginPath()
+    {
+        return $this->pluginPath. '/';
+    }
+
+    public function getCurrentPluginPath()
+    {
+        return $this->pluginPath. '/'. $this->get('currentPlugin', '');
     }
 
     protected function prepareEnvironment(){ }
@@ -85,4 +93,5 @@ class Core implements IApp
     }
 
     public function execute(string $themePath = ''){ }
+    public function url(string $subpath = ''){ return '-- current url --'; }
 }

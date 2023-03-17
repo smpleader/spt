@@ -30,6 +30,11 @@ class Core implements IApp
         return $this;
     }
 
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
     public function getPluginPath()
     {
         return $this->pluginPath. '/';

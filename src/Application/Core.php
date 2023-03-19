@@ -50,10 +50,13 @@ class Core implements IApp
     protected $config;
     public function loadConfig(string $configPath = '')
     {
-        if( !empty( $configPath) )
+        if( file_exists( $configPath) )
         {
             $try = require_once($configPath);
-            foreach($try as $K=>$V) $this->set($K, $V);
+            if(is_array($try) || is_object($try))
+            {
+                foreach($try as $K=>$V) $this->set($K, $V);
+            }
         }
     }
 

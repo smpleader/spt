@@ -18,16 +18,24 @@ class Core implements IApp
     protected $namespace;
     protected $router;
     protected $pluginPath;
+	protected $psr11;
 
     public function __construct(string $pluginPath, string $configPath = '', string $namespace = '')
     {
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
         $this->pluginPath = $pluginPath;
+        $this->psr11 = false;
 
         $this->loadConfig($configPath); 
         $this->prepareEnvironment();
         $this->loadPlugins('bootstrap', 'initialize');
+
         return $this;
+    }
+
+    public function supportContainer()
+    {
+        return $this->psr11;
     }
 
     public function getNamespace()
@@ -101,5 +109,5 @@ class Core implements IApp
     }
 
     public function execute(string $themePath = ''){ }
-    public function url(string $subpath = ''){ return '-- current url --'; }
+    public function url(string $subpath = ''){ return '-- extended application did not implement url() --'; }
 }

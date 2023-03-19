@@ -8,13 +8,13 @@
  * 
  */
 
-namespace SPT\Application;
+namespace SPT\Application\Simple;
  
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response;
 
-class Simple extends Core
+class Web extends \SPT\Application\Core
 {
     protected $request;
     public function request()

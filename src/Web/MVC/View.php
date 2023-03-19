@@ -11,10 +11,15 @@
 namespace SPT\Web\MVC;
 
 use SPT\Web\Theme;
+use SPT\Web\ViewLayout;
 
 class View
 {
     protected Theme $theme;
+    protected $overrideLayouts = [];
+    protected $_shares = [];
+    protected $mainLayout = '';
+
     public function __construct($layoutPath, $themePath, $theme)
     {
         if(empty($themePath) || empty($theme))
@@ -33,14 +38,14 @@ class View
 
         if($themePath == $layoutPath)
         {
-            $overrideLayouts = [
+            $this->overrideLayouts = [
                 $layoutPath. '__.php',
                 $layoutPath. '__/index.php'
             ];
         }
         else
         {   
-            $overrideLayouts = [
+            $this->overrideLayouts = [
                 $themePath. '__.php',
                 $themePath. '__/index.php',
                 $layoutPath. '__.php',
@@ -48,19 +53,108 @@ class View
             ];
         }
         
-        $this->theme = new Theme($themePath, $overrideLayouts);
+        $this->theme = new Theme($themePath);
+    }
+
+    public function getVar($key, $default)
+    {
+        return $this->_shares[$key] ?? $default; 
+    }
+
+    public function setVar($key, $value)
+    {
+        $this->_shares[$key] = $value; 
+    }
+
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    public function getPath( $name )
+    {
+        $name = str_replace('.', '/', $name);
+
+        foreach($this->overrideLayouts as $file)
+        {
+            $file = str_replace('__', $name, $file);
+            if(file_exists($file)) return $file;
+        }
+
+        return false;
     }
 
     public function renderPage(string $page, string $layout, array $data = [])
     {
-        $this->theme->setBody(
-            $this->renderLayout($layout, $data)
-        );
-        return $this->theme->render( $page, $data );
+        if($this->mainLayout)
+        {
+            throw new \Exception('Generate page twice is not supported ');
+        }
+        else
+        {
+            $this->mainLayout = $layout;
+        }
+
+        $file = $this->theme->getThemePath(). '/'. $page. '.php';
+        if( !file_exists($file) )
+        {
+            throw new \Exception('Invalid theme page '. $page);
+        }
+
+        if(is_array($data) || is_object($data))
+        {
+            foreach($data as $key => $value)
+            {
+                $this->setVar($key, $value);
+            }
+        }
+
+        ob_start();
+        include $file;
+        $content = ob_get_clean();
+
+        return $content; 
+    }
+    
+    public function renderLayout(string $layoutPath, array $data = [])
+    {
+        if( 0 !== strpos($layoutPath, 'layouts.') )
+        {
+            $layoutPath = 'layouts.'. $layoutPath;
+        }
+        $file = $this->getPath($layoutPath);
+        if( false === $file )
+        {
+            throw new \Exception('Invalid layout '. $layoutPath);
+        }
+
+        $layout = new ViewLayout($file, $this);
+        foreach($data as $key => $value)
+        {
+            $layout->set($key, $value);
+        }
+        
+        return $layout->_render();
     }
 
-    public function renderLayout(string $layout, array $data = [])
+    public function renderWidget(string $widgetPath, array $data = [])
     {
-        return $this->theme->renderLayout( $layout, $data );
+        if( 0 !== strpos($widgetPath, 'widgets.') )
+        {
+            $widgetPath = 'widgets.'. $widgetPath;
+        }
+        $file = $this->getPath($widgetPath);
+        if( false === $file )
+        {
+            throw new \Exception('Invalid widget '. $widgetPath);
+        }
+
+        $layout = new ViewLayout($file, $this);
+        foreach($data as $key => $value)
+        {
+            $layout->set($key, $value);
+        }
+        
+        return $layout->_render();
     }
 }

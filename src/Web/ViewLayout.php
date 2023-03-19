@@ -12,29 +12,29 @@ namespace SPT\Web;
 
 use SPT\BaseObj;
 
-class Layout extends BaseObj
+class ViewLayout extends BaseObj
 { 
     protected $_file = '';
-    protected $_theme;
+    protected $_view;
 
-    public function __construct($filePath, $theme)
+    public function __construct($filePath, $view)
     {
         $this->_file = $filePath;
-        $this->_theme = $theme;
+        $this->_view = $view;
     }
 
     public function __get(string $name)
     { 
-        if('theme' == $name) return $this->_theme;
+        if('theme' == $name) return $this->_view->getTheme();
         // try local 
         if( isset( $this->_vars[$name] ) ) return $this->_vars[$name];
         // try global
-        return $this->theme->getVar($name, NULL);
+        return $this->_view->getVar($name, NULL);
     }
 
     public function render($filePath, $data)
     {
-        return $this->theme->renderLayout($filePath, $data);
+        return $this->_view->renderLayout($filePath, $data);
     }
 
     public function _render()
@@ -48,7 +48,7 @@ class Layout extends BaseObj
     public function exists($key)
     {
         if( isset( $this->_vars[$this->_index][$key] ) ) return true;
-        $try = $this->theme->getVar($name, '__NOT__FOUND__');
+        $try = $this->_view->getVar($name, '__NOT__FOUND__');
         return '__NOT__FOUND__' !== $try ;
     }
 }

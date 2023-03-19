@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\Application;
+namespace SPT\Application\Joomla;
  
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
@@ -18,16 +18,17 @@ use Joomla\DI\Container;
 use Joomla\DI\ContainerAwareTrait;
 use Joomla\DI\ContainerAwareInterface;
 
-class JApp extends Core implements ContainerAwareInterface
+class Web extends \SPT\Application\Core implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
     public function __construct(string $pluginPath, string $configPath = '', string $namespace = '')
     {
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-        $this->pluginPath = $pluginPath;        
-        $this->setContainer(new Container);
+        $this->pluginPath = $pluginPath;       
+        $this->psr11 = true; 
 
+        $this->setContainer(new Container);
         $this->loadConfig($configPath); 
         $this->prepareEnvironment();
         $this->loadPlugins('bootstrap', 'initialize');
@@ -113,5 +114,10 @@ class JApp extends Core implements ContainerAwareInterface
         {
             Response::_500('[Error] ' . $e->getMessage());
         }
+    }
+
+    public function url(string $subpath = '')
+    {
+        return  $this->getContainer()->get('router')->url($subpath);
     }
 }

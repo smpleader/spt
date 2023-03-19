@@ -18,27 +18,13 @@ use SPT\Support\FncArray;
 class Theme extends BaseObj
 {
     protected $themePath = '';
-    protected $overrideLayouts = [];
-    protected $_body = '';
     protected $_assets = [];
     protected $_vars = [];
-    protected $_shares = [];
 
-    public function __construct(string $themePath, array $overrideLayouts)
+    public function __construct(string $themePath)
     {
         $this->themePath = $themePath;
-        $this->overrideLayouts = $overrideLayouts;
         $this->registerAssets();
-    }
-
-    public function getVar($key, $default)
-    {
-        return $this->_shares[$key] ?? $default; 
-    }
-
-    public function setVar($key, $value)
-    {
-        $this->_shares[$key] = $value; 
     }
 
     public function getThemePath()
@@ -75,29 +61,6 @@ class Theme extends BaseObj
                 call_user_func_array([$this, 'add'], $asset);
             }
         }
-    }
-
-    public function getPath( $name )
-    {
-        $name = str_replace('.', '/', $name);
-
-        foreach($this->overrideLayouts as $file)
-        {
-            $file = str_replace('__', $name, $file);
-            if(file_exists($file)) return $file;
-        }
-
-        return false;
-    }
-
-    public function setBody($body)
-    {
-        $this->_body = $body;
-    }
-
-    public function getBody()
-    {
-        return $this->_body;
     }
 
     public function echo($type, $url = '')
@@ -224,7 +187,7 @@ class Theme extends BaseObj
         return $result;
     }
 
-    public function render(string $page, array $data = [])
+    /*public function render(string $page, array $data = [])
     {
         if( !file_exists($this->themePath. '/'. $page. '.php') )
         {
@@ -243,47 +206,7 @@ class Theme extends BaseObj
         include $this->themePath. '/'. $page. '.php';
         $content = ob_get_clean();
         return $content;
-    }
+    }*/
 
-    public function renderLayout(string $layoutPath, array $data = [])
-    {
-        if( 0 !== strpos($layoutPath, 'layouts.') )
-        {
-            $layoutPath = 'layouts.'. $layoutPath;
-        }
-        $file = $this->getPath($layoutPath);
-        if( false === $file )
-        {
-            throw new \Exception('Invalid layout '. $layoutPath);
-        }
-
-        $layout = new Layout($file, $this);
-        foreach($data as $key => $value)
-        {
-            $layout->set($key, $value);
-        }
-        
-        return $layout->_render();
-    }
-
-    public function renderWidget(string $widgetPath, array $data = [])
-    {
-        if( 0 !== strpos($widgetPath, 'widgets.') )
-        {
-            $widgetPath = 'widgets.'. $widgetPath;
-        }
-        $file = $this->getPath($widgetPath);
-        if( false === $file )
-        {
-            throw new \Exception('Invalid widget '. $widgetPath);
-        }
-
-        $layout = new Layout($file, $this);
-        foreach($data as $key => $value)
-        {
-            $layout->set($key, $value);
-        }
-        
-        return $layout->_render();
-    }
+    
 }

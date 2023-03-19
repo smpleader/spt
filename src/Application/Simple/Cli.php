@@ -8,13 +8,13 @@
  * 
  */
 
-namespace SPT\Application;
+namespace SPT\Application\Simple;
  
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response;
 
-class Cli extends Core
+class Cli extends \SPT\Application\Core
 {
     protected function prepareEnvironment()
     {

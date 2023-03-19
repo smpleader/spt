@@ -13,7 +13,7 @@ namespace SPT\Web\MVVM;
 use SPT\Application\IApp;
 
 use SPT\BaseObj;
-use SPT\Response;   
+use SPT\Response;
 
 class Controller  extends BaseObj
 {
@@ -33,10 +33,17 @@ class Controller  extends BaseObj
         $data = (array) $this->getAll();
 
         $layoutPath = $this->app->getCurrentPluginPath(). '/views/';
+
+        $this->registerViewModels();
  
         $view = new View($layoutPath, $themePath, $theme);
 
-        $this->registerViewModels($view);
+        if( 0 !== strpos($layout, 'layouts.') )
+        {
+            $layout = 'layouts.'. $layout;
+        }
+
+        ViewModelHelper::deployVM($layout, $data);
 
         Response::_200( $view->renderPage( $page, $layout, $data ) );
     }
@@ -57,15 +64,22 @@ class Controller  extends BaseObj
         $data = (array) $this->getAll();
 
         $layoutPath = $this->app->getCurrentPluginPath(). '/views/';
+
+        $this->registerViewModels();
  
         $view = new View($layoutPath, $themePath, $theme);
 
-        $this->registerViewModels($view);
+        if( 0 !== strpos($layout, 'layouts.') )
+        {
+            $layout = 'layouts.'. $layout;
+        }
+
+        ViewModelHelper::deployVM($layout, $data);
 
         Response::_200( $view->renderLayout($layout, $data) );
     }
-
-    public function registerViewModels($view)
+    
+    public function registerViewModels()
     {
         foreach(new \DirectoryIterator($this->app->getPluginPath()) as $plg) 
         {
@@ -87,11 +101,11 @@ class Controller  extends BaseObj
 
                             if(class_exists($vmName))
                             {
-                                $layouts = $vmName::register();
-                                foreach($layouts as $layout)
-                                {
-                                    $view->registerVM($layout, $vmName);
-                                }
+                                ViewModelHelper::prepareVM(
+                                    $vmName, 
+                                    $vmName::register(), 
+                                    $this->app->supportContainer() ? $this->app->getContainer() : NULL
+                                );
                             }
                         }
                     }

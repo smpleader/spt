@@ -17,10 +17,18 @@ class ViewLayout extends BaseObj
     protected $_file = '';
     protected $_view;
 
-    public function __construct($filePath, $view)
+    public function __construct($filePath, $view, $data = null)
     {
         $this->_file = $filePath;
         $this->_view = $view;
+        
+        if(is_array($data) && count($data))
+        {
+            foreach($data as $key => $value)
+            {
+                $this->set($key, $value);
+            }
+        }
     }
 
     public function __get(string $name)

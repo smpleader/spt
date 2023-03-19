@@ -38,13 +38,6 @@ class Controller  extends BaseObj
  
         $view = new View($layoutPath, $themePath, $theme);
 
-        if( 0 !== strpos($layout, 'layouts.') )
-        {
-            $layout = 'layouts.'. $layout;
-        }
-
-        ViewModelHelper::deployVM($layout, $data);
-
         Response::_200( $view->renderPage( $page, $layout, $data ) );
     }
 
@@ -68,13 +61,6 @@ class Controller  extends BaseObj
         $this->registerViewModels();
  
         $view = new View($layoutPath, $themePath, $theme);
-
-        if( 0 !== strpos($layout, 'layouts.') )
-        {
-            $layout = 'layouts.'. $layout;
-        }
-
-        ViewModelHelper::deployVM($layout, $data);
 
         Response::_200( $view->renderLayout($layout, $data) );
     }

@@ -102,6 +102,8 @@ class View
             throw new \Exception('Invalid theme page '. $page);
         }
 
+        ViewModelHelper::deployVM($layout, $data);
+
         if(is_array($data) || is_object($data))
         {
             foreach($data as $key => $value)
@@ -129,11 +131,16 @@ class View
             throw new \Exception('Invalid layout '. $layoutPath);
         }
 
-        $layout = new ViewLayout($file, $this);
-        foreach($data as $key => $value)
+        if($layoutPath != $this->mainLayout)
         {
-            $layout->set($key, $value);
+            ViewModelHelper::deployVM($layoutPath, $data);
         }
+
+        $layout = new ViewLayout(
+            $file, 
+            $this,
+            $data
+        );
         
         return $layout->_render();
     }
@@ -144,17 +151,18 @@ class View
         {
             $widgetPath = 'widgets.'. $widgetPath;
         }
+
         $file = $this->getPath($widgetPath);
         if( false === $file )
         {
             throw new \Exception('Invalid widget '. $widgetPath);
         }
 
-        $layout = new ViewLayout($file, $this);
-        foreach($data as $key => $value)
-        {
-            $layout->set($key, $value);
-        }
+        $layout = new ViewLayout(
+            $file, 
+            $this,
+            ViewModelHelper::deployVM($widgetPath, $data)
+        );
         
         return $layout->_render();
     }

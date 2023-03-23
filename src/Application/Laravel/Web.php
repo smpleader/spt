@@ -4,18 +4,18 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: A web application based Joomla container
+ * @description: A web application based Laravel container
  * 
  */
 
 namespace SPT\Application\Laravel;
  
-use Illuminate\Container\Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use SPT\Storage\File\ArrayType as FileArray;
+use SPT\Container\Laravel as Container;
 
 class Web extends \SPT\Application\Core 
 {

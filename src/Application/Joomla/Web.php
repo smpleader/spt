@@ -14,9 +14,9 @@ use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response;
 use SPT\Storage\File\ArrayType as FileArray;
-use Joomla\DI\Container;
 use Joomla\DI\ContainerAwareTrait;
 use Joomla\DI\ContainerAwareInterface;
+use SPT\Container\Joomla as Container;
 
 class Web extends \SPT\Application\Core implements ContainerAwareInterface
 {

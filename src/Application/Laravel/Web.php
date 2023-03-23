@@ -13,15 +13,19 @@ namespace SPT\Application\Laravel;
 use Illuminate\Container\Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
+use SPT\Storage\File\ArrayType as FileArray;
 
 class Web extends \SPT\Application\Core 
 {
     private $container;
+    protected $slim;
     public function getContainer()
     {
-        return $container;
+        return $this->container;
     }
+
     public function __construct(string $pluginPath, string $configPath = '', string $namespace = '')
     {
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
@@ -29,7 +33,7 @@ class Web extends \SPT\Application\Core
         $this->psr11 = true; 
 
         // Create new IoC Container instance
-        $this->container = new Illuminate\Container\Container;
+        $this->container = new Container;
         
         $this->loadConfig($configPath); 
         $this->prepareEnvironment();
@@ -43,7 +47,7 @@ class Web extends \SPT\Application\Core
         // terminal or router 
         // setup container
         $container = $this->getContainer();
-        $container->bind('app', $this, true);
+        $container->instance('app', $this, true);
         // create request 
     }
 
@@ -54,12 +58,11 @@ class Web extends \SPT\Application\Core
         {
             $config->import($configPath);
         }
-        $this->getContainer()->set('config', $config);
+        $this->getContainer()->instance('config', $config);
     }
 
     private function addEndpoint($slug, $endpoint, $method = 'get')
     {
-        $app = AppFactory::create(); 
         $container = $this->getContainer();
         $params = [];
 
@@ -89,15 +92,14 @@ class Web extends \SPT\Application\Core
             $todo = $endpoint;
         }
 
-        if(count($params))
+        /*if(count($params))
         {
-            foreach($params as $key => $value)
-            {
-                $this->set($key, $value);
-            }
-        }
+            $this->set( 'params', $params);
+        }*/
 
-        $app->$method($slug, function (Request $request, Response $response) use ($container, $todo) {
+        $app = $this;
+
+        $this->slim->$method($slug, function (Request $request, Response $response) use ($app, $todo) {
 
             try{
 
@@ -105,19 +107,14 @@ class Web extends \SPT\Application\Core
         
                 if(count($try) !== 3)
                 {
-                    Response::_500('Not correct routing');
+                    throw new \Exception('Not correct routing');
                 } 
-
-                if($themePath)
-                {
-                    $this->set('themePath', $themePath);
-                }
     
                 list($plugin, $controllerName, $func) = $try;
                 $plugin = strtolower($plugin);
-                $this->set('currentPlugin', $plugin);
+                $app->set('currentPlugin', $plugin);
     
-                $plgRegister = $this->namespace. '\\plugins\\'. $plugin. '\\registers\\Dispatcher';
+                $plgRegister = $app->getNamespace(). '\\plugins\\'. $plugin. '\\registers\\Dispatcher';
                 if(!class_exists($plgRegister))
                 {
                     throw new \Exception('Invalid plugin '. $plugin);
@@ -127,15 +124,19 @@ class Web extends \SPT\Application\Core
                     throw new \Exception('Invalid dispatcher of plugin '. $plugin);
                 }
                 
-                $plgRegister::dispatch($this, $controllerName, $func);
+                $sth = $plgRegister::dispatch($app, $controllerName, $func);
+                //var_dump($sth, $plgRegister, $controllerName, $func);
+                $response->getBody()->write(
+                    $sth
+                );
     
             }
             catch (\Exception $e) 
             {
-                Response::_500('[Error] ' . $e->getMessage());
+                $response->getBody()->write(
+                    '[Error] ' . $e->getMessage()
+                ); 
             }
-            
-            //$response->getBody()->write('..');
 
             return $response;
         });
@@ -145,8 +146,16 @@ class Web extends \SPT\Application\Core
     {
         $container = $this->getContainer();
         $config = $container->get('config');
+        $this->slim = AppFactory::create(); 
+        $this->slim->setBasePath('/'.$config->subpath.'/');
+        $this->slim->addErrorMiddleware(true, true, true);
 
-        $this->loadPlugins('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
+        if($themePath)
+        {
+            $this->set('themePath', $themePath);
+        }
+
+        $this->loadPlugins('routing', 'registerEndpoints', function ($endpoints) {
 
             foreach($endpoints as $slug => $endpoint)
             {
@@ -154,13 +163,13 @@ class Web extends \SPT\Application\Core
             } 
         }); 
 
-        $app->run();
+        $this->slim->run();
     }
 
     public function url(string $subpath = '')
     {
         // TODO
         // https://www.slimframework.com/docs/v4/cookbook/retrieving-current-route.html
-        return  $this->getContainer()->get('router')->url($subpath);
+        return  '';//$this->getContainer()->get('router')->url($subpath);
     }
 }

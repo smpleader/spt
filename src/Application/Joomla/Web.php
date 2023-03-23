@@ -87,7 +87,6 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
         try{
 
             $container->share( 'router', $router, true);
-
             if($themePath)
             {
                 $this->set('themePath', $themePath);

@@ -95,7 +95,7 @@ class View
         {
             $this->mainLayout = $layout;
         }
-
+        
         $file = $this->theme->getThemePath(). '/'. $page. '.php';
         if( !file_exists($file) )
         {

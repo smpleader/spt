@@ -35,17 +35,16 @@ class Controller  extends BaseObj
         $layoutPath = $this->app->getCurrentPluginPath(). '/views/';
 
         $this->registerViewModels();
- 
         $view = new View($layoutPath, $themePath, $theme);
 
-        Response::_200( $view->renderPage( $page, $layout, $data ) );
+        return $view->renderPage( $page, $layout, $data );
     }
 
     public function toJson($data=null)
     {
         header('Content-Type: application/json;charset=utf-8');
         if(null === $data) $data = $this->getAll();
-        Response::_200( $data );
+        return json_decode($data);
     }
 
     public function toAjax()
@@ -62,7 +61,7 @@ class Controller  extends BaseObj
  
         $view = new View($layoutPath, $themePath, $theme);
 
-        Response::_200( $view->renderLayout($layout, $data) );
+        return $view->renderLayout($layout, $data);
     }
     
     public function registerViewModels()

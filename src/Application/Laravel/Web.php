@@ -72,7 +72,7 @@ class Web extends \SPT\Application\Core
             {
                 foreach($endpoint['fnc'] as $med => $function)
                 {
-                    $this->parseRouter($slug, $function, $med);
+                    $this->addEndpoint($slug, $function, $med);
                 }
                 
                 return;

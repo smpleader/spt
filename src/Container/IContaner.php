@@ -11,5 +11,7 @@
 namespace SPT\Container; 
 
 interface IContainer{
-    
+    function exists();
+    function get();
+    function set();
 }

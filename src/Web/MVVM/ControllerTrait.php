@@ -15,7 +15,7 @@ use SPT\Application\IApp;
 use SPT\BaseObj;
 use SPT\Response;
 
-class Controller  extends BaseObj
+trait ControllerTrait
 {
     protected $app;
 

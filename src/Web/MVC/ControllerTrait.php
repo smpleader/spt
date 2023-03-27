@@ -12,10 +12,10 @@ namespace SPT\Web\MVC;
 
 use SPT\Application\IApp;
 
-use SPT\BaseObj;
-use SPT\Response;   
-
-class Controller  extends BaseObj
+use SPT\BaseObj;  
+use SPT\Container\ContainerClient;   
+ 
+trait ControllerTrait
 {
     protected $app;
 

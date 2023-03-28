@@ -87,6 +87,11 @@ class View
 
     public function renderPage(string $page, string $layout, array $data = [])
     {
+        if( 0 !== strpos($layout, 'layouts.') )
+        {
+            $layout = 'layouts.'. $layout;
+        }
+
         if($this->mainLayout)
         {
             throw new \Exception('Generate page twice is not supported ');

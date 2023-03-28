@@ -46,7 +46,7 @@ abstract class Client
 	 *
 	 * @since   1.2
 	 */
-	public function setContainer(Container $container)
+	public function setContainer(IContainer $container)
 	{
 		$this->container = $container;
 

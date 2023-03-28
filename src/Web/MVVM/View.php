@@ -158,10 +158,12 @@ class View
             throw new \Exception('Invalid widget '. $widgetPath);
         }
 
+        ViewModelHelper::deployVM($widgetPath, $data, $this->_shares);
+
         $layout = new ViewLayout(
             $file, 
             $this,
-            ViewModelHelper::deployVM($widgetPath, $data, $this->_shares)
+            $data
         );
         
         return $layout->_render();

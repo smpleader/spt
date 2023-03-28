@@ -59,4 +59,58 @@ class ViewLayout extends BaseObj
         $try = $this->_view->getVar($name, '__NOT__FOUND__');
         return '__NOT__FOUND__' !== $try ;
     }
+    
+    /**
+     * SUPPORT form + field
+     */
+    public function form($formName = null)
+    {
+        $sth = $this->form;
+        if(is_array($sth))
+        {
+            if(!count($sth)) return false;
+            if(isset($sth[$formName])) return $sth[$formName];
+
+            reset($sth);
+            return current($sth);
+        }
+
+        return $sth;
+    }
+
+    public function field($name = null, $formName = null)
+    {
+        echo $this->_field($name, $formName);
+    }
+
+    public function _field($name = null, $formName = null)
+    {
+        $form = $this->form($formName);
+        if(!$form) return;
+        
+        $layout = false;
+        if(null === $name)
+        {
+            if($form->hasField())
+            {
+                $this->field = $form->getField();
+                $layout = $this->field->layout ?? 'fields.'. $this->field->type;
+            }
+        }
+        else
+        {
+            $this->field = $form->getField($name);
+            $layout = $this->field->layout ?? 'fields.'. $this->field->type;
+        }
+
+        if($layout && $file_layout = $this->_view->getPath($layout) )
+        {
+            ob_start();
+            include $file_layout;
+            $content = ob_get_clean();
+            return $content;
+        }
+
+        return '<!-- Invalid field '. $name. ' in form '. $formName .' -->';
+    }
 }

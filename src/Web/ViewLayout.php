@@ -55,7 +55,7 @@ class ViewLayout extends BaseObj
 
     public function exists($key)
     {
-        if( isset( $this->_vars[$this->_index][$key] ) ) return true;
+        if( isset( $this->_vars[$key] ) ) return true;
         $try = $this->_view->getVar($name, '__NOT__FOUND__');
         return '__NOT__FOUND__' !== $try ;
     }

@@ -16,7 +16,7 @@ use SPT\Web\ViewLayout;
 class ViewModel
 {
     protected $container;
-    public function __construc($container = null)
+    public function __construct($container = null)
     {
         $this->container = $container;
     }

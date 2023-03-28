@@ -12,7 +12,7 @@ namespace SPT\Container;
 
 use Joomla\DI\Container;
 
-class Joomla extends Container
+class Joomla extends Container implements IContainer
 {
     
 }

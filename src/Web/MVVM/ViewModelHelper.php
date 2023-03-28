@@ -45,10 +45,10 @@ class ViewModelHelper
         }
     }
 
-    public static function deployVM($layout, &$data)
+    public static function deployVM($layout, &$data, $viewData)
     {
         $helper = static::getInstance();
-        $tryData = $helper->getData($layout);
+        $tryData = $helper->getData($layout, $viewData);
         if(count($tryData))
         {
             $data = array_merge($tryData, $data);
@@ -129,7 +129,7 @@ class ViewModelHelper
         }
     }
 
-    public function getData($layout)
+    public function getData($layout, $viewData)
     {
         $data = [];
         if(isset($this->vms[$layout]))
@@ -145,7 +145,7 @@ class ViewModelHelper
                     {
                         throw new \Exception('Invalid function '. $fnc. ' of ViewModel '.$vm);
                     }
-                    $data = array_merge($data, $ViewModel->$fnc());
+                    $data = array_merge($data, $ViewModel->$fnc($data, $viewData));
                 }
             }
         }

@@ -102,7 +102,7 @@ class View
             throw new \Exception('Invalid theme page '. $page);
         }
 
-        ViewModelHelper::deployVM($layout, $data);
+        ViewModelHelper::deployVM($layout, $data, []);
 
         if(is_array($data) || is_object($data))
         {
@@ -133,7 +133,7 @@ class View
 
         if($layoutPath != $this->mainLayout)
         {
-            ViewModelHelper::deployVM($layoutPath, $data);
+            ViewModelHelper::deployVM($layoutPath, $data, $this->_shares);
         }
 
         $layout = new ViewLayout(
@@ -161,7 +161,7 @@ class View
         $layout = new ViewLayout(
             $file, 
             $this,
-            ViewModelHelper::deployVM($widgetPath, $data)
+            ViewModelHelper::deployVM($widgetPath, $data, $this->_shares)
         );
         
         return $layout->_render();

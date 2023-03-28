@@ -109,7 +109,7 @@ class ViewModelHelper
         }
         else
         {
-            $this->container->set($vmName, new $vmName);
+            $this->container->set($vmName, new $vmName($this->container));
         }
     }
 

@@ -94,13 +94,13 @@ class ViewLayout extends BaseObj
             if($form->hasField())
             {
                 $this->field = $form->getField();
-                $layout = $this->field->layout ?? 'fields.'. $this->field->type;
+                $layout = $this->field->layout ? $this->field->layout : 'fields.'. $this->field->type;
             }
         }
         else
         {
             $this->field = $form->getField($name);
-            $layout = $this->field->layout ?? 'fields.'. $this->field->type;
+            $layout = $this->field->layout ? $this->field->layout : 'fields.'. $this->field->type;
         }
 
         if($layout && $file_layout = $this->_view->getPath($layout) )

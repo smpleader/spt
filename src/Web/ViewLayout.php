@@ -40,7 +40,7 @@ class ViewLayout extends BaseObj
         return $this->_view->getVar($name, NULL);
     }
 
-    public function render($filePath, $data)
+    public function render($filePath, array $data = [])
     {
         return $this->_view->renderLayout($filePath, $data);
     }

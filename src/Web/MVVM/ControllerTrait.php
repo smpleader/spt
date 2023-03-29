@@ -44,7 +44,7 @@ trait ControllerTrait
     {
         header('Content-Type: application/json;charset=utf-8');
         if(null === $data) $data = $this->getAll();
-        return json_decode($data);
+        return json_encode($data);
     }
 
     public function toAjax()

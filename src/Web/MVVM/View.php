@@ -126,7 +126,7 @@ class View
     
     public function renderLayout(string $layoutPath, array $data = [])
     {
-        if( 0 !== strpos($layoutPath, 'layouts.') ||  0 !== strpos($layoutPath, 'widgets.') )
+        if( 0 !== strpos($layoutPath, 'layouts.') &&  0 !== strpos($layoutPath, 'widgets.') )
         {
             $layoutPath = 'layouts.'. $layoutPath;
         }

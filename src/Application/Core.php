@@ -111,7 +111,7 @@ class Core implements IApp
     public function execute(string $themePath = ''){ }
     public function url(string $subpath = ''){ return '-- extended application did not implement url() --'; }
 
-    public function redirect(string $url, $redirect_status)
+    public function redirect(string $url, $redirect_status = 301)
     {
         Response::redirect($url, $redirect_status );
         exit(0);

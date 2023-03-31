@@ -126,7 +126,7 @@ class View
     
     public function renderLayout(string $layoutPath, array $data = [])
     {
-        if( 0 !== strpos($layoutPath, 'layouts.') )
+        if( 0 !== strpos($layoutPath, 'layouts.') ||  0 !== strpos($layoutPath, 'widgets.') )
         {
             $layoutPath = 'layouts.'. $layoutPath;
         }
@@ -156,6 +156,8 @@ class View
         {
             $widgetPath = 'widgets.'. $widgetPath;
         }
+
+        return $this->renderLayout($widgetPath, $data);
 
         $file = $this->getPath($widgetPath);
         if( false === $file )

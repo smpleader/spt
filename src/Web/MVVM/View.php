@@ -158,21 +158,5 @@ class View
         }
 
         return $this->renderLayout($widgetPath, $data);
-
-        $file = $this->getPath($widgetPath);
-        if( false === $file )
-        {
-            throw new \Exception('Invalid widget '. $widgetPath);
-        }
-
-        ViewModelHelper::deployVM($widgetPath, $data, $this->_shares);
-
-        $layout = new ViewLayout(
-            $file, 
-            $this,
-            $data
-        );
-        
-        return $layout->_render();
     }
 }

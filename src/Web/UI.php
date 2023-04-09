@@ -1,6 +1,6 @@
 <?php
 /**
- * SPT software - Gui Field
+ * SPT software - Gui libraries support multi site elements
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
@@ -10,7 +10,7 @@
 
 namespace SPT\Web;
 
-class Menu
+class UI
 {
     protected array $menus = [];
 
@@ -23,14 +23,22 @@ class Menu
 
     public function generate($menuId = '__FIRST__')
     {
-        if(null === $menuId)
+        $menu = $this->getMenu($menuId);
+
+        if(!is_a($menu, '\SPT\View\Gui\Menu'))
         {
             throw new \Exception('Invalid menu Ids'); 
         }
 
-        $menu = $this->getMenu($menuId);
-        if(false)
+        if(file_exists($menu->getLayout()))
+        {
+            
+        }
+
         $_output = '';
+
+
+
         if($this->link)
         {
             $_output .= '<a href="'. $this->link. '" >';

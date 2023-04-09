@@ -186,27 +186,4 @@ class Theme extends BaseObj
 
         return $result;
     }
-
-    /*public function render(string $page, array $data = [])
-    {
-        if( !file_exists($this->themePath. '/'. $page. '.php') )
-        {
-            throw new \Exception('Invalid theme page '. $page);
-        }
-
-        if(is_array($data) || is_object($data))
-        {
-            foreach($data as $key => $value)
-            {
-                $this->setVar($key, $value);
-            }
-        }
-
-        ob_start();
-        include $this->themePath. '/'. $page. '.php';
-        $content = ob_get_clean();
-        return $content;
-    }*/
-
-    
 }

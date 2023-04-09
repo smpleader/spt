@@ -16,4 +16,9 @@ use SPT\BaseObj;
 class ControllerBase extends BaseObj
 {
     use ControllerTrait;
+
+    public function __construct(IApp $app)
+    {
+        $this->app = $app; 
+    }
 }

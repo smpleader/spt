@@ -19,22 +19,48 @@ trait ControllerTrait
 {
     protected $app;
 
-    public function __construct(IApp $app)
+    protected function getView()
     {
-        $this->app = $app; 
+        $pluginName = $this->app->get('currentPlugin', '');
+
+        if(empty($pluginName))
+        {
+            throw new \Exception('Invalid plugin, can not create content page');
+        }
+
+        $pluginLayout = $this->app->getPluginPath(). $pluginName.'/views/';
+
+        $themePath = $this->app->get('themePath', '');
+        $theme = $this->app->get('theme', '');
+        if( $themePath && $theme )
+        {
+            $themePath .= '/'. $theme;
+            $themeLayout = $themePath.  '/'. $pluginName. '/';
+            $layouts = [
+                $themeLayout. '__.php',
+                $themeLayout. '__/index.php',
+                $pluginLayout. '__.php',
+                $pluginLayout. '__/index.php',
+            ];
+        }
+        else
+        {
+            $themePath = $pluginLayout;
+            $layouts = [
+                $pluginLayout. '__.php',
+                $pluginLayout. '__/index.php'
+            ];
+        }
+
+        return new View($layouts, $themePath);
     }
 
     public function toHtml()
-    { 
+    {
+        $data = (array) $this->getAll();
         $layout = $this->app->get('layout', 'default');
         $page = $this->app->get('page', 'index');
-        $themePath = $this->app->get('themePath', '');
-        $theme = $this->app->get('theme', '');
-        $data = (array) $this->getAll();
-
-        $layoutPath = $this->app->getCurrentPluginPath(). '/views/';
- 
-        $view = new View($layoutPath, $themePath, $theme);
+        $view = $this->getView();
 
         return $view->renderPage( $page, $layout, $data );
     }
@@ -48,15 +74,9 @@ trait ControllerTrait
 
     public function toAjax()
     {
-        $layout = $this->app->get('layout', 'default');
-        $page = $this->app->get('page', 'index');
-        $themePath = $this->app->get('themePath', '');
-        $theme = $this->app->get('theme', '');
         $data = (array) $this->getAll();
-
-        $layoutPath = $this->app->getCurrentPluginPath(). '/views/';
- 
-        $view = new View($layoutPath, $themePath, $theme);
+        $layout = $this->app->get('layout', 'default');
+        $view = $this->getView();
 
         return $view->renderLayout($layout, $data);
     }

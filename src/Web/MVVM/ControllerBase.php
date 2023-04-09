@@ -11,11 +11,14 @@
 namespace SPT\Web\MVVM;
 
 use SPT\Application\IApp;
-
 use SPT\BaseObj;
-use SPT\Response;
 
 class ControllerBase  extends BaseObj
 {
     use ControllerTrait;
+
+    public function __construct(IApp $app)
+    {
+        $this->app = $app; 
+    }
 }

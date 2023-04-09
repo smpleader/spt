@@ -15,75 +15,7 @@ use SPT\Web\ViewLayout;
 
 class View
 {
-    protected Theme $theme;
-    protected $overrideLayouts = [];
-    protected $_shares = [];
-    protected $vm = [];
-    protected $mainLayout = '';
-
-    public function __construct($layoutPath, $themePath, $theme)
-    {
-        if(empty($themePath) || empty($theme))
-        {
-            $themePath = $layoutPath;
-        }
-        else
-        {
-            $themePath .= '/'. $theme;
-        }
-
-        if( '/' != substr($themePath, -1))
-        {
-            $themePath .= '/';
-        }
-
-        if($themePath == $layoutPath)
-        {
-            $this->overrideLayouts = [
-                $layoutPath. '__.php',
-                $layoutPath. '__/index.php'
-            ];
-        }
-        else
-        {   
-            $this->overrideLayouts = [
-                $themePath. '__.php',
-                $themePath. '__/index.php',
-                $layoutPath. '__.php',
-                $layoutPath. '__/index.php'
-            ];
-        }
-        
-        $this->theme = new Theme($themePath);
-    }
-
-    public function getVar($key, $default)
-    {
-        return $this->_shares[$key] ?? $default; 
-    }
-
-    public function setVar($key, $value)
-    {
-        $this->_shares[$key] = $value; 
-    }
-
-    public function getTheme()
-    {
-        return $this->theme;
-    }
-
-    public function getPath( $name )
-    {
-        $name = str_replace('.', '/', $name);
-
-        foreach($this->overrideLayouts as $file)
-        {
-            $file = str_replace('__', $name, $file);
-            if(file_exists($file)) return $file;
-        }
-
-        return false;
-    }
+    use \SPT\Web\ViewTrait;
 
     public function renderPage(string $page, string $layout, array $data = [])
     {

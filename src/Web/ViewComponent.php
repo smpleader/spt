@@ -10,9 +10,16 @@
 
 namespace SPT\Web;
 
-class UI
+class ViewComponent
 {
-    protected array $menus = [];
+    protected $_layout;
+    public function support(ViewLayout $layout)
+    {
+        $this->_layout = $layout;
+        return $this;
+    }
+
+    protected $menus;
 
     public function getMenu($menuIds = null)
     {
@@ -21,63 +28,20 @@ class UI
                 ( isset($this->menus[$menuIds]) ? $this->menus[$menuIds] : false ) );
     }
 
-    public function generate($menuId = '__FIRST__')
+    public function menu(string $menuId = '')
     {
-        $menu = $this->getMenu($menuId);
-
-        if(!is_a($menu, '\SPT\View\Gui\Menu'))
+        if( null === $menus)
         {
-            throw new \Exception('Invalid menu Ids'); 
+            // TODO set up vie factory::app->loadPlugins ..
+            // current: setup vie ViewModel
         }
 
-        if(file_exists($menu->getLayout()))
-        {
-            
-        }
-
-        $_output = '';
-
-
-
-        if($this->link)
-        {
-            $_output .= '<a href="'. $this->link. '" >';
-        }
-
-        if( $this->alias )
-        {
-            if( is_string($this->alias))
-            {
-                $key = $this->alias;
-                $_output .= $row->{$key}; 
-            }
-            /*elseif( is_array($this->alias))
-            {
-                list($name, $fnc) = $this->alias;
-                $model = $this->getModel( $name ); // TODO consider use function from field
-                $_output .= $model->$fnc( $row, $this->id );
-            }*/
-        }
-        else
-        {
-            $key = $this->id;
-            $_output .= $row->{$key};  
-        }
-
-        if($this->link && $link)
-        {
-            $_output .= '</a>';
-        }
-
-        return $_output;
+        return $this->_layout->render( 'vcom.menu'.$layout);
     }
     
-    /**
-     * SUPPORT form + field
-     */
     public function form($formName = null)
     {
-        $sth = $this->form;
+        $sth = $this->_layout->form;
         if(is_array($sth))
         {
             if(!count($sth)) return false;
@@ -105,15 +69,17 @@ class UI
         {
             if($form->hasField())
             {
-                $this->field = $form->getField();
-                $layout = $this->field->layout ? $this->field->layout : 'fields.'. $this->field->type;
+                $field = $form->getField();
+                $layout = $field->layout ? $field->layout : 'fields.'. $field->type;
             }
         }
         else
         {
-            $this->field = $form->getField($name);
-            $layout = $this->field->layout ? $this->field->layout : 'fields.'. $this->field->type;
+            $field = $form->getField($name);
+            $layout = $field->layout ? $field->layout : 'fields.'. $field->type;
         }
+
+        return $this->_layout->render( 'vcomponents.'.$layout, ['field'=>$field]);
 
         if($layout && $file_layout = $this->_view->getPath($layout) )
         {

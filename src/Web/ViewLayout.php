@@ -34,6 +34,7 @@ class ViewLayout extends BaseObj
     public function __get(string $name)
     { 
         if('theme' == $name) return $this->_view->getTheme();
+        if('ui' == $name) return $this->_view->getViewComponent($this);
         // try local 
         if( isset( $this->_vars[$name] ) ) return $this->_vars[$name];
         // try global
@@ -53,10 +54,22 @@ class ViewLayout extends BaseObj
         return $content;
     }
 
-    public function exists($key)
+    public function txt()
     {
-        if( isset( $this->_vars[$key] ) ) return true;
-        $try = $this->_view->getVar($name, '__NOT__FOUND__');
-        return '__NOT__FOUND__' !== $try ;
+        $arg_list = func_get_args();
+        $label = array_shift($arg_list);
+        if($label)
+        {
+            if(count($arg_list))
+            {
+                return call_user_func_array('sprintf', array_unshift($arg_list, $this->ui->translate($label)));
+            }
+            else
+            {
+                return $this->ui->translate($label);
+            }
+        }
+        
+        return '';
     }
 }

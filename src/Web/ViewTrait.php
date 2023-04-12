@@ -16,7 +16,7 @@ use SPT\Web\ViewLayout;
 trait ViewTrait
 {
     protected Theme $theme;
-    protected UI $ui;
+    protected ViewComponent $component;
     protected $overrideLayouts = [];
     protected $_shares = [];
     protected $mainLayout = '';
@@ -25,7 +25,7 @@ trait ViewTrait
     {
         $this->overrideLayouts = $overrideLayouts;
         $this->theme = new Theme($themePath);
-        $this->ui = new UI($this);
+        $this->component = new ViewComponent();
     }
 
     public function getVar($key, $default)
@@ -41,6 +41,11 @@ trait ViewTrait
     public function getTheme()
     {
         return $this->theme;
+    }
+
+    public function getViewComponent(ViewLayout $layout)
+    {
+        return $this->component->support($layout);
     }
 
     public function getPath( $name )

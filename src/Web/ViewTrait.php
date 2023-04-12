@@ -48,8 +48,13 @@ trait ViewTrait
         return $this->component->support($layout);
     }
 
-    public function getPath( $name )
+    public function getPath(string $name, string $type = 'layouts.')
     {
+        if(0 !== strpos($name, $type ))
+        {
+            $name = $type. $name;
+        }
+
         $name = str_replace('.', '/', $name);
 
         foreach($this->overrideLayouts as $file)
@@ -59,5 +64,15 @@ trait ViewTrait
         }
 
         return false;
+    }
+
+    public function renderWidget(string $widgetPath, array $data = [])
+    {
+        return $this->renderLayout($widgetPath, $data, 'widgets.');
+    }
+
+    public function renderViewComponent(string $viewcomPath, array $data = [])
+    {
+        return $this->renderLayout($viewcomPath, $data, 'vcoms.');
     }
 }

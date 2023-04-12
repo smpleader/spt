@@ -19,6 +19,12 @@ class ViewComponent
         return $this;
     }
 
+    public function translate(string $text)
+    {
+        // TODO: load language from app->loadPlugins('language', 'AddTranslation')
+        return $text;
+    }
+
     protected $menus;
 
     public function getMenu($menuIds = null)
@@ -36,7 +42,7 @@ class ViewComponent
             // current: setup vie ViewModel
         }
 
-        return $this->_layout->render( 'vcom.menu'.$layout);
+        return $this->_layout->render( 'vcoms.menu'.$layout);
     }
     
     public function form($formName = null)
@@ -79,7 +85,7 @@ class ViewComponent
             $layout = $field->layout ? $field->layout : 'fields.'. $field->type;
         }
 
-        return $this->_layout->render( 'vcomponents.'.$layout, ['field'=>$field]);
+        return $this->_layout->render( $layout, ['field'=>$field], 'vcoms.');
 
         if($layout && $file_layout = $this->_view->getPath($layout) )
         {

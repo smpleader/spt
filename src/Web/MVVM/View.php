@@ -56,13 +56,9 @@ class View
         return $content; 
     }
     
-    public function renderLayout(string $layoutPath, array $data = [])
+    public function renderLayout(string $layoutPath, array $data = [], string $type = 'layouts.')
     {
-        if( 0 !== strpos($layoutPath, 'layouts.') &&  0 !== strpos($layoutPath, 'widgets.') )
-        {
-            $layoutPath = 'layouts.'. $layoutPath;
-        }
-        $file = $this->getPath($layoutPath);
+        $file = $this->getPath($layoutPath, $type);
         if( false === $file )
         {
             throw new \Exception('Invalid layout '. $layoutPath);
@@ -80,15 +76,5 @@ class View
         );
         
         return $layout->_render();
-    }
-
-    public function renderWidget(string $widgetPath, array $data = [])
-    {
-        if( 0 !== strpos($widgetPath, 'widgets.') )
-        {
-            $widgetPath = 'widgets.'. $widgetPath;
-        }
-
-        return $this->renderLayout($widgetPath, $data);
     }
 }

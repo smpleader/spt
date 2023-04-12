@@ -19,11 +19,6 @@ class View
 
     public function renderPage(string $page, string $layout, array $data = [])
     {
-        if( 0 !== strpos($layout, 'layouts.') )
-        {
-            $layout = 'layouts.'. $layout;
-        }
-
         if($this->mainLayout)
         {
             throw new \Exception('Generate page twice is not supported ');
@@ -54,37 +49,12 @@ class View
         return $content; 
     }
     
-    public function renderLayout(string $layoutPath, array $data = [])
+    public function renderLayout(string $layoutPath, array $data = [], string $type = 'layouts.')
     {
-        if( 0 !== strpos($layoutPath, 'layouts.') )
-        {
-            $layoutPath = 'layouts.'. $layoutPath;
-        }
-        $file = $this->getPath($layoutPath);
+        $file = $this->getPath($layoutPath, $type);
         if( false === $file )
         {
             throw new \Exception('Invalid layout '. $layoutPath);
-        }
-
-        $layout = new ViewLayout($file, $this);
-        foreach($data as $key => $value)
-        {
-            $layout->set($key, $value);
-        }
-        
-        return $layout->_render();
-    }
-
-    public function renderWidget(string $widgetPath, array $data = [])
-    {
-        if( 0 !== strpos($widgetPath, 'widgets.') )
-        {
-            $widgetPath = 'widgets.'. $widgetPath;
-        }
-        $file = $this->getPath($widgetPath);
-        if( false === $file )
-        {
-            throw new \Exception('Invalid widget '. $widgetPath);
         }
 
         $layout = new ViewLayout($file, $this);

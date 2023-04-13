@@ -50,7 +50,7 @@ trait ViewTrait
 
     public function getPath(string $name, string $type = 'layouts.')
     {
-        if(0 !== strpos($name, $type ))
+        if( 0 !== strpos($name, $type ))
         {
             $name = $type. $name;
         }

@@ -34,6 +34,10 @@ class View
             throw new \Exception('Invalid theme page '. $page);
         }
 
+        $data = array_merge($data, ['mainLayout'=>$layout]);
+        $layout = new ViewLayout($file, $this, $data);
+        return $layout->_render();
+
         if(is_array($data) || is_object($data))
         {
             foreach($data as $key => $value)
@@ -41,6 +45,7 @@ class View
                 $this->setVar($key, $value);
             }
         }
+
 
         ob_start();
         include $file;

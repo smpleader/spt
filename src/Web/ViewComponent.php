@@ -36,13 +36,13 @@ class ViewComponent
 
     public function menu(string $menuId = '')
     {
-        if( null === $menus)
+        if( null === $this->menus)
         {
             // TODO set up vie factory::app->loadPlugins ..
             // current: setup vie ViewModel
         }
 
-        return $this->_layout->render( 'vcoms.menu'.$layout);
+        return $this->_layout->render( 'vcoms.menu'.$menuId );
     }
     
     public function form($formName = null)

@@ -14,6 +14,8 @@ use SPT\Application\IApp;
 
 use SPT\BaseObj;
 use SPT\Response;
+use SPT\Web\Theme;   
+use SPT\Web\ViewComponent;   
 
 trait ControllerTrait
 {
@@ -52,7 +54,11 @@ trait ControllerTrait
             ];
         }
 
-        return new View($layouts, $themePath);
+        return new View(
+            $layouts, 
+            new Theme($themePath),
+            new ViewComponent($this->app->getRouter())
+        );
     }
 
     public function toHtml()

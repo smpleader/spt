@@ -39,6 +39,8 @@ class View
             throw new \Exception('Invalid theme page '. $page);
         }
 
+        $this->setVar('mainLayout', $layout);
+        
         ViewModelHelper::deployVM($layout, $data, []);
 
         if(is_array($data) || is_object($data))
@@ -49,14 +51,11 @@ class View
             }
         }
 
-        ob_start();
-        include $file;
-        $content = ob_get_clean();
-
-        return $content; 
+        $layout = new ViewLayout($file, $this);
+        return $layout->_render();
     }
     
-    public function renderLayout(string $layoutPath, array $data = [], string $type = 'layouts.')
+    public function renderLayout(string $layoutPath, array $data = [], string $type = 'layout')
     {
         $file = $this->getPath($layoutPath, $type);
         if( false === $file )

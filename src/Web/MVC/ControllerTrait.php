@@ -13,7 +13,8 @@ namespace SPT\Web\MVC;
 use SPT\Application\IApp;
 
 use SPT\BaseObj;  
-use SPT\Container\ContainerClient;   
+use SPT\Web\Theme;   
+use SPT\Web\ViewComponent;   
  
 trait ControllerTrait
 {
@@ -51,8 +52,12 @@ trait ControllerTrait
                 $pluginLayout. '__/index.php'
             ];
         }
-
-        return new View($layouts, $themePath);
+        
+        return new View(
+            $layouts,
+            new Theme($themePath),
+            new ViewComponent($this->app->getRouter())
+        );
     }
 
     public function toHtml()

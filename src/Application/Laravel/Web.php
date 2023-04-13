@@ -35,9 +35,9 @@ class Web extends \SPT\Application\Core
         // Create new IoC Container instance
         $this->container = new Container;
         
-        $this->loadConfig($configPath); 
+        $this->cfgLoad($configPath); 
         $this->prepareEnvironment();
-        $this->loadPlugins('bootstrap', 'initialize');
+        $this->plgLoad('bootstrap', 'initialize');
         return $this;
     }
     
@@ -51,7 +51,7 @@ class Web extends \SPT\Application\Core
         // create request 
     }
 
-    public function loadConfig(string $configPath = '')
+    public function cfgLoad(string $configPath = '')
     {
         $config = new FileArray();
         if( file_exists($configPath) )
@@ -155,7 +155,7 @@ class Web extends \SPT\Application\Core
             $this->set('themePath', $themePath);
         }
 
-        $this->loadPlugins('routing', 'registerEndpoints', function ($endpoints) {
+        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) {
 
             foreach($endpoints as $slug => $endpoint)
             {

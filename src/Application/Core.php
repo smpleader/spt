@@ -16,19 +16,22 @@ use SPT\Response;
 class Core implements IApp
 {
     protected $namespace;
-    protected $router;
+    protected IRouter $router;
     protected $pluginPath;
 	protected $psr11;
 
-    public function __construct(string $pluginPath, string $configPath = '', string $namespace = '')
+    public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
     {
+        define('SPT_PUBLIC_PATH', $publicPath);
+        define('SPT_PLUGIN_PATH', $pluginPath);
+
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
         $this->pluginPath = $pluginPath;
         $this->psr11 = false;
 
-        $this->loadConfig($configPath); 
+        $this->cfgLoad($configPath); 
         $this->prepareEnvironment();
-        $this->loadPlugins('bootstrap', 'initialize');
+        $this->plgLoad('bootstrap', 'initialize');
 
         return $this;
     }
@@ -43,20 +46,20 @@ class Core implements IApp
         return $this->namespace;
     }
 
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
     public function getPluginPath()
     {
         return $this->pluginPath. '/';
     }
 
-    public function getCurrentPluginPath()
-    {
-        return $this->pluginPath. '/'. $this->get('currentPlugin', '');
-    }
-
     protected function prepareEnvironment(){ }
 
     protected $config;
-    public function loadConfig(string $configPath = '')
+    public function cfgLoad(string $configPath = '')
     {
         if( file_exists( $configPath) )
         {
@@ -68,7 +71,7 @@ class Core implements IApp
         }
     }
 
-    public function loadPlugins(string $event, string $execute, $closure = null)
+    public function plgLoad(string $event, string $execute, $closure = null)
     {
         $event = ucfirst(strtolower($event));
         foreach(new \DirectoryIterator($this->pluginPath) as $item) 
@@ -109,11 +112,22 @@ class Core implements IApp
     }
 
     public function execute(string $themePath = ''){ }
-    public function url(string $subpath = ''){ return '-- extended application did not implement url() --'; }
 
     public function redirect(string $url, $redirectStatus = 302)
     {
         Response::redirect($url, $redirectStatus );
+        exit(0);
+    }
+
+    public function raiseError(string $msg, $code = 500)
+    {
+        Response::_($msg, $code);
+        exit(0);
+    }
+
+    public function finalize(string $content)
+    {
+        Response::_200($content);
         exit(0);
     }
 }

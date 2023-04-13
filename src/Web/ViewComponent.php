@@ -10,8 +10,16 @@
 
 namespace SPT\Web;
 
+use SPT\Application\IRouter;
+
 class ViewComponent
 {
+    private $router;
+    public function __construct(IRouter $router)
+    {
+        $this->router = $router;
+    }
+
     protected $_layout;
     public function support(ViewLayout $layout)
     {
@@ -19,30 +27,28 @@ class ViewComponent
         return $this;
     }
 
+    public function createUrl($alias = '')
+    {
+        // TODO: support generate url from object
+        return $this->router->url($alias);
+    }
+
     public function translate(string $text)
     {
-        // TODO: load language from app->loadPlugins('language', 'AddTranslation')
+        // TODO: load language from app->plgLoad('language', 'AddTranslation')
         return $text;
     }
 
     protected $menus;
-
-    public function getMenu($menuIds = null)
-    {
-        return $menuIds === null ? $this->menus :
-            ( $menuIds === '__FIRST__' && count($this->menus) ? array_shift($this->menus) : 
-                ( isset($this->menus[$menuIds]) ? $this->menus[$menuIds] : false ) );
-    }
-
     public function menu(string $menuId = '')
     {
         if( null === $this->menus)
         {
-            // TODO set up vie factory::app->loadPlugins ..
+            // TODO set up vie factory::app->plgLoad ..
             // current: setup vie ViewModel
         }
 
-        return $this->_layout->render( 'vcoms.menu'.$menuId );
+        return $this->_layout->render( 'vcoms.menu'.$menuId, [], 'vcom');
     }
     
     public function form($formName = null)
@@ -85,7 +91,7 @@ class ViewComponent
             $layout = $field->layout ? $field->layout : 'fields.'. $field->type;
         }
 
-        return $this->_layout->render( $layout, ['field'=>$field], 'vcoms.');
+        return $this->_layout->render( $layout, ['field'=>$field], 'vcom');
 
         if($layout && $file_layout = $this->_view->getPath($layout) )
         {

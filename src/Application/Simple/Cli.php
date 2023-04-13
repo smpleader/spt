@@ -32,6 +32,6 @@ class Cli extends \SPT\Application\Core
 		}
 
         // load CommandLine to start the work
-        $this->loadPlugins('cli', 'registerCommands');
+        $this->plgLoad('cli', 'registerCommands');
     }
 }

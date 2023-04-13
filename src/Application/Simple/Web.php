@@ -13,6 +13,7 @@ namespace SPT\Application\Simple;
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response;
+use \Exception;
 
 class Web extends \SPT\Application\Core
 {
@@ -34,33 +35,45 @@ class Web extends \SPT\Application\Core
     {
         $router = new Router($this->get('subpath', ''));
 
-        $this->loadPlugins('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
+        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
             $router->import($endpoints);
         }); 
 
-        list($todo, $params) = $router->parse($this->get('defaultEndpoint', false), $this->request);
-        $try = explode('.', $todo);
-        
-        if(count($try) !== 3)
-        {
-            Response::_500('Not correct routing');
-        } 
-
-        if(count($params))
-        {
-            foreach($params as $key => $value)
-            {
-                $this->set($key, $value);
-            }
-        }
-
         try{
+
+            $try = $router->parse($this->request);
+            if(false === $try)
+            {
+                throw new Exception('Invalid request', 500);
+            }
+    
+            list($todo, $params) = $try;
+            $try = explode('.', $todo);
+            
+            if(count($try) !== 3)
+            {
+                throw new Exception('Not correct routing', 500);
+            } 
+    
+            if(count($params))
+            {
+                foreach($params as $key => $value)
+                {
+                    $this->set($key, $value);
+                }
+            }
 
             $this->router = $router;
 
             if($themePath)
             {
                 $this->set('themePath', $themePath);
+            }
+
+            // support if this home - special deals
+            if($router->get('isHome'))
+            {
+                $this->plgLoad('routing', 'isHome'); 
             }
 
             list($plugin, $controllerName, $func) = $try;
@@ -70,24 +83,19 @@ class Web extends \SPT\Application\Core
             $plgRegister = $this->namespace. '\\plugins\\'. $plugin. '\\registers\\Dispatcher';
             if(!class_exists($plgRegister))
             {
-                throw new \Exception('Invalid plugin '. $plugin);
+                throw new Exception('Invalid plugin '. $plugin);
             }
             if(!method_exists($plgRegister, 'dispatch'))
             {
-                throw new \Exception('Invalid dispatcher of plugin '. $plugin);
+                throw new Exception('Invalid dispatcher of plugin '. $plugin);
             }
             
             return $plgRegister::dispatch($this, $controllerName, $func);
 
         }
-        catch (\Exception $e) 
+        catch (Exception $e) 
         {
-            Response::_500('[Error] ' . $e->getMessage());
+            $this->raiseError('[Error] ' . $e->getMessage(), 500);
         }
-    }
-
-    public function url(string $subpath = '')
-    {
-        return  $this->router->url($subpath);
     }
 }

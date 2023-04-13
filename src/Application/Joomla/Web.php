@@ -29,9 +29,9 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
         $this->psr11 = true; 
 
         $this->setContainer(new Container);
-        $this->loadConfig($configPath); 
+        $this->cfgLoad($configPath); 
         $this->prepareEnvironment();
-        $this->loadPlugins('bootstrap', 'initialize');
+        $this->plgLoad('bootstrap', 'initialize');
         return $this;
     }
     
@@ -46,7 +46,7 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
         $container->set('request', new Request());
     }
 
-    public function loadConfig(string $configPath = '')
+    public function cfgLoad(string $configPath = '')
     {
         $config = new FileArray();
         if( file_exists($configPath) )
@@ -64,16 +64,22 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
 
         $router = new Router($config->subpath, '');
 
-        $this->loadPlugins('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
+        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
             $router->import($endpoints);
         }); 
 
-        list($todo, $params) = $router->parse($config->defaultEndpoint, $request);
+        $try = $router->parse($this->request);
+        if(false === $try)
+        {
+            $this->raiseError('Invalid request', 500);
+        }
+
+        list($todo, $params) = $try;
         $try = explode('.', $todo);
         
         if(count($try) !== 3)
         {
-            Response::_500('Not correct routing');
+            $this->raiseError('Not correct routing', 500);
         } 
 
         if(count($params))
@@ -111,12 +117,7 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
         }
         catch (\Exception $e) 
         {
-            Response::_500('[Error] ' . $e->getMessage());
+            $this->raiseError('[Error] ' . $e->getMessage(), 500);
         }
-    }
-
-    public function url(string $subpath = '')
-    {
-        return  $this->getContainer()->get('router')->url($subpath);
     }
 }

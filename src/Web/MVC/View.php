@@ -34,9 +34,7 @@ class View
             throw new \Exception('Invalid theme page '. $page);
         }
 
-        $data = array_merge($data, ['mainLayout'=>$layout]);
-        $layout = new ViewLayout($file, $this, $data);
-        return $layout->_render();
+        $this->setVar('mainLayout', $layout);
 
         if(is_array($data) || is_object($data))
         {
@@ -45,16 +43,12 @@ class View
                 $this->setVar($key, $value);
             }
         }
-
-
-        ob_start();
-        include $file;
-        $content = ob_get_clean();
-
-        return $content; 
+        
+        $layout = new ViewLayout($file, $this);
+        return $layout->_render();
     }
     
-    public function renderLayout(string $layoutPath, array $data = [], string $type = 'layouts.')
+    public function renderLayout(string $layoutPath, array $data = [], string $type = 'layout')
     {
         $file = $this->getPath($layoutPath, $type);
         if( false === $file )

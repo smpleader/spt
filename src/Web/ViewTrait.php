@@ -21,11 +21,11 @@ trait ViewTrait
     protected $_shares = [];
     protected $mainLayout = '';
 
-    public function __construct($overrideLayouts, $themePath)
+    public function __construct(array $overrideLayouts,Theme $theme, ViewComponent $component)
     {
         $this->overrideLayouts = $overrideLayouts;
-        $this->theme = new Theme($themePath);
-        $this->component = new ViewComponent();
+        $this->theme = $theme;
+        $this->component = $component;
     }
 
     public function getVar($key, $default)
@@ -48,16 +48,23 @@ trait ViewTrait
         return $this->component->support($layout);
     }
 
-    public function getPath(string $name, string $type = 'layouts.')
+    public function getPath(string $name, string $type = 'layout')
     {
-        if( 0 !== strpos($name, $type ))
+        if( 0 !== strpos($name, $type. 's.' ))
         {
-            $name = $type. $name;
+            $name = $type. 's.'. $name;
         }
 
         $name = str_replace('.', '/', $name);
 
-        foreach($this->overrideLayouts as $file)
+        $overrideLayouts = $this->overrideLayouts;
+        if($type !== 'layout')
+        {
+            $overrideLayouts[] = SPT_PLUGIN_PATH.'/core/views/'. $name.'.php';
+            $overrideLayouts[] = SPT_PLUGIN_PATH.'/core/views/'. $name.'/index.php';
+        }
+
+        foreach($overrideLayouts as $file)
         {
             $file = str_replace('__', $name, $file);
             if(file_exists($file)) return $file;
@@ -66,13 +73,13 @@ trait ViewTrait
         return false;
     }
 
-    public function renderWidget(string $widgetPath, array $data = [])
+ /*   public function renderWidget(string $widgetPath, array $data = [])
     {
-        return $this->renderLayout($widgetPath, $data, 'widgets.');
+        return $this->renderLayout($widgetPath, $data, 'widget');
     }
 
     public function renderViewComponent(string $viewcomPath, array $data = [])
     {
-        return $this->renderLayout($viewcomPath, $data, 'vcoms.');
-    }
+        return $this->renderLayout($viewcomPath, $data, 'vcom');
+    }*/
 }

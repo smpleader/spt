@@ -1,6 +1,6 @@
 <?php
 /**
- * SPT software - Asset
+ * SPT software - Application
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
@@ -12,7 +12,7 @@ namespace SPT\Application;
 
 interface IApp
 {
-    function loadPlugins(string $event, string $execute, $closure = null);
-    function loadConfig(string $configPath);
+    function plgLoad(string $event, string $execute, $closure = null);
+    function cfgLoad(string $configPath);
     function execute(string $templatePath);
 }

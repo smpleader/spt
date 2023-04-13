@@ -11,8 +11,9 @@
 namespace SPT\Router;
 
 use SPT\Support\FncArray;
+use SPT\Application\IRouter;
 
-class ArrayEndpoint extends Base
+class ArrayEndpoint extends Base implements IRouter
 {
     protected $nodes;
 
@@ -109,6 +110,7 @@ class ArrayEndpoint extends Base
             }
         }
 
+        return $found;
         return ( $found === false ) ? $default : $found;
     }
 
@@ -136,9 +138,9 @@ class ArrayEndpoint extends Base
         return $vars;
     }
 
-    public function parse($defaultEndpoint, $request)
+    public function parse($request)
     {
-        $intruction = $this->pathFinding($defaultEndpoint);
+        $intruction = $this->pathFinding();
         $fnc = '';
         $parameters = [];
 
@@ -164,7 +166,7 @@ class ArrayEndpoint extends Base
         } 
         else 
         {
-            throw new \Exception('Invalid request', 500);
+            return false;
         }
 
         if(is_array($fnc))

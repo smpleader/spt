@@ -72,14 +72,4 @@ trait ViewTrait
 
         return false;
     }
-
- /*   public function renderWidget(string $widgetPath, array $data = [])
-    {
-        return $this->renderLayout($widgetPath, $data, 'widget');
-    }
-
-    public function renderViewComponent(string $viewcomPath, array $data = [])
-    {
-        return $this->renderLayout($viewcomPath, $data, 'vcom');
-    }*/
 }

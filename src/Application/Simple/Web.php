@@ -18,7 +18,7 @@ use \Exception;
 class Web extends \SPT\Application\Core
 {
     protected $request;
-    public function request()
+    public function getRequest()
     {
         return $this->request;
     }

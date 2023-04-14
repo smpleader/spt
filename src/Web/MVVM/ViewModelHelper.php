@@ -41,7 +41,6 @@ class ViewModelHelper
             $helper = static::getInstance();
             $helper->assignContainer($container);
             $helper->assignVM($className, $xlayout);
-
         }
     }
 
@@ -62,11 +61,7 @@ class ViewModelHelper
 
     public function assignContainer($container)
     {
-        if( null == $container  )
-        {
-
-        }
-        else
+        if( null !== $container  )
         {
             if(!is_object($container)) //if(is_a($container, get_class($this->container)))
             {
@@ -82,6 +77,11 @@ class ViewModelHelper
 
     public function assignVM($vmName, $layout)
     {
+        if( 0 !== strpos($layout, 'layouts.' ) && 0 !== strpos($layout, 'widgets.') && 0 !== strpos($layout, 'vcoms.' ))
+        {
+            $layout = 'layouts.'. $layout;
+        }
+
         if(!isset($this->vms[$layout]))
         {
             $this->vms[$layout] = [];
@@ -100,7 +100,7 @@ class ViewModelHelper
             $this->vms[$layout][] = [$vmName, [$try]];
         }
 
-        if( null == $this->container )
+        if( is_a( $this->container, 'IApp' ) )
         {
             if(!isset($this->vmInstances[$vmName]))
             {
@@ -115,17 +115,17 @@ class ViewModelHelper
 
     public function getVM($name)
     {
-        if($this->container)
-        {
-            return $this->container->get($name);
-        }
-        else
+        if( is_a( $this->container, 'IApp') )
         {
             if(!isset($this->vmInstances[$name]))
             {
                 throw new \Exception('Invalid View Model '. $name);
             }
             return $this->vmInstances[$name];
+        }
+        else
+        {
+            return $this->container->get($name);
         }
     }
 

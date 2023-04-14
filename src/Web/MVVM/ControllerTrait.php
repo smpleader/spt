@@ -114,7 +114,7 @@ trait ControllerTrait
                                 ViewModelHelper::prepareVM(
                                     $vmName, 
                                     $vmName::register(), 
-                                    $this->app->supportContainer() ? $this->app->getContainer() : NULL
+                                    $this->app->supportContainer() ? $this->app->getContainer() : $this->app
                                 );
                             }
                         }

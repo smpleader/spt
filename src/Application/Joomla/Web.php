@@ -22,8 +22,11 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    public function __construct(string $pluginPath, string $configPath = '', string $namespace = '')
+    public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
     {
+        define('SPT_PUBLIC_PATH', $publicPath);
+        define('SPT_PLUGIN_PATH', $pluginPath);
+
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
         $this->pluginPath = $pluginPath;       
         $this->psr11 = true; 
@@ -33,6 +36,16 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
         $this->prepareEnvironment();
         $this->plgLoad('bootstrap', 'initialize');
         return $this;
+    }
+    
+    public function getRouter()
+    {
+        return $this->getContainer()->get('router');
+    }
+
+    public function getRequest()
+    {
+        return $this->getContainer()->get('request');
     }
     
     protected function prepareEnvironment()
@@ -68,34 +81,40 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
             $router->import($endpoints);
         }); 
 
-        $try = $router->parse($this->request);
-        if(false === $try)
-        {
-            $this->raiseError('Invalid request', 500);
-        }
-
-        list($todo, $params) = $try;
-        $try = explode('.', $todo);
-        
-        if(count($try) !== 3)
-        {
-            $this->raiseError('Not correct routing', 500);
-        } 
-
-        if(count($params))
-        {
-            foreach($params as $key => $value)
-            {
-                $this->set($key, $value);
-            }
-        }
-
         try{
 
-            $container->share( 'router', $router, true);
+            $try = $router->parse($container->get('request'));
+            if(false === $try)
+            {
+                $this->raiseError('Invalid request', 500);
+            }
+
+            list($todo, $params) = $try;
+            $try = explode('.', $todo);
+            
+            if(count($try) !== 3)
+            {
+                $this->raiseError('Not correct routing', 500);
+            } 
+
+            if(count($params))
+            {
+                foreach($params as $key => $value)
+                {
+                    $this->set($key, $value);
+                }
+            }
+
+            $container->share('router', $router, true);
             if($themePath)
             {
                 $this->set('themePath', $themePath);
+            }
+
+            // support if this home - special deals
+            if($router->get('isHome'))
+            {
+                $this->plgLoad('routing', 'isHome'); 
             }
 
             list($plugin, $controllerName, $func) = $try;

@@ -16,18 +16,18 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use SPT\Storage\File\ArrayType as FileArray;
 use SPT\Container\Laravel as Container;
+use SPT\Router\ArrayEndpoint as Router;
 
 class Web extends \SPT\Application\Core 
 {
     private $container;
     protected $slim;
-    public function getContainer()
-    {
-        return $this->container;
-    }
 
-    public function __construct(string $pluginPath, string $configPath = '', string $namespace = '')
+    public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
     {
+        define('SPT_PUBLIC_PATH', $publicPath);
+        define('SPT_PLUGIN_PATH', $pluginPath);
+
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
         $this->pluginPath = $pluginPath;       
         $this->psr11 = true; 
@@ -40,14 +40,30 @@ class Web extends \SPT\Application\Core
         $this->plgLoad('bootstrap', 'initialize');
         return $this;
     }
+
+    public function getContainer()
+    {
+        return $this->container;
+    }
+    
+    public function getRouter()
+    {
+        return $this->container->get('router');
+    }
+
+    public function getRequest()
+    {
+        return $this->container->get('request');
+    }
     
     protected function prepareEnvironment()
     {   
         // secrect key
         // terminal or router 
+        $this->container->instance('router', new Router($this->container->config->subpath, ''), true);
         // setup container
-        $container = $this->getContainer();
-        $container->instance('app', $this, true);
+        //$container = $this->getContainer();
+        $this->container->instance('app', $this, true);
         // create request 
     }
 
@@ -58,7 +74,7 @@ class Web extends \SPT\Application\Core
         {
             $config->import($configPath);
         }
-        $this->getContainer()->instance('config', $config);
+        $this->container->instance('config', $config);
     }
 
     private function addEndpoint($slug, $endpoint, $method = 'get')
@@ -92,14 +108,9 @@ class Web extends \SPT\Application\Core
             $todo = $endpoint;
         }
 
-        /*if(count($params))
-        {
-            $this->set( 'params', $params);
-        }*/
-
         $app = $this;
 
-        $this->slim->$method($slug, function (Request $request, Response $response) use ($app, $todo) {
+        $this->slim->$method($slug, function (Request $request, Response $response) use ($app, $todo, $params) {
 
             try{
 
@@ -109,6 +120,16 @@ class Web extends \SPT\Application\Core
                 {
                     throw new \Exception('Not correct routing');
                 } 
+
+                /*/ support if this home - special deals
+                if($router->get('isHome'))
+                {
+                    $this->plgLoad('routing', 'isHome'); 
+                }*/
+                if(count($params))
+                {
+                    $this->set( 'params', $params);
+                }
     
                 list($plugin, $controllerName, $func) = $try;
                 $plugin = strtolower($plugin);
@@ -164,12 +185,5 @@ class Web extends \SPT\Application\Core
         }); 
 
         $this->slim->run();
-    }
-
-    public function url(string $subpath = '')
-    {
-        // TODO
-        // https://www.slimframework.com/docs/v4/cookbook/retrieving-current-route.html
-        return  '';//$this->getContainer()->get('router')->url($subpath);
     }
 }

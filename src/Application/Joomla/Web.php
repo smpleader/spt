@@ -40,12 +40,12 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
     
     public function getRouter()
     {
-        return $this->getContainer()->get('router');
+        return $this->container->get('router');
     }
 
     public function getRequest()
     {
-        return $this->getContainer()->get('request');
+        return $this->container->get('request');
     }
     
     protected function prepareEnvironment()

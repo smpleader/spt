@@ -17,6 +17,7 @@ use Slim\Factory\AppFactory;
 use SPT\Storage\File\ArrayType as FileArray;
 use SPT\Container\Laravel as Container;
 use SPT\Router\ArrayEndpoint as Router;
+use SPT\Request\Base as SPTRequest;
 
 class Web extends \SPT\Application\Core 
 {
@@ -65,6 +66,7 @@ class Web extends \SPT\Application\Core
         //$container = $this->getContainer();
         $this->container->instance('app', $this, true);
         // create request 
+        $this->container->set('request', new SPTRequest());
     }
 
     public function cfgLoad(string $configPath = '')
@@ -121,14 +123,18 @@ class Web extends \SPT\Application\Core
                     throw new \Exception('Not correct routing');
                 } 
 
-                /*/ support if this home - special deals
-                if($router->get('isHome'))
+                // support if this home - special deals
+                if($app->getContainer()->get('router')->get('isHome'))
                 {
                     $this->plgLoad('routing', 'isHome'); 
-                }*/
+                }
+                
                 if(count($params))
                 {
-                    $this->set( 'params', $params);
+                    foreach($params as $K=>$V)
+                    {
+                        $this->set($K, $V);
+                    }
                 }
     
                 list($plugin, $controllerName, $func) = $try;
@@ -144,12 +150,9 @@ class Web extends \SPT\Application\Core
                 {
                     throw new \Exception('Invalid dispatcher of plugin '. $plugin);
                 }
-                
-                $sth = $plgRegister::dispatch($app, $controllerName, $func);
-                //var_dump($sth, $plgRegister, $controllerName, $func);
-                $response->getBody()->write(
-                    $sth
-                );
+
+                $plgRegister::dispatch($app, $controllerName, $func);
+               // $response->getBody()->write(  $sth  );
     
             }
             catch (\Exception $e) 

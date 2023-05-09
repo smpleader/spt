@@ -38,7 +38,7 @@ trait ControllerTrait
         }
         else
         {
-            $themePath = SPT_PLUGIN_PATH. '/'. $this->pluginName. '/views';
+            $themePath = SPT_PLUGIN_PATH. '/'. $pluginName. '/views';
         }
 
         return new View(

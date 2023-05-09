@@ -53,6 +53,7 @@ class View
         $file = $this->getPath($layoutPath, $type);
         if( false === $file )
         {
+            // $this->debugPath()
             throw new \Exception('Invalid layout '. $layoutPath);
         }
 

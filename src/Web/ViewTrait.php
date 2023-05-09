@@ -18,6 +18,7 @@ trait ViewTrait
     protected Theme $theme;
     protected ViewComponent $component;
     protected $overrideLayouts = [];
+    protected $paths = [];
     protected $_shares = [];
     protected $mainLayout = '';
     protected $currentPlugin = '';
@@ -53,36 +54,34 @@ trait ViewTrait
 
     private function preparePath(string $name, string $type)
     {
-        if( 0 !== strpos($name, $type. 's.' ))
-        {
-            $fullname = $type. 's.'. $name;
-        }
+        $fullname = 0 !== strpos($name, $type. 's.') ? $type. 's.'. $name : $name;
 
         $fullname = str_replace('.', '/', $fullname);
 
         $overrides =  $this->noTheme ? [
             SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '.php',
             SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '/index.php',
-            SPT_PLUGIN_PATH. '/core/'. $fullname. '.php',
-            SPT_PLUGIN_PATH. '/core/'. $fullname. '/index.php'
+            SPT_PLUGIN_PATH. '/core/views/'. $fullname. '.php',
+            SPT_PLUGIN_PATH. '/core/views/'. $fullname. '/index.php'
 
         ] : [
             SPT_THEME_PATH. '/'. $this->currentPlugin. '/'. $fullname. '.php',
             SPT_THEME_PATH. '/'. $this->currentPlugin. '/'. $fullname. '/index.php',
-            SPT_THEME_PATH. '/_'. $type. 's/'. $fullname. '.php',
-            SPT_THEME_PATH. '/_'. $type. 's/'. $fullname. '/index.php',
+            SPT_THEME_PATH. '/_'. $fullname. '.php',
+            SPT_THEME_PATH. '/_'. $fullname. '/index.php',
             SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '.php',
             SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '/index.php',
-            SPT_PLUGIN_PATH. '/core/'. $fullname. '.php',
-            SPT_PLUGIN_PATH. '/core/'. $fullname. '/index.php'
+            SPT_PLUGIN_PATH. '/core/views/'. $fullname. '.php',
+            SPT_PLUGIN_PATH. '/core/views/'. $fullname. '/index.php'
         ];
         
-        $this->overrideLayouts[$name] = false;
+        $this->overrideLayouts[$name] = $overrides;
+        $this->paths[$name] = false;
         foreach($overrides as $file)
         {
             if(file_exists($file))
             {
-                $this->overrideLayouts[$name] = $file;
+                $this->paths[$name] = $file;
                 return;
             }
         }
@@ -102,11 +101,11 @@ trait ViewTrait
 
     public function getPath(string $name, string $type = 'layout')
     {
-        if(!isset($this->overrideLayouts[$name]))
+        if(!isset($this->paths[$name]))
         {
             $this->preparePath($name, $type); 
         }
 
-        return $this->overrideLayouts[$name];
+        return $this->paths[$name];
     }
 }

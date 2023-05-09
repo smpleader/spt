@@ -92,15 +92,6 @@ class ViewComponent
         }
 
         return $this->_layout->render( $layout, ['field'=>$field], 'vcom');
-
-        if($layout && $file_layout = $this->_view->getPath($layout) )
-        {
-            ob_start();
-            include $file_layout;
-            $content = ob_get_clean();
-            return $content;
-        }
-
-        return '<!-- Invalid field '. $name. ' in form '. $formName .' -->';
+ 
     }
 }

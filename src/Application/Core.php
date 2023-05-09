@@ -26,7 +26,6 @@ class Core implements IApp
         define('SPT_PLUGIN_PATH', $pluginPath);
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-        $this->pluginPath = $pluginPath;
         $this->psr11 = false;
 
         $this->cfgLoad($configPath); 
@@ -51,11 +50,6 @@ class Core implements IApp
         return $this->router;
     }
 
-    public function getPluginPath()
-    {
-        return $this->pluginPath. '/';
-    }
-
     protected function prepareEnvironment(){ }
 
     protected $config;
@@ -74,7 +68,7 @@ class Core implements IApp
     public function plgLoad(string $event, string $execute, $closure = null)
     {
         $event = ucfirst(strtolower($event));
-        foreach(new \DirectoryIterator($this->pluginPath) as $item) 
+        foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $item) 
         {
             if (!$item->isDot() && $item->isDir()) 
             { 

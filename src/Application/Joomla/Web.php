@@ -28,7 +28,6 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
         define('SPT_PLUGIN_PATH', $pluginPath);
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-        $this->pluginPath = $pluginPath;       
         $this->psr11 = true; 
 
         $this->setContainer(new Container);

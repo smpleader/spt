@@ -91,7 +91,7 @@ trait ControllerTrait
     
     public function registerViewModels()
     {
-        foreach(new \DirectoryIterator($this->app->getPluginPath()) as $plg) 
+        foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $plg) 
         {
             if (!$plg->isDot() && $plg->isDir()) 
             { 

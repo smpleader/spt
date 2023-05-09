@@ -52,11 +52,9 @@ trait ViewTrait
         return $this->component->support($layout);
     }
 
-    private function preparePath(string $name, string $type)
+    private function preparePath(string $name)
     {
-        $fullname = 0 !== strpos($name, $type. 's.') ? $type. 's.'. $name : $name;
-
-        $fullname = str_replace('.', '/', $fullname);
+        $fullname = str_replace('.', '/', $name);
 
         $overrides =  $this->noTheme ? [
             SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '.php',
@@ -101,11 +99,13 @@ trait ViewTrait
 
     public function getPath(string $name, string $type = 'layout')
     {
-        if(!isset($this->paths[$name]))
+        $safeName = 0 !== strpos($name, $type. 's.') ? $type. 's.'. $name : $name;
+
+        if(!isset($this->paths[$safeName]))
         {
-            $this->preparePath($name, $type); 
+            $this->preparePath($safeName); 
         }
 
-        return $this->paths[$name];
+        return $this->paths[$safeName];
     }
 }

@@ -17,26 +17,21 @@ use SPT\Support\FncArray;
 
 class Theme extends BaseObj
 {
-    protected $themePath = '';
+    protected $themePat = '';
     protected $_assets = [];
     protected $_vars = [];
 
     public function __construct(string $themePath)
     {
-        $this->themePath = $themePath;
+        define('SPT_THEME_PATH', $themePath);
         $this->registerAssets();
-    }
-
-    public function getThemePath()
-    {
-        return $this->themePath;
     }
 
     public function registerAssets(string $profile = '', array $list = [])
     {
-        if( '' === $profile && file_exists($this->themePath. '/_assets.php'))
+        if( '' === $profile && file_exists(SPT_THEME_PATH. '/_assets.php'))
         {
-            $arr = require_once $this->themePath. '/_assets.php';
+            $arr = require_once SPT_THEME_PATH. '/_assets.php';
         }
         else
         {

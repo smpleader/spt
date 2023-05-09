@@ -29,32 +29,19 @@ trait ControllerTrait
             throw new \Exception('Invalid plugin, can not create content page');
         }
 
-        $pluginLayout = $this->app->getPluginPath(). $pluginName.'/views/';
-
         $themePath = $this->app->get('themePath', '');
         $theme = $this->app->get('theme', '');
         if( $themePath && $theme )
         {
-            $themePath .= '/'. $theme;
-            $themeLayout = $themePath.  '/'. $pluginName. '/';
-            $layouts = [
-                $themeLayout. '__.php',
-                $themeLayout. '__/index.php',
-                $pluginLayout. '__.php',
-                $pluginLayout. '__/index.php',
-            ];
+            $themePath .= '/'. $theme; 
         }
         else
         {
-            $themePath = $pluginLayout;
-            $layouts = [
-                $pluginLayout. '__.php',
-                $pluginLayout. '__/index.php'
-            ];
+            $themePath = SPT_PLUGIN_PATH. '/'. $this->pluginName. '/views';
         }
         
         return new View(
-            $layouts,
+            $pluginName, 
             new Theme($themePath),
             new ViewComponent($this->app->getRouter())
         );

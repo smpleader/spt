@@ -20,10 +20,13 @@ trait ViewTrait
     protected $overrideLayouts = [];
     protected $_shares = [];
     protected $mainLayout = '';
+    protected $currentPlugin = '';
+    protected $noTheme = false;
 
-    public function __construct(array $overrideLayouts,Theme $theme, ViewComponent $component)
+    public function __construct(string $pluginName, Theme $theme, ViewComponent $component)
     {
-        $this->overrideLayouts = $overrideLayouts;
+        $this->noTheme = SPT_THEME_PATH == SPT_PLUGIN_PATH. '/'. $pluginName. '/views';
+        $this->currentPlugin = $pluginName;
         $this->theme = $theme;
         $this->component = $component;
     }
@@ -48,28 +51,55 @@ trait ViewTrait
         return $this->component->support($layout);
     }
 
-    public function getPath(string $name, string $type = 'layout')
+    private function preparePath(string $name, string $type)
     {
         if( 0 !== strpos($name, $type. 's.' ))
         {
-            $name = $type. 's.'. $name;
+            $fullname = $type. 's.'. $name;
         }
 
-        $name = str_replace('.', '/', $name);
+        $fullname = str_replace('.', '/', $fullname);
 
-        $overrideLayouts = $this->overrideLayouts;
-        if($type !== 'layout')
+        $overrides =  $this->noTheme ? [
+            SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '.php',
+            SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '/index.php',
+            SPT_PLUGIN_PATH. '/core/'. $fullname. '.php',
+            SPT_PLUGIN_PATH. '/core/'. $fullname. '/index.php'
+
+        ] : [
+            SPT_THEME_PATH. '/'. $this->currentPlugin. '/'. $fullname. '.php',
+            SPT_THEME_PATH. '/'. $this->currentPlugin. '/'. $fullname. '/index.php',
+            SPT_THEME_PATH. '/_'. $type. 's/'. $fullname. '.php',
+            SPT_THEME_PATH. '/_'. $type. 's/'. $fullname. '/index.php',
+            SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '.php',
+            SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '/index.php',
+            SPT_PLUGIN_PATH. '/core/'. $fullname. '.php',
+            SPT_PLUGIN_PATH. '/core/'. $fullname. '/index.php'
+        ];
+        
+        $this->overrideLayouts[$name] = false;
+        foreach($overrides as $file)
         {
-            $overrideLayouts[] = SPT_PLUGIN_PATH.'/core/views/'. $name.'.php';
-            $overrideLayouts[] = SPT_PLUGIN_PATH.'/core/views/'. $name.'/index.php';
+            if(file_exists($file))
+            {
+                $this->overrideLayouts[$name] = $file;
+                return;
+            }
         }
+    }
 
-        foreach($overrideLayouts as $file)
+    public function debugPath($vardump = true)
+    {
+        $vardump ? var_dump( $this->overrideLayouts ) : return $this->overrideLayouts;
+    }
+
+    public function getPath(string $name, string $type = 'layout')
+    {
+        if(!isset($this->overrideLayouts[$name]))
         {
-            $file = str_replace('__', $name, $file);
-            if(file_exists($file)) return $file;
+            $this->preparePath($name, $type); 
         }
 
-        return false;
+        return $this->overrideLayouts[$name];
     }
 }

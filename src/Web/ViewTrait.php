@@ -90,7 +90,14 @@ trait ViewTrait
 
     public function debugPath($vardump = true)
     {
-        $vardump ? var_dump( $this->overrideLayouts ) : return $this->overrideLayouts;
+        if($vardump)
+        {
+            var_dump( $this->overrideLayouts );
+        }
+        else
+        {
+            return $this->overrideLayouts;
+        }
     }
 
     public function getPath(string $name, string $type = 'layout')

@@ -34,9 +34,9 @@ class Theme extends BaseObj
 
     public function registerAssets(string $profile = '', array $list = [])
     {
-        if( '' === $profile && file_exists($this->themePath. '_assets.php'))
+        if( '' === $profile && file_exists($this->themePath. '/_assets.php'))
         {
-            $arr = require_once $this->themePath. '_assets.php';
+            $arr = require_once $this->themePath. '/_assets.php';
         }
         else
         {

@@ -28,7 +28,7 @@ class View
             $this->mainLayout = $layout;
         }
 
-        $file = $this->theme->getThemePath(). '/'. $page. '.php';
+        $file = SPT_THEME_PATH. '/'. $page. '.php';
         if( !file_exists($file) )
         {
             throw new \Exception('Invalid theme page '. $page);

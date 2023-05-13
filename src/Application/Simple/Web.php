@@ -14,6 +14,7 @@ use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response;
 use \Exception;
+use SPT\Storage\File\ArrayType as FileArray;
 
 class Web extends \SPT\Application\Core
 {
@@ -23,21 +24,40 @@ class Web extends \SPT\Application\Core
         return $this->request;
     }
 
+    private $config;
+    public function cfgLoad(string $configPath = '')
+    {
+        $this->config = new FileArray();
+        if( file_exists( $configPath) )
+        {
+            $this->config->import($configPath); 
+        }
+    }
+    
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
     protected function prepareEnvironment()
     {
-        // secrect key
-        // terminal or router
+        // secrect key 
         $this->request = new Request();
-        // setup container
+        $this->router =  new Router($this->config->subpath);
     }
 
     public function execute(string $themePath = '')
     {
-        $router = new Router($this->get('subpath', ''));
+        $router = $this->router;
 
         $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
             $router->import($endpoints);
-        }); 
+        });
+
+        if($masterPlg = $this->getConfig()->master)
+        {
+            $this->pluginBackbone($masterPlg, 'Routing', 'afterRegisterEndpoints');
+        }
 
         try{
 
@@ -62,8 +82,6 @@ class Web extends \SPT\Application\Core
                     $this->set($key, $value);
                 }
             }
-
-            $this->router = $router;
 
             if($themePath)
             {

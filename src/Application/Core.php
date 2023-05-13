@@ -18,7 +18,7 @@ class Core implements IApp
     protected $namespace;
     protected IRouter $router;
     protected $pluginPath;
-	protected $psr11;
+	protected $container;
 
     public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
     {
@@ -26,7 +26,6 @@ class Core implements IApp
         define('SPT_PLUGIN_PATH', $pluginPath);
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-        $this->psr11 = false;
 
         $this->cfgLoad($configPath); 
         $this->prepareEnvironment();
@@ -37,33 +36,34 @@ class Core implements IApp
 
     protected function pluginsBootstrap()
     {
-        $masterPlg = $this->get('master', false);
-        if($masterPlg)
+        $config = $this->getContainer() ? $this->getContainer()->get('config') : $this->getConfig();
+        if($config->master)
         {
-            $this->tryPluginBootstrap($masterPlg, 'initialize', true);
+            $this->pluginBackbone($config->master, 'Bootstrap', 'initialize', true);
         }
 
         foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $item) 
         {
-            if (!$item->isDot() && $item->isDir() && ($item->getBasename() !== $masterPlg))
+            if (!$item->isDot() && $item->isDir() && ($item->getBasename() !== $config->master))
             { 
-                $this->tryPluginBootstrap($item->getBasename());
+                $this->pluginBackbone($item->getBasename(), 'Bootstrap', 'initialize');
             }
         }
 
-        if($masterPlg)
+        if($config->master)
         {
-            $this->tryPluginBootstrap($masterPlg, 'afterInitialize');
+            $this->pluginBackbone($config->master, 'Bootstrap', 'afterInitialize');
         }
     }
 
-    protected function tryPluginBootstrap($plgName, $fnc = 'initialize', $required=false)
+    protected function pluginBackbone(string $plgName, string $event, string $fnc, bool $required=false)
     {
-        $plgRegister = $this->namespace. '\\plugins\\'. $plgName. '\\registers\\Bootstrap';
+        $event = ucfirst(strtolower($event));
+        $plgRegister = $this->namespace. '\\plugins\\'. $plgName. '\\registers\\'.$event;
         if(!class_exists($plgRegister) || !method_exists($plgRegister, $fnc))
         {
             if(!$required) return;
-            $this->raiseError('Invalid Plugin '.$plgName. ' with '. $fnc);
+            $this->raiseError('Invalid Plugin '. $plgName. ' with '. $event. '.'. $fnc);
         }
 
         if(false === $plgRegister::$fnc($this))
@@ -72,9 +72,9 @@ class Core implements IApp
         }
     }
 
-    public function supportContainer()
+    public function getContainer()
     {
-        return $this->psr11;
+        return $this->container;
     }
 
     public function getNamespace()
@@ -89,18 +89,7 @@ class Core implements IApp
 
     protected function prepareEnvironment(){ }
 
-    protected $config;
-    public function cfgLoad(string $configPath = '')
-    {
-        if( file_exists( $configPath) )
-        {
-            $try = require_once($configPath);
-            if(is_array($try) || is_object($try))
-            {
-                foreach($try as $K=>$V) $this->set($K, $V);
-            }
-        }
-    }
+    public function cfgLoad(string $configPath = ''){}
 
     public function plgLoad(string $event, string $execute, $closure = null)
     {

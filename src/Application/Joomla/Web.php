@@ -14,28 +14,35 @@ use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response;
 use SPT\Storage\File\ArrayType as FileArray;
+
+use Joomla\DI\Container as ContainerType;
 use Joomla\DI\ContainerAwareTrait;
 use Joomla\DI\ContainerAwareInterface;
 use SPT\Container\Joomla as Container;
 
 class Web extends \SPT\Application\Core implements ContainerAwareInterface
 {
-    use ContainerAwareTrait;
-
     public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
     {
         define('SPT_PUBLIC_PATH', $publicPath);
         define('SPT_PLUGIN_PATH', $pluginPath);
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-        $this->psr11 = true; 
 
         $this->setContainer(new Container);
         $this->cfgLoad($configPath); 
         $this->prepareEnvironment();
-        $this->plgLoad('bootstrap', 'initialize');
+        $this->pluginsBootstrap();
+        
         return $this;
     }
+
+    // this is required from ContainerAwareInterface
+	public function setContainer(ContainerType $container)
+	{
+		$this->container = $container;
+		return $this;
+	}
     
     public function getRouter()
     {
@@ -49,13 +56,16 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
     
     protected function prepareEnvironment()
     {   
-        // secrect key
-        // terminal or router 
+        // secrect key 
         // setup container
         $container = $this->getContainer();
+        $config = $container->get('config');
+
         $container->share('app', $this, true);
         // create request
         $container->set('request', new Request());
+        // create router
+        $container->share('router', new Router($config->subpath, ''), true);
     }
 
     public function cfgLoad(string $configPath = '')
@@ -71,14 +81,17 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
     public function execute(string $themePath = '')
     {
         $container = $this->getContainer();
-        $config = $container->get('config');
-        $request = $container->get('request');
-
-        $router = new Router($config->subpath, '');
+        $request = $container->get('request'); 
+        $router = $container->get('router');
 
         $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
             $router->import($endpoints);
         }); 
+
+        if($masterPlg = $this->container->get('config')->master)
+        {
+            $this->pluginBackbone($masterPlg, 'Routing', 'afterRegisterEndpoints');
+        }
 
         try{
 
@@ -104,13 +117,12 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
                 }
             }
 
-            $container->share('router', $router, true);
             if($themePath)
             {
                 $this->set('themePath', $themePath);
             }
 
-            // support if this home - special deals
+            // support if this is home - special deals
             if($router->get('isHome'))
             {
                 $this->plgLoad('routing', 'isHome'); 

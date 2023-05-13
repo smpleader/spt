@@ -21,7 +21,6 @@ use SPT\Request\Base as SPTRequest;
 
 class Web extends \SPT\Application\Core 
 {
-    private $container;
     protected $slim;
 
     public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
@@ -30,20 +29,15 @@ class Web extends \SPT\Application\Core
         define('SPT_PLUGIN_PATH', $pluginPath);
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-        $this->psr11 = true; 
 
         // Create new IoC Container instance
         $this->container = new Container;
         
         $this->cfgLoad($configPath); 
         $this->prepareEnvironment();
-        $this->plgLoad('bootstrap', 'initialize');
-        return $this;
-    }
+        $this->pluginsBootstrap();
 
-    public function getContainer()
-    {
-        return $this->container;
+        return $this;
     }
     
     public function getRouter()
@@ -185,6 +179,11 @@ class Web extends \SPT\Application\Core
                 $this->addEndpoint($slug, $endpoint);
             } 
         }); 
+
+        if($masterPlg = $this->container->get('config')->master)
+        {
+            $this->pluginBackbone($masterPlg, 'Routing', 'afterRegisterEndpoints');
+        }
 
         $this->slim->run();
     }

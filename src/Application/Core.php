@@ -30,9 +30,46 @@ class Core implements IApp
 
         $this->cfgLoad($configPath); 
         $this->prepareEnvironment();
-        $this->plgLoad('bootstrap', 'initialize');
+        $this->pluginsBootstrap();
 
         return $this;
+    }
+
+    protected function pluginsBootstrap()
+    {
+        $masterPlg = $this->get('master', false);
+        if($masterPlg)
+        {
+            $this->tryPluginBootstrap($masterPlg, 'initialize', true);
+        }
+
+        foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $item) 
+        {
+            if (!$item->isDot() && $item->isDir() && ($item->getBasename() !== $masterPlg))
+            { 
+                $this->tryPluginBootstrap($item->getBasename());
+            }
+        }
+
+        if($masterPlg)
+        {
+            $this->tryPluginBootstrap($masterPlg, 'afterInitialize');
+        }
+    }
+
+    protected function tryPluginBootstrap($plgName, $fnc = 'initialize', $required=false)
+    {
+        $plgRegister = $this->namespace. '\\plugins\\'. $plgName. '\\registers\\Bootstrap';
+        if(!class_exists($plgRegister) || !method_exists($plgRegister, $fnc))
+        {
+            if(!$required) return;
+            $this->raiseError('Invalid Plugin '.$plgName. ' with '. $fnc);
+        }
+
+        if(false === $plgRegister::$fnc($this))
+        {
+            $this->raiseError($plgRegister::getMessage());
+        }
     }
 
     public function supportContainer()
@@ -70,7 +107,7 @@ class Core implements IApp
         $event = ucfirst(strtolower($event));
         foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $item) 
         {
-            if (!$item->isDot() && $item->isDir()) 
+            if (!$item->isDot() && $item->isDir())
             { 
                 $plgRegister = $this->namespace. '\\plugins\\'. $item->getBasename(). '\\registers\\'. $event; // $item->getFilename();
                 if(class_exists($plgRegister) && method_exists($plgRegister, $execute))
@@ -81,7 +118,7 @@ class Core implements IApp
                         $ok = $closure( $result );
                         if(false === $ok)
                         {
-                            die('Got an issue with plugin '. $item->getBasename(). ' when call '. $event .'.' . $execute);
+                            $this->raiseError('Got an issue with plugin '. $item->getBasename(). ' when call '. $event .'.' . $execute);
                         }
                     }
                 }

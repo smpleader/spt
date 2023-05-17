@@ -145,7 +145,7 @@ class Core implements IApp
         exit(0);
     }
 
-    public function finalize(string $content)
+    public function finalize($content)
     {
         Response::_200($content);
         exit(0);

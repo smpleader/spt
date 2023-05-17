@@ -78,7 +78,7 @@ class Base extends BaseObj
  
     public function url($asset = '')
     {
-        if($asset) $asset = trim($asset, '/');
+        if($asset) $asset = ltrim($asset, '/');
         return $this->get('root'). $asset;
     }
 }

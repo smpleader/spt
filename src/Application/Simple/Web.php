@@ -49,12 +49,13 @@ class Web extends \SPT\Application\Core
     public function execute(string $themePath = '')
     {
         $router = $this->router;
+        $config = $this->getConfig();
 
         $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
             $router->import($endpoints);
         });
 
-        if($masterPlg = $this->getConfig()->master)
+        if($masterPlg = $config->master)
         {
             $this->pluginBackbone($masterPlg, 'Routing', 'afterRegisterEndpoints');
         }
@@ -64,7 +65,14 @@ class Web extends \SPT\Application\Core
             $try = $router->parse($this->request);
             if(false === $try)
             {
-                throw new Exception('Invalid request', 500);
+                if($config->exists('pagenotfound'))
+                {
+                    $try = $config->pagenotfound;
+                }
+                else
+                {
+                    $this->raiseError('Invalid request', 500);
+                }
             }
     
             list($todo, $params) = $try;

@@ -83,12 +83,13 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
         $container = $this->getContainer();
         $request = $container->get('request'); 
         $router = $container->get('router');
+        $config = $container->get('config');
 
         $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
             $router->import($endpoints);
         }); 
 
-        if($masterPlg = $this->container->get('config')->master)
+        if($masterPlg = $config->master)
         {
             $this->pluginBackbone($masterPlg, 'Routing', 'afterRegisterEndpoints');
         }
@@ -98,7 +99,14 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
             $try = $router->parse($container->get('request'));
             if(false === $try)
             {
-                $this->raiseError('Invalid request', 500);
+                if($config->exists('pagenotfound'))
+                {
+                    $try = $config->pagenotfound;
+                }
+                else
+                {
+                    $this->raiseError('Invalid request', 500);
+                }
             }
 
             list($todo, $params) = $try;

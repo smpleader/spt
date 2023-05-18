@@ -101,7 +101,7 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
             {
                 if($config->exists('pagenotfound'))
                 {
-                    $try = $config->pagenotfound;
+                    $try = [$config->pagenotfound, []];
                 }
                 else
                 {

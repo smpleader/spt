@@ -67,7 +67,7 @@ class Web extends \SPT\Application\Core
             {
                 if($config->exists('pagenotfound'))
                 {
-                    $try = $config->pagenotfound;
+                    $try = [$config->pagenotfound, []];
                 }
                 else
                 {

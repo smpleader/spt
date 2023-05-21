@@ -39,6 +39,19 @@ class ViewComponent
         return $text;
     }
 
+    protected $title;
+    public function title(string $text = '')
+    {
+        if('' === $text)
+        {
+            echo empty($this->_layout->title) ? $this->title : $this->_layout->title;
+        }
+        else
+        {
+            $this->title = $text;
+        }
+    }
+
     protected $menus;
     public function menu(string $menuId = '')
     {

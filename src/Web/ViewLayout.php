@@ -41,6 +41,11 @@ class ViewLayout extends BaseObj
         return $this->_view->getVar($name, NULL);
     }
 
+    public function exists(string $name)
+    { 
+        return isset( $this->_vars[$name] ) || null !== $this->_view->getVar($name, NULL);
+    }
+
     public function render($layout, array $data=[], $type='layout')
     {
         if( 0 !== strpos($layout, $type. 's.' ))

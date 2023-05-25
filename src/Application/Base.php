@@ -73,7 +73,7 @@ class Base extends ACore implements IApp
         }
     }
 
-    protected function plgDispatch(string $controller, string $function)
+    public function plgDispatch(string $controller, string $function)
     {
         $plugin = $this->get('currentPlugin', '');
         $plgRegister = $this->namespace. '\\plugins\\'. $plugin. '\\registers\\Dispatcher';

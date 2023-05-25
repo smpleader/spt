@@ -65,7 +65,7 @@ abstract class Client
             return $this->container->get($name);
         }
 
-        throw new \RuntimeException('Invalid JDIContainer '.$name, 500);
+        throw new \RuntimeException('Invalid Container Service '.$name, 500);
     }
 
     protected $_vars = []; 

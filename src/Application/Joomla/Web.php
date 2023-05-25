@@ -5,6 +5,7 @@
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
  * @description: A web application based Joomla container
+ * @version: 0.8
  * 
  */
 
@@ -12,96 +13,49 @@ namespace SPT\Application\Joomla;
  
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
-use SPT\Response;
-use SPT\Storage\File\ArrayType as FileArray;
-
-use Joomla\DI\Container as ContainerType;
-use Joomla\DI\ContainerAwareTrait;
-use Joomla\DI\ContainerAwareInterface;
+use SPT\Response; 
 use SPT\Container\Joomla as Container;
 
-class Web extends \SPT\Application\Core implements ContainerAwareInterface
+class Web extends \SPT\Application\Base
 {
-    public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
-    {
-        define('SPT_PUBLIC_PATH', $publicPath);
-        define('SPT_PLUGIN_PATH', $pluginPath);
-
-        $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-
-        $this->setContainer(new Container);
-        $this->cfgLoad($configPath); 
-        $this->prepareEnvironment();
-        $this->pluginsBootstrap();
-        
-        return $this;
-    }
-
-    // this is required from ContainerAwareInterface
-	public function setContainer(ContainerType $container)
-	{
-		$this->container = $container;
-		return $this;
-	}
-    
-    public function getRouter()
-    {
-        return $this->container->get('router');
-    }
-
-    public function getRequest()
-    {
-        return $this->container->get('request');
-    }
-    
-    protected function prepareEnvironment()
+    protected function envLoad()
     {   
         // secrect key 
         // setup container
-        $container = $this->getContainer();
-        $config = $container->get('config');
-
-        $container->share('app', $this, true);
+        $this->container = new Container; 
+        $this->container->set('app', $this, true);
         // create request
-        $container->set('request', new Request());
+        $this->request = new Request(); 
+        $this->container->set('request', $this->request);
         // create router
-        $container->share('router', new Router($config->subpath, ''), true);
-    }
-
-    public function cfgLoad(string $configPath = '')
-    {
-        $config = new FileArray();
-        if( file_exists($configPath) )
-        {
-            $config->import($configPath);
-        }
-        $this->getContainer()->set('config', $config);
+        $this->router = new Router($this->config->subpath, '');
+        $this->container->set('router', $this->router, true);
+        // access to app config 
+        $this->container->set('config', $this->config, true);
     }
 
     public function execute(string $themePath = '')
     {
-        $container = $this->getContainer();
-        $request = $container->get('request'); 
-        $router = $container->get('router');
-        $config = $container->get('config');
-
-        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
+        $router = $this->router;
+        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ($router){
             $router->import($endpoints);
         }); 
 
-        if($masterPlg = $config->master)
+        if($masterPlg = $this->config->master)
         {
-            $this->pluginBackbone($masterPlg, 'Routing', 'afterRegisterEndpoints');
+            $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
         }
+
+        $this->set('themePath', $themePath);
 
         try{
 
-            $try = $router->parse($container->get('request'));
+            $try = $this->router->parse($this->request);
             if(false === $try)
             {
-                if($config->exists('pagenotfound'))
+                if($this->config->pagenotfound)
                 {
-                    $try = [$config->pagenotfound, []];
+                    $try = [$this->config->pagenotfound, []];
                 }
                 else
                 {
@@ -125,32 +79,17 @@ class Web extends \SPT\Application\Core implements ContainerAwareInterface
                 }
             }
 
-            if($themePath)
-            {
-                $this->set('themePath', $themePath);
-            }
-
             // support if this is home - special deals
-            if($router->get('isHome'))
+            if($this->router->get('isHome'))
             {
                 $this->plgLoad('routing', 'isHome'); 
             }
 
-            list($plugin, $controllerName, $func) = $try;
+            list($plugin, $controller, $function) = $try;
             $plugin = strtolower($plugin);
             $this->set('currentPlugin', $plugin);
-
-            $plgRegister = $this->namespace. '\\plugins\\'. $plugin. '\\registers\\Dispatcher';
-            if(!class_exists($plgRegister))
-            {
-                throw new \Exception('Invalid plugin '. $plugin);
-            }
-            if(!method_exists($plgRegister, 'dispatch'))
-            {
-                throw new \Exception('Invalid dispatcher of plugin '. $plugin);
-            }
             
-            return $plgRegister::dispatch($this, $controllerName, $func);
+            return $this->plgDispatch($controller, $function);
 
         }
         catch (\Exception $e) 

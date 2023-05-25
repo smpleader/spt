@@ -72,21 +72,21 @@ abstract class ACore
     // -- Shortcut :: no factory pattern
     public function rt(string $path = '////')
     {
-        return $path !== '////' ? $this->router->url($path) : $this->router;
+        return $path !== '////' ? $this->getRouter()->url($path) : $this->getRouter();
     }
 
-    public function cn(string $name)
+    public function cn(string $name = '')
     {
-        return $this->container->get($name);
+        return $name == '' ? $this->getContainer() : $this->getContainer()->get($name);
     }
 
     public function cf(string $name = '')
     {
-        return $name == '' ? $this->config : $this->config->{$name};
+        return $name == '' ? $this->getConfig() : $this->getConfig()->{$name};
     }
 
     public function rq(string $method = '')
     {
-        return  $method == '' ? $this->request : $this->request->{$method};
+        return  $method == '' ? $this->getRequest() : $this->getRequest()->{$method};
     }
 }

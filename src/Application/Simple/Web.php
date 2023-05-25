@@ -13,11 +13,14 @@ namespace SPT\Application\Simple;
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response;
-use \Exception;
-use SPT\Storage\File\ArrayType as FileArray;
 
 class Web extends \SPT\Application\Base
 {
+    public function getContainer()
+    {
+        return $this;
+    }
+
     protected function envLoad()
     {
         // secrect key 
@@ -28,13 +31,12 @@ class Web extends \SPT\Application\Base
     public function execute(string $themePath = '')
     {
         $router = $this->router;
-        $config = $this->getConfig();
 
         $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
             $router->import($endpoints);
         });
 
-        if($masterPlg = $config->master)
+        if($masterPlg = $this->config->master)
         {
             $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
         }
@@ -44,9 +46,9 @@ class Web extends \SPT\Application\Base
             $try = $router->parse($this->request);
             if(false === $try)
             {
-                if($config->exists('pagenotfound'))
+                if($this->config->pagenotfound)
                 {
-                    $try = [$config->pagenotfound, []];
+                    $try = [$this->config->pagenotfound, []];
                 }
                 else
                 {
@@ -59,7 +61,7 @@ class Web extends \SPT\Application\Base
             
             if(count($try) !== 3)
             {
-                throw new Exception('Not correct routing', 500);
+                throw new \Exception('Not correct routing', 500);
             } 
     
             if(count($params))
@@ -70,10 +72,7 @@ class Web extends \SPT\Application\Base
                 }
             }
 
-            if($themePath)
-            {
-                $this->set('themePath', $themePath);
-            }
+            $this->set('themePath', $themePath);
 
             // support if this home - special deals
             if($router->get('isHome'))
@@ -88,7 +87,7 @@ class Web extends \SPT\Application\Base
             return $this->plgDispatch($controller, $function);
 
         }
-        catch (Exception $e) 
+        catch (\Exception $e) 
         {
             $this->raiseError('[Error] ' . $e->getMessage(), 500);
         }

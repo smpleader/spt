@@ -5,6 +5,7 @@
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
  * @description: A web application based Laravel container
+ * @version: 0.8
  * 
  */
 
@@ -14,67 +15,32 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
-use SPT\Storage\File\ArrayType as FileArray;
+ 
 use SPT\Container\Laravel as Container;
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as SPTRequest;
 
-class Web extends \SPT\Application\Core 
+class Web extends \SPT\Application\Base 
 {
-    protected $slim;
-
-    public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
-    {
-        define('SPT_PUBLIC_PATH', $publicPath);
-        define('SPT_PLUGIN_PATH', $pluginPath);
-
-        $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-
-        // Create new IoC Container instance
-        $this->container = new Container;
-        
-        $this->cfgLoad($configPath); 
-        $this->prepareEnvironment();
-        $this->pluginsBootstrap();
-
-        return $this;
-    }
-    
-    public function getRouter()
-    {
-        return $this->container->get('router');
-    }
-
-    public function getRequest()
-    {
-        return $this->container->get('request');
-    }
-    
-    protected function prepareEnvironment()
+    protected $slim; 
+    protected function envLoad()
     {   
         // secrect key
         // terminal or router 
-        $this->container->instance('router', new Router($this->container->config->subpath, ''), true);
-        // setup container
-        //$container = $this->getContainer();
-        $this->container->instance('app', $this, true);
-        // create request 
-        $this->container->set('request', new SPTRequest());
+        $this->container = new Container; 
+        $this->container->set('app', $this, true);
+        // create request
+        $this->request = new SPTRequest(); 
+        $this->container->set('request', $this->request);
+        // create router
+        $this->router = new Router($this->config->subpath, '');
+        $this->container->set('router', $this->router, true);
+        // access to app config 
+        $this->container->set('config', $this->config, true);
     }
-
-    public function cfgLoad(string $configPath = '')
-    {
-        $config = new FileArray();
-        if( file_exists($configPath) )
-        {
-            $config->import($configPath);
-        }
-        $this->container->instance('config', $config);
-    }
-
+    
     private function addEndpoint($slug, $endpoint, $method = 'get')
     {
-        $container = $this->getContainer();
         $params = [];
 
         if(is_array($endpoint))
@@ -117,7 +83,7 @@ class Web extends \SPT\Application\Core
                 } 
 
                 // support if this home - special deals
-                if($app->getContainer()->get('router')->get('isHome'))
+                if($app->cn('router')->get('isHome'))
                 {
                     $this->plgLoad('routing', 'isHome'); 
                 }
@@ -130,21 +96,12 @@ class Web extends \SPT\Application\Core
                     }
                 }
     
-                list($plugin, $controllerName, $func) = $try;
+                list($plugin, $controller, $function) = $try;
                 $plugin = strtolower($plugin);
                 $app->set('currentPlugin', $plugin);
-    
-                $plgRegister = $app->getNamespace(). '\\plugins\\'. $plugin. '\\registers\\Dispatcher';
-                if(!class_exists($plgRegister))
-                {
-                    throw new \Exception('Invalid plugin '. $plugin);
-                }
-                if(!method_exists($plgRegister, 'dispatch'))
-                {
-                    throw new \Exception('Invalid dispatcher of plugin '. $plugin);
-                }
 
-                $plgRegister::dispatch($app, $controllerName, $func);
+                return $app->plgDispatch($controller, $function);
+     
                // $response->getBody()->write(  $sth  );
     
             }
@@ -161,16 +118,11 @@ class Web extends \SPT\Application\Core
 
     public function execute(string $themePath = '')
     {
-        $container = $this->getContainer();
-        $config = $container->get('config');
         $this->slim = AppFactory::create(); 
-        $this->slim->setBasePath('/'.$config->subpath.'/');
+        $this->slim->setBasePath('/'.$this->config->subpath.'/');
         $this->slim->addErrorMiddleware(true, true, true);
 
-        if($themePath)
-        {
-            $this->set('themePath', $themePath);
-        }
+        $this->set('themePath', $themePath);
 
         $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) {
 
@@ -180,9 +132,9 @@ class Web extends \SPT\Application\Core
             } 
         }); 
 
-        if($masterPlg = $this->container->get('config')->master)
+        if($masterPlg = $this->config->master)
         {
-            $this->pluginBackbone($masterPlg, 'Routing', 'afterRegisterEndpoints');
+            $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
         }
 
         $this->slim->run();

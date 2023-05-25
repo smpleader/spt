@@ -1,0 +1,69 @@
+<?php
+/**
+ * SPT software - Application configuration
+ * 
+ * @project: https://github.com/smpleader/spt
+ * @author: Pham Minh - smpleader
+ * @description: A class to manage configuration 
+ * @version: 0.8
+ * 
+ */
+
+namespace SPT\Application;
+
+use SPT\MagicObj;
+
+class Configuration extends MagicObj
+{
+    public function __construct($default)
+    {
+        defined('SPT_CONFIG_PATH') or die('Configuration path not found');
+
+        $this->_vars = [];
+        $this->_default = $default;
+
+        if(is_file(SPT_CONFIG_PATH))
+        {
+            $this->import(SPT_CONFIG_PATH, $this);
+        }
+        elseif(is_dir(SPT_CONFIG_PATH))
+        {
+            foreach(new \DirectoryIterator(SPT_CONFIG_PATH) as $item) 
+            {
+                if (!$item->isDot())
+                { 
+                    if($item->isFile())
+                    {
+                        $this->import( SPT_CONFIG_PATH. '/'. $item->getBasename(), $this);
+                    }
+                    elseif($item->isDir())
+                    {
+                        $name =  $item->getBasename();
+                        $this->{$name} = new MagicObj($default);
+                        foreach(new \DirectoryIterator(SPT_CONFIG_PATH. '/'. $name) as $inner) 
+                        {
+                            if (!$inner->isDot() && $inner->isFile())
+                            {
+                                $this->import(SPT_CONFIG_PATH. '/'. $name. '/'. $inner->getBasename(), $this->{$name});
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function import(string $path, &$b)
+    {
+        $try = require_once $path;
+        if(is_array($try) || is_object($try))
+        {
+            foreach ($try as $key => $value) {
+                if(!is_numeric($key))
+                {
+                    $b->{$key} = $value;
+                }
+            } 
+        }
+    }
+}

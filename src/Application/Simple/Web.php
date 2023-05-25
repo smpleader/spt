@@ -16,30 +16,9 @@ use SPT\Response;
 use \Exception;
 use SPT\Storage\File\ArrayType as FileArray;
 
-class Web extends \SPT\Application\Core
+class Web extends \SPT\Application\Base
 {
-    protected $request;
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    private $config;
-    public function cfgLoad(string $configPath = '')
-    {
-        $this->config = new FileArray();
-        if( file_exists( $configPath) )
-        {
-            $this->config->import($configPath); 
-        }
-    }
-    
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    protected function prepareEnvironment()
+    protected function envLoad()
     {
         // secrect key 
         $this->request = new Request();
@@ -57,7 +36,7 @@ class Web extends \SPT\Application\Core
 
         if($masterPlg = $config->master)
         {
-            $this->pluginBackbone($masterPlg, 'Routing', 'afterRegisterEndpoints');
+            $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
         }
 
         try{
@@ -102,21 +81,11 @@ class Web extends \SPT\Application\Core
                 $this->plgLoad('routing', 'isHome'); 
             }
 
-            list($plugin, $controllerName, $func) = $try;
+            list($plugin, $controller, $function) = $try;
             $plugin = strtolower($plugin);
-            $this->set('currentPlugin', $plugin);
-
-            $plgRegister = $this->namespace. '\\plugins\\'. $plugin. '\\registers\\Dispatcher';
-            if(!class_exists($plgRegister))
-            {
-                throw new Exception('Invalid plugin '. $plugin);
-            }
-            if(!method_exists($plgRegister, 'dispatch'))
-            {
-                throw new Exception('Invalid dispatcher of plugin '. $plugin);
-            }
+            $this->set('currentPlugin', $plugin); 
             
-            return $plgRegister::dispatch($this, $controllerName, $func);
+            return $this->plgDispatch($controller, $function);
 
         }
         catch (Exception $e) 

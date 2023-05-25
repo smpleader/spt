@@ -13,6 +13,5 @@ namespace SPT\Application;
 interface IApp
 {
     function plgLoad(string $event, string $execute, $closure = null);
-    function cfgLoad(string $configPath);
     function execute(string $templatePath);
 }

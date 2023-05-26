@@ -72,7 +72,7 @@ class Web extends \SPT\Application\Base
                 }
             }
 
-            $this->set('themePath', $themePath);
+            if($themePath) $this->set('themePath', $themePath);
 
             // support if this home - special deals
             if($router->get('isHome'))

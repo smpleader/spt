@@ -133,7 +133,7 @@ class Web extends \SPT\Application\Base
         $this->slim->setBasePath('/'.$this->config->subpath.'/');
         $this->slim->addErrorMiddleware(true, true, true);
        
-        $this->set('themePath', $themePath);
+        if($themePath) $this->set('themePath', $themePath);
 
         $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) {
 

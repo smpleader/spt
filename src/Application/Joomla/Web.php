@@ -46,7 +46,7 @@ class Web extends \SPT\Application\Base
             $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
         }
 
-        $this->set('themePath', $themePath);
+        if($themePath) $this->set('themePath', $themePath);
 
         try{
 

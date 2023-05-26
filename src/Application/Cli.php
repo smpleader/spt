@@ -9,7 +9,7 @@
  * 
  */
 
-namespace SPT\Application\Simple;
+namespace SPT\Application;
 
 class Cli extends Web
 {

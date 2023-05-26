@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Application
+ * SPT software - Container client
  * 
  * @project: https://github.com/smpleader/spt-boilerplate
  * @author: Pham Minh - smpleader
- * @description: Base abstract implement Container
+ * @description: Base abstract use Container as core
  * 
  */
 
@@ -12,7 +12,7 @@ namespace SPT\Container;
 
 abstract class Client
 { 
-	private $container;
+	protected $container;
     public function __construct(IContainer $container)
     {
         $this->setContainer($container);

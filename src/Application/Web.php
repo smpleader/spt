@@ -9,12 +9,11 @@
  * 
  */
 
-namespace SPT\Application\Joomla;
+namespace SPT\Application;
  
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Base as Request;
 use SPT\Response; 
-use SPT\Container\Joomla as Container;
 
 class Web extends \SPT\Application\Base
 {
@@ -22,7 +21,6 @@ class Web extends \SPT\Application\Base
     {   
         // secrect key 
         // setup container
-        $this->container = new Container; 
         $this->container->set('app', $this, true);
         // create request
         $this->request = new Request(); 

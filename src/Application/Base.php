@@ -13,10 +13,11 @@ namespace SPT\Application;
  
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Response;
+use SPT\Container\IContainer;
 
 class Base extends ACore implements IApp
 {
-    public function __construct(string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
+    public function __construct(IContainer $container, string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
     {
         if(!file_exists($publicPath) || !file_exists($pluginPath) || !file_exists($configPath))
         {
@@ -29,6 +30,7 @@ class Base extends ACore implements IApp
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
 
+        $this->container = $container;
         $this->config = new Configuration(null);
         $this->envLoad();
         $this->plgBoot();

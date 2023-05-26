@@ -22,6 +22,7 @@ class Configuration extends MagicObj
         $this->_vars = [];
         $this->_default = $default;
 
+        // TODO: consider file name / folder name as a scope of information
         if(is_file(SPT_CONFIG_PATH))
         {
             $this->import(SPT_CONFIG_PATH, $this);
@@ -32,7 +33,7 @@ class Configuration extends MagicObj
             {
                 if (!$item->isDot())
                 { 
-                    if($item->isFile())
+                    if($item->isFile() && 'php' == $item->getExtension())
                     {
                         $this->import( SPT_CONFIG_PATH. '/'. $item->getBasename(), $this);
                     }
@@ -42,7 +43,7 @@ class Configuration extends MagicObj
                         $this->{$name} = new MagicObj($default);
                         foreach(new \DirectoryIterator(SPT_CONFIG_PATH. '/'. $name) as $inner) 
                         {
-                            if (!$inner->isDot() && $inner->isFile())
+                            if (!$inner->isDot() && $inner->isFile() && 'php' == $inner->getExtension())
                             {
                                 $this->import(SPT_CONFIG_PATH. '/'. $name. '/'. $inner->getBasename(), $this->{$name});
                             }

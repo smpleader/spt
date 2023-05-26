@@ -40,11 +40,11 @@ class ViewComponent
     }
 
     protected $title;
-    public function title(string $text = '')
+    public function title(string $text = '////')
     {
-        if('' === $text)
+        if('////' === $text)
         {
-            echo empty($this->_layout->title) ? $this->title : $this->_layout->title;
+            echo $this->_layout->exists('title') ? $this->_layout->title : $this->title;
         }
         else
         {

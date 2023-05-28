@@ -48,30 +48,6 @@ class Base extends ACore implements IApp
 
     protected function envLoad(){}
 
-    public function plgLoad(string $event, string $execute, $closure = null)
-    {
-        $event = ucfirst(strtolower($event));
-        foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $item) 
-        {
-            if (!$item->isDot() && $item->isDir())
-            { 
-                $plgRegister = $this->namespace. '\\plugins\\'. $item->getBasename(). '\\registers\\'. $event; // $item->getFilename();
-                if(class_exists($plgRegister) && method_exists($plgRegister, $execute))
-                {
-                    $result = $plgRegister::$execute($this);
-                    if(null !== $closure && is_callable($closure))
-                    {
-                        $ok = $closure( $result );
-                        if(false === $ok)
-                        {
-                            $this->raiseError('Got an issue with plugin '. $item->getBasename(). ' when call '. $event .'.' . $execute);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     public function execute(string $themePath = ''){}
 
     public function redirect(string $url, $code = 302)

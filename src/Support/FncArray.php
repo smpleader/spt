@@ -72,4 +72,14 @@ class FncArray
             return array_unique(array_map("is_int", array_keys($arr))) === array(true);
         }
     }
+
+    public static function isArrayString($arr)
+    {
+        if(!is_array($arr)) return false;
+        foreach($arr as $v)
+        {
+            if(!is_string($v)) return false;
+        }
+        return true;
+    }
 }

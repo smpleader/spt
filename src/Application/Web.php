@@ -35,15 +35,12 @@ class Web extends \SPT\Application\Base
     public function execute(string $themePath = '')
     {
         $router = $this->router;
-        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ($router){
+        $this->plgManager->run( null, 'routing', 'registerEndpoints', false, function ($endpoints) use ($router){
             $router->import($endpoints);
-        }); 
+        });  
 
-        if($masterPlg = $this->config->master)
-        {
-            $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
-        }
-
+        $this->plgManager->run('only-master', 'Routing', 'afterRegisterEndpoints');
+        
         if($themePath) $this->set('themePath', $themePath);
 
         try{
@@ -80,14 +77,16 @@ class Web extends \SPT\Application\Base
             // support if this is home - special deals
             if($this->router->get('isHome'))
             {
-                $this->plgLoad('routing', 'isHome'); 
+                $this->plgManager->run(null, 'Routing', 'isHome');
             }
 
             list($plugin, $controller, $function) = $try;
             $plugin = strtolower($plugin);
             $this->set('currentPlugin', $plugin);
-            
-            return $this->plgDispatch($controller, $function);
+            $this->set('controller', $controller);
+            $this->set('function', $function);
+
+            return $this->plgManager->run( $plugin, 'Dispatcher', 'dispatch', true);
 
         }
         catch (\Exception $e) 

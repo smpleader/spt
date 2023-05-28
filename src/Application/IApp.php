@@ -12,6 +12,8 @@ namespace SPT\Application;
 
 interface IApp
 {
-    function plgLoad(string $event, string $execute, $closure = null);
+    function getContainer();
+    function getRequest();
+    function getRouter();
     function execute(string $templatePath);
 }

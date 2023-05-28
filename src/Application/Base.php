@@ -14,9 +14,12 @@ namespace SPT\Application;
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Response;
 use SPT\Container\IContainer;
+use SPT\Application\Plugin\Manager;
 
 class Base extends ACore implements IApp
 {
+    protected $plgManager;
+
     public function __construct(IContainer $container, string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
     {
         if(!file_exists($publicPath) || !file_exists($pluginPath) || !file_exists($configPath))
@@ -32,63 +35,15 @@ class Base extends ACore implements IApp
 
         $this->container = $container;
         $this->config = new Configuration(null);
+        $this->plgManager = new Manager($this);
+
         $this->envLoad();
-        $this->plgBoot();
+        
+        $this->plgManager->run('only-master', 'Bootstrap', 'initialize', true);
+        $this->plgManager->run('none-master', 'Bootstrap', 'initialize');
+        $this->plgManager->run('only-master', 'Bootstrap', 'afterInitialize');
 
         return $this;
-    }
-
-    protected function plgBoot()
-    { 
-        if($this->config->master)
-        {
-            $this->plgRun($this->config->master, 'Bootstrap', 'initialize', true);
-        }
-
-        foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $item) 
-        {
-            if (!$item->isDot() && $item->isDir() && ($item->getBasename() !== $this->config->master))
-            { 
-                $this->plgRun($item->getBasename(), 'Bootstrap', 'initialize');
-            }
-        }
-
-        if($this->config->master)
-        {
-            $this->plgRun($this->config->master, 'Bootstrap', 'afterInitialize');
-        }
-    }
-
-    protected function plgRun(string $plgName, string $event, string $fnc, bool $required=false)
-    {
-        $event = ucfirst(strtolower($event));
-        $plgRegister = $this->namespace. '\\plugins\\'. $plgName. '\\registers\\'.$event;
-        if(!class_exists($plgRegister) || !method_exists($plgRegister, $fnc))
-        {
-            if(!$required) return;
-            $this->raiseError('Invalid Plugin '. $plgName. ' with '. $event. '.'. $fnc);
-        }
-
-        if(false === $plgRegister::$fnc($this))
-        {
-            $this->raiseError($plgRegister::getMessage());
-        }
-    }
-
-    public function plgDispatch(string $controller, string $function)
-    {
-        $plugin = $this->get('currentPlugin', '');
-        $plgRegister = $this->namespace. '\\plugins\\'. $plugin. '\\registers\\Dispatcher';
-        if(!class_exists($plgRegister))
-        {
-            throw new Exception('Invalid plugin '. $plugin);
-        }
-        if(!method_exists($plgRegister, 'dispatch'))
-        {
-            throw new Exception('Invalid dispatcher of plugin '. $plugin);
-        }
-        
-        return $plgRegister::dispatch($this, $controller, $function);
     }
 
     protected function envLoad(){}

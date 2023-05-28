@@ -96,7 +96,7 @@ class Web extends \SPT\Application\Base
                 // support if this home - special deals
                 if($app->cn('router')->get('isHome'))
                 {
-                    $this->plgLoad('routing', 'isHome'); 
+                    $this->plgManager->run(null, 'Routing', 'isHome'); 
                 }
                 
                 if(count($params))
@@ -110,8 +110,10 @@ class Web extends \SPT\Application\Base
                 list($plugin, $controllerName, $func) = $try;
                 $plugin = strtolower($plugin);
                 $app->set('currentPlugin', $plugin);
-    
-                return $app->plgDispatch($controller, $function); 
+                $app->set('controller', $controller);
+                $app->set('function', $function);
+
+                return $app->plgManager->run($plugin, 'Dispatcher', 'dispatch', true);
             }
             catch (\Exception $e) 
             {
@@ -135,7 +137,7 @@ class Web extends \SPT\Application\Base
        
         if($themePath) $this->set('themePath', $themePath);
 
-        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) {
+        $this->plgManager->run(null, 'routing', 'registerEndpoints', false, function ($endpoints) {
 
             foreach($endpoints as $slug => $endpoint)
             {
@@ -143,17 +145,14 @@ class Web extends \SPT\Application\Base
             } 
         });
 
-        if($masterPlg = $this->container->get('config')->master)
-        {
-            $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
-        }
+        $this->plgManager->run('only-master', 'Routing', 'afterRegisterEndpoints'); 
 
         $this->slim->run();
         return;
 
         // CASE route add ( no response )
         $routes = new RouteCollection();
-        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ($routes) {
+        $this->plgManager->run(null, 'routing', 'registerEndpoints', false, function ($endpoints) use ($routes) {
 
             foreach($endpoints as $slug => $endpoint)
             {

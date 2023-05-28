@@ -32,14 +32,11 @@ class Web extends \SPT\Application\Base
     {
         $router = $this->router;
 
-        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) use ( $router ){
+        $this->plgManager->run(null, 'Routing', 'registerEndpoints', false, function ($endpoints) use ( $router ){
             $router->import($endpoints);
         });
 
-        if($masterPlg = $this->config->master)
-        {
-            $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
-        }
+        $this->plgManager->run('only-master', 'Routing', 'afterRegisterEndpoints'); 
 
         try{
 
@@ -77,14 +74,16 @@ class Web extends \SPT\Application\Base
             // support if this home - special deals
             if($router->get('isHome'))
             {
-                $this->plgLoad('routing', 'isHome'); 
+                $this->plgManager->run('only-master', 'Routing', 'isHome'); 
             }
 
             list($plugin, $controller, $function) = $try;
             $plugin = strtolower($plugin);
             $this->set('currentPlugin', $plugin); 
-            
-            return $this->plgDispatch($controller, $function);
+            $app->set('controller', $controller);
+            $app->set('function', $function);
+
+            return $this->plgManager->run($plugin, 'Dispatcher', 'dispatch', true);
 
         }
         catch (\Exception $e) 

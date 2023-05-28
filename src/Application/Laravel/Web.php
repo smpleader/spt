@@ -5,7 +5,7 @@
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
  * @description: A web application based Laravel container
- * @version: 0.8
+ * @version: 0.
  * 
  */
 
@@ -85,7 +85,7 @@ class Web extends \SPT\Application\Base
                 // support if this home - special deals
                 if($app->cn('router')->get('isHome'))
                 {
-                    $this->plgLoad('routing', 'isHome'); 
+                    $this->plgManager->run(null, 'Routing', 'isHome');
                 }
                 
                 if(count($params))
@@ -99,9 +99,10 @@ class Web extends \SPT\Application\Base
                 list($plugin, $controller, $function) = $try;
                 $plugin = strtolower($plugin);
                 $app->set('currentPlugin', $plugin);
+                $app->set('controller', $controller);
+                $app->set('function', $function);
 
-                return $app->plgDispatch($controller, $function);
-     
+                return $app->plgManager->run($plugin, 'Dispatcher', 'dispatch', true);
                // $response->getBody()->write(  $sth  );
     
             }
@@ -124,18 +125,15 @@ class Web extends \SPT\Application\Base
 
         if($themePath) $this->set('themePath', $themePath);
 
-        $this->plgLoad('routing', 'registerEndpoints', function ($endpoints) {
+        $this->plgManager->run(null, 'Routing', 'registerEndpoints', false, function ($endpoints) {
 
             foreach($endpoints as $slug => $endpoint)
             {
                 $this->addEndpoint($slug, $endpoint);
             } 
-        }); 
+        });
 
-        if($masterPlg = $this->config->master)
-        {
-            $this->plgRun($masterPlg, 'Routing', 'afterRegisterEndpoints');
-        }
+        $this->plgManager->run('only-master', 'Routing', 'afterRegisterEndpoints'); 
 
         $this->slim->run();
     }

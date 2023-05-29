@@ -67,4 +67,9 @@ class Base extends ACore implements IApp
         Response::_200($content);
         exit(0);
     }
+
+    public function plgLoad(string $event, string $function, $callback = null)
+    {
+        $this->plgManager->run( null, $event, $function, false, $callback);
+    }
 }

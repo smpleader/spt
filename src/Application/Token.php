@@ -27,38 +27,42 @@ class Token
     public function __construct(Configuration $config, Request $request)
     {
         $now = strtotime('now');
-        $this->secrect = empty($config->secrect) ? $now : $config->secrect;
+        $this->secrect = $config->empty('secrect') ? $now : $config->secrect;
         $this->request = $request;
-
+        $expireDuration = $config->empty('expireSessionDuration') ? $this->expireSessionDuration : $config->expireSessionDuration;
+        $expireDuration = (int)$expireDuration * 60; // seconds
+        
         $cookie = $request->cookie->get($this->secrect, '_do_not_set_');
         if ('_do_not_set_' == $cookie)
         {
-            $cookie = $this->refresh();
+            $cookie = $this->refresh($expireDuration);
         }
         
         $cookieTime = (int)$request->cookie->get($this->secrect. 'time', 0);
-        $expireDuration = empty($config->expireSessionDuration) ? $this->expireSessionDuration : $config->expireSessionDuration;
-        $expireDuration = (int)$expireDuration * 3600; // seconds
-        $expireCookie = $cookieTime + $expireDuration;
-        $now = (int) $now;
-
-        if( $expireCookie < $now)
+        if( 0 !== $cookieTime || '0' !== $cookieTime )
         {
-            $cookie = $this->refresh();
-        }
-        else
-        {
-            $expireCookie = $now + $expireDuration;
-            $request->cookie->set($this->secrect. 'time', $expireCookie);
+            $expireCookie = $cookieTime + $expireDuration;
+            $now = (int) $now;
+    
+            if( $expireCookie < $now)
+            {
+                $cookie = $this->refresh($expireDuration);
+            }
+            else
+            {
+                $expireCookie = $now + $expireDuration;
+                $request->cookie->set($this->secrect. 'time', $expireCookie);
+            }
         }
 
         $this->storage = ['_app_'=>$this->generate('_app_')];
     }
     
-    private function refresh()
+    private function refresh($duration = 0)
     {
         $cookie = SupportToken::md5( rand(1000001, strtotime('now')), $this->keyLength);
         $this->request->cookie->set($this->secrect, $cookie);
+        $this->request->cookie->set($this->secrect. 'time', 0 === $duration ? 0 : (strtotime('now') + $duration) );
         return $cookie;
     }
 

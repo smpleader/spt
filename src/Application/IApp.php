@@ -15,5 +15,6 @@ interface IApp
     function getContainer();
     function getRequest();
     function getRouter();
+    function plgLoad(string $event, string $function, $callback = null);
     function execute(string $templatePath);
 }

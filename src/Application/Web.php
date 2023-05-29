@@ -19,17 +19,19 @@ class Web extends \SPT\Application\Base
 {
     protected function envLoad()
     {   
-        // secrect key 
+        // secrect key ..
         // setup container
-        $this->container->set('app', $this, true);
+        $this->container->set('app', $this);
         // create request
         $this->request = new Request(); 
         $this->container->set('request', $this->request);
         // create router
         $this->router = new Router($this->config->subpath, '');
-        $this->container->set('router', $this->router, true);
+        $this->container->set('router', $this->router);
         // access to app config 
-        $this->container->set('config', $this->config, true);
+        $this->container->set('config', $this->config);
+        // token
+        $this->container->set('token', new Token($this->config, $this->request));
     }
 
     public function execute(string $themePath = '')

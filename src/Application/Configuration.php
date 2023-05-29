@@ -67,4 +67,14 @@ class Configuration extends MagicObj
             } 
         }
     }
+
+    public function exists($key)
+    {
+        return isset($this->_vars[$key]);
+    }
+
+    public function empty($key)
+    {
+        return empty($this->_vars[$key]);
+    }
 }

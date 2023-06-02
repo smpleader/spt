@@ -20,6 +20,7 @@ class Manager
 {
     private array $list = [];
     private string $master = '';
+    private IApp $app;
 
     public function __construct(IApp $app)
     {

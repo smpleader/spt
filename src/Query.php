@@ -17,6 +17,7 @@ class Query
 {
     protected $db;
     protected $query;
+    protected $sql;
 
     protected $prefix;
     protected $qq;

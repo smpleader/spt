@@ -19,6 +19,8 @@ class Column
     public $search;
     public $filter; 
     public $listClass; 
+    public $link;
+    public $alias;
 
     public function __construct( $id, $params )
     {

@@ -28,7 +28,7 @@ class File extends BaseObj
     public function setOptions(array $options, $reset = false)
     {
         $arr = [
-            'targetDir' => SPT_PATH_TEMP. 'upload',
+            'targetDir' => SPT_STORAGE_PATH. 'upload',
             'overwrite' => false,
             'newName' => '',
             'maxFileSize' => '',
@@ -114,7 +114,7 @@ class File extends BaseObj
         return true;
     }
 
-    public function extract(array $file, string $extractDir = SPT_PATH_TEMP. 'extract')
+    public function extract(array $file, string $extractDir = SPT_STORAGE_PATH. 'extract')
     {
         if( $this->cleanExtract && !$this->emptyFolder($extractDir) )
         {

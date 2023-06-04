@@ -18,6 +18,15 @@ class File extends BaseObj
 {
     use Log, ErrorString;
 
+    protected $targetDir;
+    protected $overwrite;
+    protected $newName;
+    protected $maxFileSize;
+    protected $fileTypes;
+    protected $fileMime;
+    protected $cleanUpload;
+    protected $cleanExtract;
+
     public function __construct()
     {
         // prepare a default properties;
@@ -226,25 +235,27 @@ class File extends BaseObj
     }
 
     public function uploadImage(array $file)
-    {
-        $uploadOk = 1;
+    { 
         $imageFileType = strtolower(pathinfo($this->targetFile,PATHINFO_EXTENSION));
 
         // Check if image file is a actual image or fake image 
         $check = getimagesize($file["tmp_name"]);
-        if($check !== false) {
-            echo "File is an image - " . $check["mime"] . ".";
-            $uploadOk = 1;
-        } else {
-            echo "File is not an image.";
-            $uploadOk = 0;
+        //Log::add  "File is an image - " . $check["mime"] . ".";
+        if($check === false) 
+        {
+            $this->error = "File is not an image.";
+            return false;
         }
 
         // Allow certain file formats
-        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-        && $imageFileType != "gif" ) {
-        echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-        $uploadOk = 0;
+        if( $imageFileType != "jpg" 
+         && $imageFileType != "png" 
+         && $imageFileType != "jpeg"
+         && $imageFileType != "gif" ) 
+        {
+            $this->error = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            return false;
         }
+        // TODO: support resize or stamp
     }
 }

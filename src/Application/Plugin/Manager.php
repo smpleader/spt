@@ -56,7 +56,7 @@ class Manager
         }
     }
 
-    public function run($plugin, string $event, string $function, bool $required = false, $closure = null)
+    public function run($plugin, string $event, string $function, bool $required = false, $closure = null, bool $outputResult=false)
     {
         $listName = [];
         $finalList = [];
@@ -112,7 +112,7 @@ class Manager
         }
 
         $event = ucfirst(strtolower($event));
-        $results = [];
+        $results = $outputResult ? [] : true;
 
         foreach($finalList as $plugin)
         {
@@ -131,11 +131,18 @@ class Manager
                 {
                     throw new Exception('Callback failed with plugin '. $plugin. ' when call '. $event .'.' . $function);
                 }
-                $results[$plugin] = ['result'=>$result, 'afterCallback' =>$ok];
+
+                if( $outputResult )
+                {
+                    $results[$plugin] = ['result'=>$result, 'afterCallback' =>$ok];
+                }
             }
             else
-            {
-                $results[$plugin] = ['result'=>$result];
+            {   
+                if( $outputResult )
+                {
+                    $results[$plugin] = ['result'=>$result];
+                }
             }
         }
 

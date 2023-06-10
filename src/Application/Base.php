@@ -68,8 +68,8 @@ class Base extends ACore implements IApp
         exit(0);
     }
 
-    public function plgLoad(string $event, string $function, $callback = null)
+    public function plgLoad(string $event, string $function, $callback = null, bool $getResult = false)
     {
-        $this->plgManager->run( null, $event, $function, false, $callback);
+        return $this->plgManager->run( null, $event, $function, false, $callback, $getResult);
     }
 }

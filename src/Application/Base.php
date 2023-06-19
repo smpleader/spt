@@ -72,4 +72,15 @@ class Base extends ACore implements IApp
     {
         return $this->plgManager->run( null, $event, $function, false, $callback, $getResult);
     }
+
+    public function childLoad(string $event, string $function, $callback = null, bool $getResult = false)
+    {
+        $plugin = $this->set('currentPlugin', false);
+        if(false === $plugin)
+        {
+            throw new Exception('Method childLoad can not be called before Routing.'); 
+        }
+
+        return $this->plgManager->run( 'child-'.$plugin, $event, $function, false, $callback, $getResult);
+    }
 }

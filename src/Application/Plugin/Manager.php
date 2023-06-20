@@ -75,9 +75,7 @@ class Manager
             case 'only-master':
                 if(!$this->callPlugin($this->master))
                 {
-                    Log::add('PluginManager: call master failed because there is no master plugin');
-                    if(!$required) return false;
-                    throw new Exception('Unavailable master plugin'); 
+                    $this->message = 'PluginManager: call master failed because there is no master plugin';
                 }
                 break;
             default:

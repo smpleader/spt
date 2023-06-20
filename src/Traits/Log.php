@@ -1,6 +1,6 @@
 <?php
 /**
- * SPT software - Array
+ * SPT software - Log
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader

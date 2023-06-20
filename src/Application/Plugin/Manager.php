@@ -20,8 +20,8 @@ class Manager
 {
     private array $list = [];
     private string $master = '';
-    private string $pointer = '';
-    private string $calls = [];
+    private string $message = '';
+    private array $calls = [];
     private IApp $app;
 
     public function __construct(IApp $app)
@@ -61,6 +61,7 @@ class Manager
     public function call($sth, string $mode = 'single')
     {
         $this->calls = [];
+        $this->message = '';
 
         switch($sth)
         {
@@ -90,11 +91,11 @@ class Manager
                         }
                     }
                 }
-                if(is_string($sth))
+                elseif(is_string($sth))
                 {
                     if(!$this->callPlugin($sth, $mode))
                     {
-                        Log::add('PluginManager: unvailable plugin '.$sth); 
+                        Log::add('PluginManager: unvailable plugin '. $sth. ' in mode '. $mode); 
                     }
                 }
                 else
@@ -109,11 +110,15 @@ class Manager
 
     private function callPlugin($pluginName, string $mode = 'single')
     {
-        if(!isset($this->list[$pluginName])) return false;
+        if(!isset($this->list[$pluginName]))
+        {
+            $this->message = 'Invalid plugin '. $pluginName;
+            return false;
+        }
 
         if($mode == 'single' || $mode == 'family')
         {
-            $this->calls = [$pluginName =>$this->list[$pluginName]];
+            $this->calls[$pluginName] = $this->list[$pluginName];
         }
 
         if($mode == 'children' || $mode == 'family')
@@ -123,9 +128,8 @@ class Manager
             {
                 if(strpos($name, $test) === 0)
                 {
-                    if(! $this->callPlugin($name, $mode) )
+                    if(! $this->callPlugin($name) )
                     {
-                        Log::add('Invalid plugin '. $name);
                         return false;
                     }
                 }
@@ -139,38 +143,20 @@ class Manager
     {
         if(empty($this->calls))
         {
-            if(!$required) continue;
-            throw new Exception('Invalid plugin '. $name);
+            return;
         }
 
-        list($listName, $finalList) = $this->filterName($plugin);
-
-        if(count($listName))
+        if($this->message && $required)
         {
-            foreach($listName as $name)
-            {
-                if(isset($this->list[$name]))
-                {
-                    $finalList[$name] = $this->list[$name];
-                }
-                else
-                {
-                    
-                }
-            }
+            throw new Exception($this->message);
         }
-
-        $this->calls = [];
-    }
-
-    private function runByList(string $event, string $function, $closure = null, $outputResult=false)
-    {
+ 
         $event = ucfirst(strtolower($event));
         $results = $outputResult ? [] : true;
 
-        foreach($this->calls as $plugin)
+        foreach($this->calls as $plugin => $pluginPath)
         {
-            $class = $plugin. '\\'. $event;
+            $class = $pluginPath. '\\'. $event;
             if(!method_exists($class, $function))
             {
                 if(!$required) continue;

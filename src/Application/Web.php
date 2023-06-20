@@ -37,11 +37,11 @@ class Web extends \SPT\Application\Base
     public function execute(string $themePath = '')
     {
         $router = $this->router;
-        $this->plgManager->run( null, 'routing', 'registerEndpoints', false, function ($endpoints) use ($router){
+        $this->plgManager->call('all')->run('routing', 'registerEndpoints', false, function ($endpoints) use ($router){
             $router->import($endpoints);
         });  
 
-        $this->plgManager->run('only-master', 'Routing', 'afterRegisterEndpoints');
+        $this->plgManager->call('only-master')->run('Routing', 'afterRegisterEndpoints');
         
         if($themePath) $this->set('themePath', $themePath);
 
@@ -79,7 +79,7 @@ class Web extends \SPT\Application\Base
             // support if this is home - special deals
             if($this->router->get('isHome'))
             {
-                $this->plgManager->run(null, 'Routing', 'isHome');
+                $this->plgManager->call('all')->run('Routing', 'isHome');
             }
 
             list($plugin, $controller, $function) = $try;
@@ -88,7 +88,7 @@ class Web extends \SPT\Application\Base
             $this->set('controller', $controller);
             $this->set('function', $function);
 
-            return $this->plgManager->run( $plugin, 'Dispatcher', 'dispatch', true);
+            return $this->plgManager->call($plugin)->run('Dispatcher', 'dispatch', true);
 
         }
         catch (\Exception $e) 

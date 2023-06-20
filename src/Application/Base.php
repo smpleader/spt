@@ -39,9 +39,9 @@ class Base extends ACore implements IApp
 
         $this->envLoad();
         
-        $this->plgManager->run('only-master', 'Bootstrap', 'initialize', true);
-        $this->plgManager->run('none-master', 'Bootstrap', 'initialize');
-        $this->plgManager->run('only-master', 'Bootstrap', 'afterInitialize');
+        $this->plgManager->call('only-master')->run('Bootstrap', 'initialize', true);
+        $this->plgManager->call('none-master')->run('Bootstrap', 'initialize');
+        $this->plgManager->call('only-master')->run('Bootstrap', 'afterInitialize');
 
         return $this;
     }
@@ -70,7 +70,7 @@ class Base extends ACore implements IApp
 
     public function plgLoad(string $event, string $function, $callback = null, bool $getResult = false)
     {
-        return $this->plgManager->run( null, $event, $function, false, $callback, $getResult);
+        return $this->plgManager->call('all')->run($event, $function, false, $callback, $getResult);
     }
 
     public function childLoad(string $event, string $function, $callback = null, bool $getResult = false)
@@ -81,6 +81,17 @@ class Base extends ACore implements IApp
             throw new Exception('Method childLoad can not be called before Routing.'); 
         }
 
-        return $this->plgManager->run( 'child-'.$plugin, $event, $function, false, $callback, $getResult);
+        return $this->plgManager->call($plugin, 'children')->run($event, $function, false, $callback, $getResult);
+    }
+
+    public function familyLoad(string $event, string $function, $callback = null, bool $getResult = false)
+    {
+        $plugin = $this->set('currentPlugin', false);
+        if(false === $plugin)
+        {
+            throw new Exception('Method familyLoad can not be called before Routing.'); 
+        }
+
+        return $this->plgManager->call($plugin, 'family')->run($event, $function, false, $callback, $getResult);
     }
 }

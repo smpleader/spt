@@ -72,7 +72,7 @@ class Manager
                 $this->calls = $this->list;
                 if($this->master) unset($this->calls[$this->master]);
                 break;
-            case 'only-master':
+            case 'master':
                 if(!$this->callPlugin($this->master))
                 {
                     $this->message = 'PluginManager: call master failed because there is no master plugin';
@@ -201,7 +201,7 @@ class Manager
             $finalList = $this->list;
             if($this->master) unset($finalList[$this->master]);
         }
-        elseif('only-master' === $plugin)
+        elseif('master' === $plugin)
         {
             if($this->master)
             {

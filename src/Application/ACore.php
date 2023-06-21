@@ -85,8 +85,9 @@ abstract class ACore
         return $name == '' ? $this->getConfig() : $this->getConfig()->{$name};
     }
 
-    public function rq(string $method = '')
+    public function rq($key, string $method = '')
     {
-        return  $method == '' ? $this->getRequest() : $this->getRequest()->{$method};
+        return empty($key)? ( $method == '' ? $this->getRequest() : $this->getRequest()->{$method} ) 
+                    : ( $method == '' ? $this->getRequest()->get($key) : $this->getRequest()->{$method}->get($key) ) ;
     }
 }

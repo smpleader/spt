@@ -41,7 +41,7 @@ class Web extends \SPT\Application\Base
             $router->import($endpoints);
         });  
 
-        $this->plgManager->call('only-master')->run('Routing', 'afterRegisterEndpoints');
+        $this->plgManager->call('master')->run('Routing', 'afterRegisterEndpoints');
         
         if($themePath) $this->set('themePath', $themePath);
 
@@ -50,9 +50,9 @@ class Web extends \SPT\Application\Base
             $try = $this->router->parse($this->request);
             if(false === $try)
             {
-                if($this->config->pagenotfound)
+                if($this->config->pageNotFound)
                 {
-                    $try = [$this->config->pagenotfound, []];
+                    $try = [$this->config->pageNotFound, []];
                 }
                 else
                 {

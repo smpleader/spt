@@ -39,9 +39,9 @@ class Base extends ACore implements IApp
 
         $this->envLoad();
         
-        $this->plgManager->call('only-master')->run('Bootstrap', 'initialize', true);
+        $this->plgManager->call('master')->run('Bootstrap', 'initialize', true);
         $this->plgManager->call('none-master')->run('Bootstrap', 'initialize');
-        $this->plgManager->call('only-master')->run('Bootstrap', 'afterInitialize');
+        $this->plgManager->call('master')->run('Bootstrap', 'afterInitialize');
 
         return $this;
     }

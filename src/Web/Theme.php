@@ -21,9 +21,13 @@ class Theme extends BaseObj
     protected $_assets = [];
     protected $_vars = [];
 
-    public function __construct(string $themePath)
+    public function __construct()
     {
-        define('SPT_THEME_PATH', $themePath);
+        if(!defined('SPT_THEME_PATH'))
+        {
+            throw new \Exception('Invalid theme path');
+        }
+        
         $this->registerAssets();
     }
 

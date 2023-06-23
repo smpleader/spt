@@ -16,11 +16,14 @@ When you are bored with packages, and love simply "include and run", let try thi
 - Support multi language
 - Support SEF link
 - Implement MVC
+- Implement MVVM
 - Support multi theme
 - Support REST APIs
+- Implement JWT
 - Support Routering based Regular expression search
 - Support multi sites
 - Support CLI
+- DI container PSR-11
 
 # Links
 
@@ -30,45 +33,9 @@ When you are bored with packages, and love simply "include and run", let try thi
 
 # Setup:
 
-1. Be sure we are running PHP7
-1. Define APP_PATH to root folder of your application.
-2. Include files and run, more details, look at "examples" folders.
-
-# Examples:
-
-1. Base usage: examples/base
-
-2. Simple route: examples/router
-
-3. MVC pattern: examples/mvc
-
-4. Format and theme: examples/theme ( TODO: support Theme add Js at anyplace )
-
-5. Multi lanugage: examples/multilanguage
-
-6. Rest API: examples/restapi
-
-7. Implement JWT ( private branch )
-
-8. Implement Unit Test and Auto Test ( private branch )
-
-9. Use Namespace and  PSR-4
-
-10. Composer and spl_autoload_register ( private branch )
-
-11. Integrate as Joomla extensions ( private branch )
-
-12. Integrate as WP extensions ( private branch )
-
-13.  Multi site: Routing based domain name ( private branch )
-
-14.  CLI ( private branch )
-
-15.  Query builder and PDO wrapper to work with database: examples/database
-
-16. Use DI container PSR-11
-
-17. And many more
+1. PHP 8.1 or later
+2. Define paths to plugin, configuration, theme folder.
+3. For more example, check [link](https://github.com/smpleader/spt-examples)
 
 # LICENCE
 

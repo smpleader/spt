@@ -1,6 +1,6 @@
 <?php
 /**
- * SPT software - Triat
+ * SPT software - Triat Index
  * 
  * @project: https://github.com/smpleader/spt-boilerplate
  * @author: Pham Minh - smpleader

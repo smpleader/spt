@@ -17,6 +17,27 @@ class Controller extends Client
 {
     protected $supportMVVM = false;
 
+    protected function getThemePath()
+    {
+        if(!defined('SPT_THEME_PATH'))
+        {
+            $themePath = $this->app->get('themePath', '');
+            $theme = $this->app->get('theme', '');
+            if( $themePath && $theme )
+            {
+                $themePath .= '/'. $theme; 
+            }
+            else
+            {
+                $themePath = SPT_PLUGIN_PATH. '/'. $pluginName. '/views';
+            }
+    
+            define('SPT_THEME_PATH', $themePath);
+        }
+
+        return SPT_THEME_PATH;
+    }
+
     protected function getView()
     {
         $pluginName = $this->app->get('currentPlugin', '');
@@ -26,20 +47,11 @@ class Controller extends Client
             throw new \Exception('Invalid plugin, can not create content page');
         }
 
-        $themePath = $this->app->get('themePath', '');
-        $theme = $this->app->get('theme', '');
-        if( $themePath && $theme )
-        {
-            $themePath .= '/'. $theme; 
-        }
-        else
-        {
-            $themePath = SPT_PLUGIN_PATH. '/'. $pluginName. '/views';
-        }
+        $this->getThemePath();
         
         return new View(
             $pluginName, 
-            new Theme($themePath),
+            new Theme(),
             new ViewComponent($this->app->getRouter()),
             $this->supportMVVM
         );

@@ -88,6 +88,7 @@ class ArrayEndpoint extends Base implements IRouter
 
         if( isset($sitemap[$path]) )
         {
+            $this->set('sitenode', $path);
             return $sitemap[$path];
         }
         

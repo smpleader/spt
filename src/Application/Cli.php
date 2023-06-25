@@ -21,6 +21,6 @@ class Cli extends Web
 		}
 
         // load CommandLine to start the work
-        $this->plgManager->run(null, 'cli', 'registerCommands');
+        $this->plgManager->call('all')->run('cli', 'registerCommands');
     }
 }

@@ -12,6 +12,10 @@ namespace SPT\View\Gui\FieldType;
 
 class Option extends Input
 {
+    public $options;
+    public $optionSrc;
+    public $emptyOption;
+    
     public function __construct( $id, $params )
     {
         parent::__construct( $id, $params );

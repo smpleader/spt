@@ -24,7 +24,7 @@ class ViewModel extends Client
         if( is_object( $this->request->{$request_type} ) )
         {
             $var = $this->request->{$request_type}->get($key, $old, $format);
-            $session->set($sessionName, $var);
+            $this->session->set($sessionName, $var);
         }
 
         return $var;

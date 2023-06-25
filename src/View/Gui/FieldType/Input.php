@@ -25,6 +25,12 @@ class Input
     public $autocompleteOff;
     public $showLabel;
 
+    public $validates;
+    public $autocomplete;
+    public $link;
+    public $alias;
+    public $layout;
+
     public function __construct( $id, $params )
     {
         $this->id = $id;

@@ -20,6 +20,7 @@ use SPT\Support\Env;
 class Token
 {
     private $secrect;
+    private $request;
     private $storage;
     private $keyLength = 9;
     private $expireSessionDuration = 30;

@@ -20,6 +20,9 @@ class Manager
 {
     private array $list = [];
     private string $master = '';
+    private string $message = '';
+    private array $calls = [];
+    private IApp $app;
 
     public function __construct(IApp $app)
     {
@@ -55,67 +58,103 @@ class Manager
         }
     }
 
-    public function run($plugin, string $event, string $function, bool $required = false, $closure = null)
+    public function call($sth, string $mode = 'single')
     {
-        $listName = [];
-        $finalList = [];
-        if(is_null($plugin))
-        {
-            $finalList = $this->list;
-        }
-        elseif('none-master' === $plugin)
-        {
-            $finalList = $this->list;
-            if($this->master) unset($finalList[$this->master]);
-        }
-        elseif('only-master' === $plugin)
-        {
-            if($this->master)
-            {
-                $finalList = [$this->master =>$this->list[$this->master]];
-            }
-            else
-            {
-                if(!$required) return false;
-                throw new Exception('Unavailable master plugin'); 
-            }
-        }
-        elseif(is_string($plugin))
-        {
-            $listName = [$plugin];
-        }
-        elseif(FncArray::isArrayString($plugin))
-        {
-            $listName = $plugin;
-        }
-        else
-        {
-            if(!$required) return false;
-            throw new Exception('Invalid plugin array'); 
-        }
+        $this->calls = [];
+        $this->message = '';
 
-        if(count($listName))
+        switch($sth)
         {
-            foreach($listName as $name)
-            {
-                if(isset($this->list[$name]))
+            case 'all':
+                $this->calls = $this->list;
+                break;
+            case 'none-master': 
+                $this->calls = $this->list;
+                if($this->master) unset($this->calls[$this->master]);
+                break;
+            case 'master':
+                if(!$this->callPlugin($this->master))
                 {
-                    $finalList[$name] = $this->list[$name];
+                    $this->message = 'PluginManager: call master failed because there is no master plugin';
+                }
+                break;
+            default:
+                if(FncArray::isArrayString($sth))
+                {
+                    foreach($sth as $plgName)
+                    {
+                        if(!$this->callPlugin($plgName))
+                        {
+                            Log::add('PluginManager: unvailable plugin '.$plgName); 
+                        }
+                    }
+                }
+                elseif(is_string($sth))
+                {
+                    if(!$this->callPlugin($sth, $mode))
+                    {
+                        Log::add('PluginManager: unvailable plugin '. $sth. ' in mode '. $mode); 
+                    }
                 }
                 else
                 {
-                    if(!$required) continue;
-                    throw new Exception('Invalid plugin '. $name);
+                    Log::add('PluginManager: invalid plugin call'); 
+                }
+                break;
+        }
+
+        return $this;
+    }
+
+    private function callPlugin($pluginName, string $mode = 'single')
+    {
+        if(!isset($this->list[$pluginName]))
+        {
+            $this->message = 'Invalid plugin '. $pluginName;
+            return false;
+        }
+
+        if($mode == 'single' || $mode == 'family')
+        {
+            $this->calls[$pluginName] = $this->list[$pluginName];
+        }
+
+        if($mode == 'children' || $mode == 'family')
+        {
+            $test = $pluginName. '_';
+            foreach($this->list as $name => $plg)
+            {
+                if(strpos($name, $test) === 0)
+                {
+                    if(! $this->callPlugin($name) )
+                    {
+                        return false;
+                    }
                 }
             }
         }
 
-        $event = ucfirst(strtolower($event));
-        $results = [];
+        return true;
+    }
 
-        foreach($finalList as $plugin)
+    public function run(string $event, string $function, bool $required = false, $closure = null, bool $outputResult=false)
+    {
+        if(empty($this->calls))
         {
-            $class = $plugin. '\\'. $event;
+            return;
+        }
+
+        if($this->message && $required)
+        {
+            throw new Exception($this->message);
+        }
+ 
+        $event = ucfirst(strtolower($event));
+        $results = $outputResult ? [] : true;
+
+        foreach($this->calls as $plugin => $pluginPath)
+        {
+            $class = $pluginPath. '\\'. $event;
             if(!method_exists($class, $function))
             {
                 if(!$required) continue;
@@ -130,14 +169,89 @@ class Manager
                 {
                     throw new Exception('Callback failed with plugin '. $plugin. ' when call '. $event .'.' . $function);
                 }
-                $results[$plugin] = ['result'=>$result, 'afterCallback' =>$ok];
+
+                if( $outputResult )
+                {
+                    $results[$plugin] = ['result'=>$result, 'afterCallback' =>$ok];
+                }
             }
             else
-            {
-                $results[$plugin] = ['result'=>$result];
+            {   
+                if( $outputResult )
+                {
+                    $results[$plugin] = ['result'=>$result];
+                }
             }
         }
 
         return $results;
+    }
+
+    private function filterName($plugin)
+    {
+        $listName = [];
+        $finalList = [];
+
+        if(is_null($plugin))
+        {
+            $finalList = $this->list;
+        }
+        elseif('none-master' === $plugin)
+        {
+            $finalList = $this->list;
+            if($this->master) unset($finalList[$this->master]);
+        }
+        elseif('master' === $plugin)
+        {
+            if($this->master)
+            {
+                $finalList = [$this->master =>$this->list[$this->master]];
+            }
+            else
+            {
+                if(!$required) return false;
+                throw new Exception('Unavailable master plugin'); 
+            }
+        }
+        elseif(is_string($plugin))
+        {
+            if(strpos($plugin, 'child-') === 0)
+            {
+                $segment = substr($plugin, 5). '_';
+                foreach($this->list as $name => $plg)
+                {
+                    if(strpos($name, $segment) === 0)
+                    {
+                        $finalList[$name] = $plg;
+                    }
+                }
+            }
+            elseif(strpos($plugin, 'family-') === 0)
+            {
+                $segment = substr($plugin, 6);
+                foreach($this->list as $name => $plg)
+                {
+                    if($name == $segment || strpos($name, $segment. '_') === 0)
+                    {
+                        $finalList[$name] = $plg;
+                    }
+                }
+            }
+            else
+            {
+                $listName = [$plugin];
+            }
+        }
+        elseif(FncArray::isArrayString($plugin))
+        {
+            $listName = $plugin;
+        }
+        else
+        {
+            if(!$required) return false;
+            throw new Exception('Invalid plugin array'); 
+        }
+
+        return [$listName, $finalList];
     }
 }

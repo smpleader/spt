@@ -1,6 +1,6 @@
 <?php
 /**
- * SPT software - Array
+ * SPT software - Error Array Traits
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader

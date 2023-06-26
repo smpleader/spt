@@ -51,7 +51,7 @@ class ControllerMVVM extends Controller
             }
             else
             {
-                $themePath = SPT_PLUGIN_PATH. '/'. $pluginName. '/views';
+                $themePath = SPT_PLUGIN_PATH. '/'. $this->app->get('currentPlugin', ''). '/views';
             }
     
             define('SPT_THEME_PATH', $themePath);

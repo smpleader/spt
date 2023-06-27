@@ -12,7 +12,7 @@ namespace SPT\Support;
 
 class Loader
 {
-    public static function findClass($dir, $namespace='')
+    public static function findClass($dir, $namespace='', $callback = null)
     {
         $tmp = [];
         if( is_dir($dir) )
@@ -34,7 +34,20 @@ class Loader
                 }
             }
         }
-        
-        return $tmp;
+
+        if($callback!== null && is_callable($callback))
+        {
+            foreach($tmp as $class)
+            {
+                if(class_exists($class))
+                {
+                    $callback($class);
+                }
+            }
+        }
+        else
+        {
+            return $tmp;
+        }
     }
 }

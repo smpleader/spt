@@ -29,19 +29,20 @@ class Loader
                     elseif(!is_link($dir. '/'. $x) && '.php' == substr($x, -4))
                     {
                         $x = substr($x, 0, (strlen($x) - 4));
-                        $tmp[] = empty( $namespace ) ? $x : $namespace. '\\'.$x;
+                        $namespace = empty( $namespace ) ? $x : $namespace. '\\'.$x;
+                        $tmp[$namespace] = $x;
                     }
                 }
             }
         }
 
-        if($callback!== null && is_callable($callback))
+        if($callback !== null && is_callable($callback))
         {
-            foreach($tmp as $class)
+            foreach($tmp as $name=>$class)
             {
                 if(class_exists($class))
                 {
-                    $callback($class);
+                    $callback($class, $name);
                 }
             }
         }

@@ -19,7 +19,9 @@ class Web extends \SPT\Application\Base
 {
     protected function envLoad()
     {   
-        // secrect key ..
+        // private properties
+        parent::envLoad();
+
         // setup container
         $this->container->set('app', $this);
         // create request
@@ -34,14 +36,19 @@ class Web extends \SPT\Application\Base
         $this->container->set('token', new Token($this->config, $this->request));
     }
 
-    public function execute(string $themePath = '')
+    private function routing()
     {
+        // TODO: load cache
+        // TODO: load table
         $router = $this->router;
         $this->plgManager->call('all')->run('routing', 'registerEndpoints', false, function ($endpoints) use ($router){
             $router->import($endpoints);
-        });  
+        });
+    }
 
-        $this->plgManager->call('master')->run('Routing', 'afterRegisterEndpoints');
+    public function execute(string $themePath = '')
+    {
+        $this->routing();
         
         if($themePath) $this->set('themePath', $themePath);
 

@@ -20,7 +20,7 @@ class Base extends ACore implements IApp
 {
     protected $plgManager;
 
-    public function __construct(IContainer $container, string $publicPath, string $pluginPath, string $configPath = '', string $namespace = '')
+    public function __construct(IContainer $container, string $publicPath, string $pluginPath, string $configPath, string $namespace = '')
     {
         if(!file_exists($publicPath) || !file_exists($pluginPath) || !file_exists($configPath))
         {
@@ -34,19 +34,19 @@ class Base extends ACore implements IApp
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
 
         $this->container = $container;
-        $this->config = new Configuration(null);
-        $this->plgManager = new Manager($this);
 
         $this->envLoad();
         
-        $this->plgManager->call('master')->run('Bootstrap', 'initialize', true);
-        $this->plgManager->call('none-master')->run('Bootstrap', 'initialize');
-        $this->plgManager->call('master')->run('Bootstrap', 'afterInitialize');
+        $this->plgManager->call('all')->run('Bootstrap', 'initialize');
 
         return $this;
     }
 
-    protected function envLoad(){}
+    protected function envLoad()
+    {
+        $this->config = new Configuration(null);
+        $this->plgManager = new Manager($this);
+    }
 
     public function execute(string $themePath = ''){}
 

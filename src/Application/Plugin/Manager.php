@@ -52,8 +52,8 @@ class Manager
                     continue;
                 }
 
-                $name = $namespace. $plg. '\\registers';
-                $installer = $name. '\\Installer';
+                $name = $namespace. $plg;
+                $installer = $name. '\\registers\\Installer';
                 $this->list[$plg] = class_exists($installer) ? $installer::info() : [];
                 $this->list[$plg]['namespace'] =  $name;
                 $this->list[$plg]['path'] =  $path. $plg. '/';
@@ -166,7 +166,7 @@ class Manager
 
         foreach($this->calls as $plugin => $pluginInfo)
         {
-            $class = $pluginInfo['namespace']. '\\'. $event;
+            $class = $pluginInfo['namespace']. '\\registers\\'. $event;
             if(!method_exists($class, $function))
             {
                 if(!$required) continue;
@@ -197,5 +197,15 @@ class Manager
         }
 
         return $results;
+    }
+
+    public function getList()
+    {
+        return $this->list;
+    }
+
+    public function getDetail(string $name)
+    {
+        return isset($this->list[$name]) ? $this->list[$name] : false;
     }
 }

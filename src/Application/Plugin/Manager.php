@@ -18,11 +18,11 @@ use \Exception;
 
 class Manager
 {
-    private array $list = [];
-    private string $master = '';
-    private string $message = '';
-    private array $calls = [];
-    private IApp $app;
+    protected array $list = [];
+    protected string $master = '';
+    protected string $message = '';
+    protected array $calls = [];
+    protected IApp $app;
 
     public function __construct(IApp $app)
     {
@@ -103,13 +103,13 @@ class Manager
         return $this;
     }
 
-    private function hasTag(array $matchTags, string $pluginName)
+    protected function hasTag(array $matchTags, string $pluginName)
     {
         // TODO: call plugin by tags 
         return false;
     }
 
-    private function callPlugin($pluginName, string $mode = 'single')
+    protected function callPlugin($pluginName, string $mode = 'single')
     {
         if(!isset($this->list[$pluginName]))
         {

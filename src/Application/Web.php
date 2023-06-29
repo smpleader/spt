@@ -36,7 +36,7 @@ class Web extends \SPT\Application\Base
         $this->container->set('token', new Token($this->config, $this->request));
     }
 
-    private function routing()
+    protected function routing()
     {
         // TODO: load cache
         // TODO: load table

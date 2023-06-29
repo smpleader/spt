@@ -24,7 +24,7 @@ class Manager
     protected array $calls = [];
     protected IApp $app;
 
-    public function __construct(IApp $app)
+    public function __construct(IApp $app, array $packages)
     {
         $this->app = $app;
 
@@ -34,7 +34,15 @@ class Manager
             $filterActive = $app->cf('activePlugins');
         }
 
-        foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $item) 
+        foreach($packages as $path=>$namespace)
+        {
+            $this->add($path, $namespace, $filterActive);
+        }
+    }
+
+    protected function add($path, $namespace, $filterActive)
+    {
+        foreach(new \DirectoryIterator($path) as $item) 
         {
             if (!$item->isDot() && $item->isDir())
             {
@@ -44,10 +52,11 @@ class Manager
                     continue;
                 }
 
-                $namespace = $app->getNamespace(). '\\plugins\\'. $plg. '\\registers';
-                $installer = $namespace. '\Installer';
+                $name = $namespace. $plg. '\\registers';
+                $installer = $name. '\\Installer';
                 $this->list[$plg] = class_exists($installer) ? $installer::info() : [];
-                $this->list[$plg]['namespace'] =  $namespace;
+                $this->list[$plg]['namespace'] =  $name;
+                $this->list[$plg]['path'] =  $path. $plg. '/';
             }
         }
     }

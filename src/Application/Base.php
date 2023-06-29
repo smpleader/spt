@@ -45,7 +45,10 @@ class Base extends ACore implements IApp
     protected function envLoad()
     {
         $this->config = new Configuration(null);
-        $this->plgManager = new Manager($this);
+        $this->plgManager = new Manager(
+            $this,
+            [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\']
+        );
     }
 
     public function execute(string $themePath = ''){}

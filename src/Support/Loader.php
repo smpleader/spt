@@ -29,8 +29,8 @@ class Loader
                     elseif(!is_link($dir. '/'. $x) && '.php' == substr($x, -4))
                     {
                         $x = substr($x, 0, (strlen($x) - 4));
-                        $namespace = empty( $namespace ) ? $x : $namespace. '\\'.$x;
-                        $tmp[$namespace] = $x;
+                        $name = empty( $namespace ) ? $x : $namespace. '\\'.$x;
+                        $tmp[$name] = $x;
                     }
                 }
             }

@@ -14,7 +14,7 @@ use SPT\Application\IRouter;
 
 class ViewComponent
 {
-    private $router;
+    protected $router;
     public function __construct(IRouter $router)
     {
         $this->router = $router;

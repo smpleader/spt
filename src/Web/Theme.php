@@ -153,7 +153,7 @@ class Theme extends BaseObj
         return $result;
     }
 
-    private function createTag(Asset $sth)
+    protected function createTag(Asset $sth)
     {
         $result = [];
 

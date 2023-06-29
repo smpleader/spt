@@ -54,7 +54,7 @@ class View
         return $this->component->support($layout);
     }
 
-    private function preparePath(string $name)
+    protected function preparePath(string $name)
     {
         $fullname = str_replace('.', '/', $name);
 

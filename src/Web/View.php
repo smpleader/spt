@@ -18,17 +18,15 @@ class View
     protected $isMVVM;
     protected Theme $theme;
     protected ViewComponent $component;
-    protected $overrideLayouts = [];
+    protected $logs = [];
     protected $paths = [];
     protected $_shares = [];
-    protected $mainLayout = '';
-    protected $currentPlugin = '';
-    protected $noTheme = false;
+    protected $mainLayout = ''; 
+    protected $overrides = [];
 
-    public function __construct(string $pluginName, Theme $theme, ViewComponent $component, $supportMVVM = true)
+    public function __construct(array $overrides, Theme $theme, ViewComponent $component, $supportMVVM = true)
     {
-        $this->noTheme = SPT_THEME_PATH == SPT_PLUGIN_PATH. '/'. $pluginName. '/views';
-        $this->currentPlugin = $pluginName;
+        $this->overrides = $overrides; 
         $this->theme = $theme;
         $this->component = $component;
         $this->isMVVM = $supportMVVM;
@@ -54,11 +52,16 @@ class View
         return $this->component->support($layout);
     }
 
-    protected function preparePath(string $name)
+    protected function preparePath(string $name, string $type)
     {
-        $fullname = str_replace('.', '/', $name);
+        $overrides = [];
+        foreach($this->overrides as $line)
+        {
+            $overrides[] = $line. str_replace('.', '/', $name). '.php';
+            $overrides[] = $line. str_replace('.', '/', $name). '/index.php';
+        }
 
-        $overrides =  $this->noTheme ? [
+        /*$overrides =  $this->noTheme ? [
             // plugin view
             SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '.php',
             SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '/index.php',
@@ -79,9 +82,9 @@ class View
             // default view
             SPT_PLUGIN_PATH. '/core/views/'. $fullname. '.php',
             SPT_PLUGIN_PATH. '/core/views/'. $fullname. '/index.php'
-        ];
+        ];*/
         
-        $this->overrideLayouts[$name] = $overrides;
+        $this->logs[$name] = $overrides;
         $this->paths[$name] = false;
         foreach($overrides as $file)
         {
@@ -97,11 +100,11 @@ class View
     {
         if($vardump)
         {
-            var_dump( $this->overrideLayouts );
+            var_dump( $this->logs );
         }
         else
         {
-            return $this->overrideLayouts;
+            return $this->logs;
         }
     }
 
@@ -111,7 +114,7 @@ class View
 
         if(!isset($this->paths[$safeName]))
         {
-            $this->preparePath($safeName); 
+            $this->preparePath($safeName, $type); 
         }
 
         return $this->paths[$safeName];

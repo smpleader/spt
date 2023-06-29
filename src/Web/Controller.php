@@ -16,41 +16,40 @@ use SPT\Container\Client;
 class Controller extends Client
 {
     protected $supportMVVM = false;
+    protected $overrides;
 
-    protected function getThemePath()
+    protected function getOverrideLayouts()
     {
-        if(!defined('SPT_THEME_PATH'))
+        if(empty($this->overrides))
         {
+            $pluginPath = $this->app->get('pluginPath');
+            $plugin = $this->app->get('currentPlugin');
             $themePath = $this->app->get('themePath', '');
             $theme = $this->app->get('theme', '');
             if( $themePath && $theme )
             {
-                $themePath .= '/'. $theme; 
+                $themePath .= '/'. $theme. '/'; 
+                $this->overrides = [
+                    $themePath.'_',
+                    $themePath. $plugin. '/views/',
+                    $pluginPath. '/views/'
+                ];
             }
             else
             {
-                $themePath = SPT_PLUGIN_PATH. '/'. $pluginName. '/views';
+                $themePath = $pluginPath. '/views/';
+                $this->overrides = [$pluginPath. '/views/'];
             }
     
             define('SPT_THEME_PATH', $themePath);
         }
-
-        return SPT_THEME_PATH;
+        return $this->overrides;
     }
 
     protected function getView()
-    {
-        $pluginName = $this->app->get('currentPlugin', '');
-
-        if(empty($pluginName))
-        {
-            throw new \Exception('Invalid plugin, can not create content page');
-        }
-
-        $this->getThemePath();
-        
+    {   
         return new View(
-            $pluginName, 
+            $this->getOverrideLayouts(), 
             new Theme(),
             new ViewComponent($this->app->getRouter()),
             $this->supportMVVM

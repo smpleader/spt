@@ -75,6 +75,16 @@ class Web extends \SPT\Application\Base
                 $this->raiseError('Not correct routing', 500);
             } 
 
+            list($pluginName, $controller, $function) = $try;
+
+            $plugin = $this->plgManager->getDetail($pluginName);
+            $plugin['name'] = $pluginName;
+
+            if(false === $plugin)
+            {
+                $this->raiseError('Invalid plugin '.$pluginName, 500);
+            }
+
             if(count($params))
             {
                 foreach($params as $key => $value)
@@ -89,9 +99,7 @@ class Web extends \SPT\Application\Base
                 $this->plgManager->call('all')->run('Routing', 'isHome');
             }
 
-            list($plugin, $controller, $function) = $try;
-            $plugin = strtolower($plugin);
-            $this->set('currentPlugin', $plugin);
+            $this->set('mainPlugin', $plugin);
             $this->set('controller', $controller);
             $this->set('function', $function);
 
@@ -102,5 +110,14 @@ class Web extends \SPT\Application\Base
         {
             $this->raiseError('[Error] ' . $e->getMessage(), 500);
         }
+    }
+
+    public function plugin($name = '')
+    {
+        return '' == $name ? $this->get('mainPlugin') : 
+                ( true === $name ? 
+                    $this->plgManager->getList() : 
+                    $this->plgManager->getDetail($name) 
+                );
     }
 }

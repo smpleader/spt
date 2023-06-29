@@ -30,16 +30,42 @@ class ControllerMVVM extends Controller
     }
 
     public function registerViewModels()
-    {
-        $this->getThemePath();
-        $plgName = $this->app->get('currentPlugin', '');
+    { 
+       $this->getOverrideLayouts();
+
+        // Load VMs for theme
+        if( is_file(SPT_THEME_PATH.'/_viewmodels.php'))
+        { 
+            $vmlist = (array) require_once SPT_THEME_PATH.'/_viewmodels.php';
+            foreach($vmlist as $line)
+            {
+                if(is_array($line))
+                { 
+                    list($path, $namespace, $onlyWidget) = $line; 
+                    $this->loadVMFolder($path, $namespace, $onlyWidget);
+                }
+            }
+        }
+
+        /*Loader::findClass( 
+            $pluginPath. '/viewmodels/', 
+            $this->app->get('namespace'). '\models\\', 
+            function($classname, $fullname) use (&$container)
+            {
+                $container->share( $classname, new $fullname($container), true);
+            });*/
+
+ 
+        $plgName = $this->app->get('currentPlugin');
+        $pluginPath = $this->app->get('pluginPath');
+
         $this->loadVMFolder(
-            SPT_PLUGIN_PATH. '/'. $plgName. '/viewmodels',
-            $this->app->getNamespace(). '\\plugins\\'. $plgName
+            $pluginPath. '/viewmodels/', 
+            $this->app->get('namespace'). '\\viewmodels\\', 
         );
     }
 
-    protected function getThemePath()
+   /* protected function getThemePath()
     {
         if(!defined('SPT_THEME_PATH'))
         {
@@ -60,26 +86,19 @@ class ControllerMVVM extends Controller
             if( is_file(SPT_THEME_PATH.'/_vms.php'))
             { 
                 $vmlist = (array) require_once SPT_THEME_PATH.'/_vms.php';
-                foreach($vmlist as $key => $item)
+                foreach($vmlist as $line)
                 {
-                    $path = ''; $namespace = ''; $onlyWidget = true;
-                    if(is_string($item))
+                    if(is_array($line))
                     { 
-                        $path = SPT_PLUGIN_PATH. '/'. $item. '/viewmodels';
-                        $namespace = $this->app->getNamespace(). '\\plugins\\'. $item;
+                        list($path, $namespace, $onlyWidget) = $line; 
+                        $this->loadVMFolder($path, $namespace, $onlyWidget);
                     }
-                    elseif(is_array($item))
-                    { 
-                        list($path, $namespace, $onlyWidget) = $item; 
-                    }
-
-                    $this->loadVMFolder($path, $namespace, $onlyWidget);
                 }
             }
         }
 
         return SPT_THEME_PATH;
-    }
+    }*/
 
     protected function loadVMFolder($path, $namespace, $onlyWidget = false)
     {
@@ -97,7 +116,7 @@ class ControllerMVVM extends Controller
                 $filename = $file->getBasename(); 
                 $vmName = substr($filename, 0, strlen($filename) - 4) ;
                 $vmName = ucfirst($vmName);
-                $vmName = $namespace. '\\viewmodels\\'. $vmName;
+                $vmName = $namespace. $vmName; 
 
                 if(class_exists($vmName))
                 {

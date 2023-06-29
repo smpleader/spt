@@ -31,7 +31,7 @@ class ControllerMVVM extends Controller
 
     public function registerViewModels()
     { 
-       $this->getOverrideLayouts();
+        $this->getOverrideLayouts();
 
         // Load VMs for theme
         if( is_file(SPT_THEME_PATH.'/_viewmodels.php'))
@@ -116,7 +116,7 @@ class ControllerMVVM extends Controller
                 $filename = $file->getBasename(); 
                 $vmName = substr($filename, 0, strlen($filename) - 4) ;
                 $vmName = ucfirst($vmName);
-                $vmName = $namespace. $vmName; 
+                $vmName = $namespace. $vmName;
 
                 if(class_exists($vmName))
                 {

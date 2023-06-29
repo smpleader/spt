@@ -84,7 +84,7 @@ class Web extends \SPT\Application\Base
             {
                 $this->raiseError('Invalid plugin '.$pluginName, 500);
             }
-
+            
             if(count($params))
             {
                 foreach($params as $key => $value)
@@ -103,7 +103,7 @@ class Web extends \SPT\Application\Base
             $this->set('controller', $controller);
             $this->set('function', $function);
 
-            return $this->plgManager->call($plugin)->run('Dispatcher', 'dispatch', true);
+            return $this->plgManager->call($pluginName)->run('Dispatcher', 'dispatch', true);
 
         }
         catch (\Exception $e) 

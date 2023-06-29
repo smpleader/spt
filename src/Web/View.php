@@ -21,12 +21,13 @@ class View
     protected $logs = [];
     protected $paths = [];
     protected $_shares = [];
-    protected $mainLayout = ''; 
+    protected $mainLayout = '';
+    protected $currentPlugin = '';
     protected $overrides = [];
 
     public function __construct(array $overrides, Theme $theme, ViewComponent $component, $supportMVVM = true)
     {
-        $this->overrides = $overrides; 
+        $this->overrides = $overrides;
         $this->theme = $theme;
         $this->component = $component;
         $this->isMVVM = $supportMVVM;
@@ -166,7 +167,7 @@ class View
         $file = $this->getPath($layoutPath, $type);
         if( false === $file )
         {
-            // $this->debugPath()
+            // $this->debugPath();
             throw new \Exception('Invalid layout '. $layoutPath);
         }
 

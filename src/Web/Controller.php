@@ -32,12 +32,12 @@ class Controller extends Client
                 $this->overrides = [
                     $themePath.'_',
                     $themePath. $plugin. '/views/',
-                    $pluginPath. '/views/'
+                    $pluginPath. 'views/'
                 ];
             }
             else
             {
-                $themePath = $pluginPath. '/views/';
+                $themePath = $pluginPath. 'views/';
                 $this->overrides = [$pluginPath. '/views/'];
             }
     
@@ -47,7 +47,7 @@ class Controller extends Client
     }
 
     protected function getView()
-    {   
+    {
         return new View(
             $this->getOverrideLayouts(), 
             new Theme(),

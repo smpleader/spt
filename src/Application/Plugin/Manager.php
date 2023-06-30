@@ -57,6 +57,7 @@ class Manager
                 $this->list[$plg] = class_exists($installer) ? $installer::info() : [];
                 $this->list[$plg]['namespace'] =  $name;
                 $this->list[$plg]['path'] =  $path. $plg. '/';
+                $this->list[$plg]['name'] =  $plg;
             }
         }
     }

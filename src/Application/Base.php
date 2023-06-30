@@ -84,7 +84,7 @@ class Base extends ACore implements IApp
             throw new \Exception('Method childLoad can not be called before Routing.'); 
         }
 
-        return $this->plgManager->call($plugin, 'children')->run($event, $function, false, $callback, $getResult);
+        return $this->plgManager->call($plugin['name'], 'children')->run($event, $function, false, $callback, $getResult);
     }
 
     public function familyLoad(string $event, string $function, $callback = null, bool $getResult = false)
@@ -95,6 +95,6 @@ class Base extends ACore implements IApp
             throw new \Exception('Method familyLoad can not be called before Routing.'); 
         }
 
-        return $this->plgManager->call($plugin, 'family')->run($event, $function, false, $callback, $getResult);
+        return $this->plgManager->call($plugin['name'], 'family')->run($event, $function, false, $callback, $getResult);
     }
 }

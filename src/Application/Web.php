@@ -78,7 +78,6 @@ class Web extends \SPT\Application\Base
             list($pluginName, $controller, $function) = $try;
 
             $plugin = $this->plgManager->getDetail($pluginName);
-            $plugin['name'] = $pluginName;
 
             if(false === $plugin)
             {

@@ -38,7 +38,7 @@ class Cli extends Web
             $commands = array_merge($commands, $items);
         });
 
-        $args = $this->request->cli->getArg();
+        $args = $this->request->cli->getArgs();
         if (!$args)
         {
             $this->raiseError('Invalid Command Line');

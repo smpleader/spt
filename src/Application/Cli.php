@@ -14,6 +14,8 @@ use SPT\Request\Base as Request;
 
 class Cli extends Web
 {
+    private $commands;
+
     public function envLoad()
     {
         // setup container
@@ -38,6 +40,8 @@ class Cli extends Web
             $commands = array_merge($commands, $items);
         });
 
+        $this->commands = $commands;
+
         $args = $this->request->cli->getArgs();
         if (!$args)
         {
@@ -45,14 +49,27 @@ class Cli extends Web
         }
 
         $exec = $args[0];
-        $todo = $commands[$exec];
+        if ($exec == '--help')
+        {
+            return $this->commandHelp();
+        }
+
+        $todo = isset($this->commands[$exec]) ? $this->commands[$exec] : '';
+       
         if (!$todo)
         {
             $this->raiseError('Invalid Command Line');
         }
 
-        $try = explode('.', $todo);
-            
+        if(is_array($todo))
+        {
+            $try = explode('.', $todo['fnc']);
+        }
+        else
+        {
+            $try = explode('.', $todo);
+        }
+
         if(count($try) !== 3)
         {
             $this->raiseError('Not correct routing');
@@ -65,5 +82,27 @@ class Cli extends Web
         $this->set('function', $function);
 
         return $this->plgManager->call($plugin)->run('Dispatcher', 'dispatch', true);
+    }
+
+    public function commandHelp()
+    {
+        $commands = $this->commands;
+        $commands['--help'] = [
+            'description' => 'Information commands',
+        ];
+
+        echo "Command Helper:\n";
+        foreach($commands as $key => $command)
+        {
+            $description = is_array($command) ? $command['description'] : '';
+            
+            echo "\t" . $key ."\t". "\t". $description ."\n";
+        }
+    }
+
+    public function raiseError(string $msg, $code = 500)
+    {
+        echo $msg ."\n";
+        exit(0);
     }
 }

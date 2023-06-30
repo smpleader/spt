@@ -89,11 +89,8 @@ class Cli extends Base
 					}
 				}
 			}
-			// Plain-arg
-			else
-			{
-				$this->args[] = $arg;
-			}
+			
+			$this->args[] = $arg;
 		}
 
 		$this->data = $out; 

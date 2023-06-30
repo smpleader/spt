@@ -97,4 +97,9 @@ class Cli extends Base
 
 		$this->data = $out; 
     }
+
+	public function getArg()
+	{
+		return $this->args ?? [];
+	}
 }

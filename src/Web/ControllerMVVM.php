@@ -41,12 +41,27 @@ class ControllerMVVM extends Controller
             {
                 if(is_array($line))
                 { 
-                    list($path, $namespace, $onlyWidget) = $line; 
+                    @list($path, $namespace, $onlyWidget) = $line; 
+                    if(null === $onlyWidget) $onlyWidget = true;
                     $this->loadVMFolder($path, $namespace, $onlyWidget);
                 }
             }
         }
+ 
+        $plgName = $this->app->get('currentPlugin');
+        $pluginPath = $this->app->get('pluginPath');
 
+        $this->loadVMFolder(
+            $pluginPath. 'viewmodels/', 
+            $this->app->get('namespace'). '\\viewmodels\\', 
+        );
+    }
+
+    protected function loadVMFolder($path, $namespace, $onlyWidget = false)
+    {
+        if(!is_dir($path)) return;
+ 
+        // TODO: brenchmark test with Loader::findClass
         /*Loader::findClass( 
             $pluginPath. '/viewmodels/', 
             $this->app->get('namespace'). '\models\\', 
@@ -54,55 +69,6 @@ class ControllerMVVM extends Controller
             {
                 $container->share( $classname, new $fullname($container), true);
             });*/
-
- 
-        $plgName = $this->app->get('currentPlugin');
-        $pluginPath = $this->app->get('pluginPath');
-
-        $this->loadVMFolder(
-            $pluginPath. '/viewmodels/', 
-            $this->app->get('namespace'). '\\viewmodels\\', 
-        );
-    }
-
-   /* protected function getThemePath()
-    {
-        if(!defined('SPT_THEME_PATH'))
-        {
-            $themePath = $this->app->get('themePath', '');
-            $theme = $this->app->get('theme', '');
-            if( $themePath && $theme )
-            {
-                $themePath .= '/'. $theme; 
-            }
-            else
-            {
-                $themePath = SPT_PLUGIN_PATH. '/'. $this->app->get('currentPlugin', ''). '/views';
-            }
-    
-            define('SPT_THEME_PATH', $themePath);
-
-            // Load VMs for theme
-            if( is_file(SPT_THEME_PATH.'/_vms.php'))
-            { 
-                $vmlist = (array) require_once SPT_THEME_PATH.'/_vms.php';
-                foreach($vmlist as $line)
-                {
-                    if(is_array($line))
-                    { 
-                        list($path, $namespace, $onlyWidget) = $line; 
-                        $this->loadVMFolder($path, $namespace, $onlyWidget);
-                    }
-                }
-            }
-        }
-
-        return SPT_THEME_PATH;
-    }*/
-
-    protected function loadVMFolder($path, $namespace, $onlyWidget = false)
-    {
-        if(!is_dir($path)) return;
 
         foreach(new \DirectoryIterator($path) as $file) 
         {
@@ -115,7 +81,6 @@ class ControllerMVVM extends Controller
             {
                 $filename = $file->getBasename(); 
                 $vmName = substr($filename, 0, strlen($filename) - 4) ;
-                $vmName = ucfirst($vmName);
                 $vmName = $namespace. $vmName;
 
                 if(class_exists($vmName))

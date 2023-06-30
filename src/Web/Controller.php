@@ -81,4 +81,37 @@ class Controller extends Client
 
         return $view->renderLayout($layout, $data);
     }
+
+    public function setCurrentPlugin(string $name = '')
+    {
+        $current = $this->app->get('currentPlugin', true);
+        if(true === $current)
+        {
+            // set plugin info
+            $plugin = $this->app->plugin($name);
+            if(false === $plugin)
+            {
+                throw new Exception('Can not set current plugin with '.$name);
+            }
+            $this->app->set('currentPlugin', $plugin['name']);
+            $this->app->set('namespace', $plugin['namespace']);
+            $this->app->set('pluginPath', $plugin['path']);
+        }
+        else
+        {
+            throw new Exception('Can not set current plugin twice');
+        }
+        return true;
+    }
+
+    public function useDefaultTheme()
+    {
+        if(empty( $this->app->get('theme', '') ))
+        {
+            $this->app->set('theme', $this->app->cf('defaultTheme'));
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

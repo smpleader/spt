@@ -45,7 +45,10 @@ class Base extends ACore implements IApp
     protected function envLoad()
     {
         $this->config = new Configuration(null);
-        $this->plgManager = new Manager($this);
+        $this->plgManager = new Manager(
+            $this,
+            [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\']
+        );
     }
 
     public function execute(string $themePath = ''){}
@@ -75,23 +78,23 @@ class Base extends ACore implements IApp
 
     public function childLoad(string $event, string $function, $callback = null, bool $getResult = false)
     {
-        $plugin = $this->get('currentPlugin', false);
+        $plugin = $this->get('mainPlugin', false);
         if(false === $plugin)
         {
-            throw new Exception('Method childLoad can not be called before Routing.'); 
+            throw new \Exception('Method childLoad can not be called before Routing.'); 
         }
 
-        return $this->plgManager->call($plugin, 'children')->run($event, $function, false, $callback, $getResult);
+        return $this->plgManager->call($plugin['name'], 'children')->run($event, $function, false, $callback, $getResult);
     }
 
     public function familyLoad(string $event, string $function, $callback = null, bool $getResult = false)
     {
-        $plugin = $this->get('currentPlugin', false);
+        $plugin = $this->get('mainPlugin', false);
         if(false === $plugin)
         {
-            throw new Exception('Method familyLoad can not be called before Routing.'); 
+            throw new \Exception('Method familyLoad can not be called before Routing.'); 
         }
 
-        return $this->plgManager->call($plugin, 'family')->run($event, $function, false, $callback, $getResult);
+        return $this->plgManager->call($plugin['name'], 'family')->run($event, $function, false, $callback, $getResult);
     }
 }

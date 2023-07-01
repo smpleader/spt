@@ -18,13 +18,13 @@ use \Exception;
 
 class Manager
 {
-    private array $list = [];
-    private string $master = '';
-    private string $message = '';
-    private array $calls = [];
-    private IApp $app;
+    protected array $list = [];
+    protected string $master = '';
+    protected string $message = '';
+    protected array $calls = [];
+    protected IApp $app;
 
-    public function __construct(IApp $app)
+    public function __construct(IApp $app, array $packages)
     {
         $this->app = $app;
 
@@ -34,7 +34,15 @@ class Manager
             $filterActive = $app->cf('activePlugins');
         }
 
-        foreach(new \DirectoryIterator(SPT_PLUGIN_PATH) as $item) 
+        foreach($packages as $path=>$namespace)
+        {
+            $this->add($path, $namespace, $filterActive);
+        }
+    }
+
+    protected function add($path, $namespace, $filterActive)
+    {
+        foreach(new \DirectoryIterator($path) as $item) 
         {
             if (!$item->isDot() && $item->isDir())
             {
@@ -44,10 +52,12 @@ class Manager
                     continue;
                 }
 
-                $namespace = $app->getNamespace(). '\\plugins\\'. $plg. '\\registers';
-                $installer = $namespace. '\Installer';
+                $name = $namespace. $plg;
+                $installer = $name. '\\registers\\Installer';
                 $this->list[$plg] = class_exists($installer) ? $installer::info() : [];
-                $this->list[$plg]['namespace'] =  $namespace;
+                $this->list[$plg]['namespace'] =  $name;
+                $this->list[$plg]['path'] =  $path. $plg. '/';
+                $this->list[$plg]['name'] =  $plg;
             }
         }
     }
@@ -103,13 +113,13 @@ class Manager
         return $this;
     }
 
-    private function hasTag(array $matchTags, string $pluginName)
+    protected function hasTag(array $matchTags, string $pluginName)
     {
         // TODO: call plugin by tags 
         return false;
     }
 
-    private function callPlugin($pluginName, string $mode = 'single')
+    protected function callPlugin($pluginName, string $mode = 'single')
     {
         if(!isset($this->list[$pluginName]))
         {
@@ -157,7 +167,7 @@ class Manager
 
         foreach($this->calls as $plugin => $pluginInfo)
         {
-            $class = $pluginInfo['namespace']. '\\'. $event;
+            $class = $pluginInfo['namespace']. '\\registers\\'. $event;
             if(!method_exists($class, $function))
             {
                 if(!$required) continue;
@@ -188,5 +198,15 @@ class Manager
         }
 
         return $results;
+    }
+
+    public function getList()
+    {
+        return $this->list;
+    }
+
+    public function getDetail(string $name)
+    {
+        return isset($this->list[$name]) ? $this->list[$name] : false;
     }
 }

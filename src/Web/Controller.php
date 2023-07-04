@@ -22,6 +22,14 @@ class Controller extends Client
     {
         if(empty($this->overrides))
         {
+            // mainPlugin | childPlugin -> currentPlugin
+            $this->setCurrentPlugin();
+            // auto use default theme
+            if(empty( $this->app->get('theme', '') ))
+            {
+                $this->app->set('theme', $this->app->cf('defaultTheme'));
+            }
+            
             $pluginPath = $this->app->get('pluginPath');
             $plugin = $this->app->get('currentPlugin');
             $themePath = $this->app->get('themePath', '');
@@ -99,19 +107,12 @@ class Controller extends Client
         }
         else
         {
-            throw new Exception('Can not set current plugin twice');
-        }
-        return true;
-    }
-
-    public function useDefaultTheme()
-    {
-        if(empty( $this->app->get('theme', '') ))
-        {
-            $this->app->set('theme', $this->app->cf('defaultTheme'));
-            return true;
-        }else{
+            if(!$silent)
+            {
+                throw new Exception('Can not set current plugin twice');
+            }
             return false;
         }
+        return true;
     }
 }

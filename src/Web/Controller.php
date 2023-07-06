@@ -99,7 +99,7 @@ class Controller extends Client
             $plugin = $this->app->plugin($name);
             if(false === $plugin)
             {
-                throw new Exception('Can not set current plugin with '.$name);
+                throw new \Exception('Can not set current plugin with '.$name);
             }
             $this->app->set('currentPlugin', $plugin['name']);
             $this->app->set('namespace', $plugin['namespace']);

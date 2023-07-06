@@ -38,15 +38,28 @@ class Controller extends Client
             {
                 $themePath .= '/'. $theme. '/'; 
                 $this->overrides = [
-                    $themePath.'_',
-                    $themePath. $plugin. '/views/',
-                    $pluginPath. 'views/'
+                    'layout' => [
+                        $themePath. '_layouts/'. $plugin. '/',
+                        $pluginPath. 'views/layouts/'
+                    ],
+                    'widget' => [
+                        $themePath.'_widgets/',
+                        $pluginPath. 'views/widgets/'
+                    ],
+                    'vcom' => [
+                        $themePath.'_vcoms/',
+                        $pluginPath. 'views/vcoms/'
+                    ]
                 ];
             }
             else
             {
                 $themePath = $pluginPath. 'views/';
-                $this->overrides = [$pluginPath. '/views/'];
+                $this->overrides = [
+                    'layout' => [$pluginPath. 'views/layouts/'],
+                    'widget' => [$pluginPath. 'views/widgets/'],
+                    'vcom' => [$pluginPath. 'views/vcoms/']
+                ];
             }
     
             define('SPT_THEME_PATH', $themePath);

@@ -22,7 +22,7 @@ class Form
     {
         foreach($fields as $id => $field)
         {
-            $className = '\SPT\View\Gui\FieldType\Input';
+            $className = '\SPT\Web\Gui\FieldType\Input';
             $type = 'text';
             
             if(isset($field[0]))
@@ -30,7 +30,7 @@ class Form
                 if(false === strpos($field[0], '\\'))
                 {
                     $type = $field[0];
-                    $tmp = '\SPT\View\Gui\FieldType\\'. ucfirst($field[0]);
+                    $tmp = '\SPT\Web\Gui\FieldType\\'. ucfirst($field[0]);
                 }
                 else
                 {

@@ -27,27 +27,27 @@ class ViewModelHelper
         return static::$instance;
     }
 
-    public static function prepareVM($className, $xlayout, $container = null)
+    public static function prepareVM($type, $className, $xlayout, $container = null)
     {
         if(is_array($xlayout))
         {
             foreach($xlayout as $layout)
             {
-                static::prepareVM($className, $layout, $container);
+                static::prepareVM($type, $className, $layout, $container);
             }
         }
         elseif(is_string($xlayout))
         {
             $helper = static::getInstance();
             $helper->assignContainer($container);
-            $helper->assignVM($className, $xlayout);
+            $helper->assignVM($type, $className, $xlayout);
         }
     }
 
-    public static function deployVM($layout, &$data, $viewData)
+    public static function deployVM($type, $layout, &$data, $viewData)
     {
         $helper = static::getInstance();
-        $tryData = $helper->getData($layout, $viewData);
+        $tryData = $helper->getData($type, $layout, $viewData);
         if(count($tryData))
         {
             $data = array_merge($tryData, $data);
@@ -75,41 +75,29 @@ class ViewModelHelper
         }
     }
 
-    public function assignVM($vmName, $layout)
+    public function assignVM($type, $vmName, $layout)
     {
-        if( 0 !== strpos($layout, 'layouts.' ) && 0 !== strpos($layout, 'widgets.') && 0 !== strpos($layout, 'vcoms.' ))
+        if(!isset($this->vms[$type]))
         {
-            $layout = 'layouts.'. $layout;
+            $this->vms[$type] = [];
         }
 
-        if(!isset($this->vms[$layout]))
+        if(!isset($this->vms[$type][$layout]))
         {
-            $this->vms[$layout] = [];
+            $this->vms[$type][$layout] = [];
         }
 
         $try = explode('|', $layout);
         if( sizeof($try) > 1)
         {
             $layout = array_shift($try);
-            $this->vms[$layout][] = [$vmName, $try];
+            $this->vms[$type][$layout][] = [$vmName, $try];
         }
         else
         {
             $try = explode('.', $layout);
             $try = end( $try );
-            $this->vms[$layout][] = [$vmName, [$try]];
-        }
-
-        if( is_a( $this->container, 'IApp' ) )
-        {
-            if(!isset($this->vmInstances[$vmName]))
-            {
-                $this->vmInstances[$vmName] = new $vmName;
-            }
-        }
-        else
-        {
-            $this->container->set($vmName, new $vmName($this->container));
+            $this->vms[$type][$layout][] = [$vmName, [$try]];
         }
     }
 
@@ -129,12 +117,12 @@ class ViewModelHelper
         }
     }
 
-    public function getData($layout, $viewData)
+    public function getData($type, $layout, $viewData)
     {
         $data = [];
-        if(isset($this->vms[$layout]))
+        if(isset($this->vms[$type]) && isset($this->vms[$type][$layout]))
         {
-            foreach($this->vms[$layout] as $array)
+            foreach($this->vms[$type][$layout] as $array)
             {
                 list($vm, $functions) = $array;
                  

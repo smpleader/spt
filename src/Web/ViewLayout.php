@@ -48,11 +48,6 @@ class ViewLayout extends BaseObj
 
     public function render($layout, array $data=[], $type='layout')
     {
-        if( 0 !== strpos($layout, $type. 's.' ))
-        {
-            $layout = $type. 's.'. $layout;
-        }
-
         return $this->_view->renderLayout($layout, $data, $type);
     }
 

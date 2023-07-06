@@ -32,77 +32,29 @@ class ControllerMVVM extends Controller
     public function registerViewModels()
     { 
         $this->getOverrideLayouts();
-
-        // Load VMs for theme
-        if( is_file(SPT_THEME_PATH.'/_viewmodels.php'))
-        { 
-            $vmlist = (array) require_once SPT_THEME_PATH.'/_viewmodels.php';
-            foreach($vmlist as $line)
-            {
-                if(is_array($line))
-                { 
-                    @list($path, $namespace, $onlyWidget) = $line; 
-                    if(null === $onlyWidget) $onlyWidget = true;
-                    $this->loadVMFolder($path, $namespace, $onlyWidget);
-                }
-            }
-        }
- 
+        
         $plgName = $this->app->get('currentPlugin');
-        $pluginPath = $this->app->get('pluginPath');
-
-        $this->loadVMFolder(
-            $pluginPath. 'viewmodels/', 
-            $this->app->get('namespace'). '\\viewmodels\\', 
-        );
-    }
-
-    protected function loadVMFolder($path, $namespace, $onlyWidget = false)
-    {
-        if(!is_dir($path)) return;
- 
-        // TODO: brenchmark test with Loader::findClass
-        /*Loader::findClass( 
-            $pluginPath. '/viewmodels/', 
-            $this->app->get('namespace'). '\models\\', 
-            function($classname, $fullname) use (&$container)
-            {
-                $container->share( $classname, new $fullname($container), true);
-            });*/
-
-        foreach(new \DirectoryIterator($path) as $file) 
+        $vms = $this->app->getVMList($plgName);
+        $container = $this->getContainer();
+        
+        foreach($vms as $vm)
         {
-            if(!$file->isDot() && $file->isDir())
-            {
-                $inner = $file->getBasename();
-                $this->loadVMFolder($path. '/'.$inner, $namespace. '\\'. $inner, $onlyWidget);
-            }
-            elseif (!$file->isDot() && $file->isFile()) 
-            {
-                $filename = $file->getBasename(); 
-                $vmName = substr($filename, 0, strlen($filename) - 4) ;
-                $vmName = $namespace. $vmName;
+            list($name, $fullname) = $vm;
 
-                if(class_exists($vmName))
+            $registers = $fullname::register();
+            if(isset($registers['layout']))
+            {
+                if(!$container->exists($name))
                 {
-                    $registers = $vmName::register();
-                    if($onlyWidget)
-                    {
-                        foreach($registers as $i => $line)
-                        {
-                            if(strpos($line, 'widgets.') !== 0)
-                            {
-                                unset($registers[$i]);
-                            }
-                        }
-                    } 
-
-                    ViewModelHelper::prepareVM(
-                        $vmName, 
-                        $registers, 
-                        $this->getContainer()
-                    );
+                    $container->share( $name, new $fullname($container), true);
                 }
+
+                ViewModelHelper::prepareVM(
+                    'layout',
+                    $name, 
+                    $registers['layout'], 
+                    $container
+                );
             }
         }
     }

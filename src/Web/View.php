@@ -56,42 +56,19 @@ class View
     protected function preparePath(string $name, string $type)
     {
         $overrides = [];
-        foreach($this->overrides as $line)
+        foreach($this->overrides[$type] as $line)
         {
-            $overrides[] = $line. str_replace('.', '/', $name). '.php';
-            $overrides[] = $line. str_replace('.', '/', $name). '/index.php';
+            $overrides[] = $line. $name. '.php';
+            $overrides[] = $line. $name. '/index.php';
         }
-
-        /*$overrides =  $this->noTheme ? [
-            // plugin view
-            SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '.php',
-            SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '/index.php',
-            // default view
-            SPT_PLUGIN_PATH. '/core/views/'. $fullname. '.php',
-            SPT_PLUGIN_PATH. '/core/views/'. $fullname. '/index.php'
-
-        ] : [
-            // theme view for a plugin view
-            SPT_THEME_PATH. '/'. $this->currentPlugin. '/'. $fullname. '.php',
-            SPT_THEME_PATH. '/'. $this->currentPlugin. '/'. $fullname. '/index.php',
-            // theme view for a default
-            SPT_THEME_PATH. '/_'. $fullname. '.php',
-            SPT_THEME_PATH. '/_'. $fullname. '/index.php',
-            // plugin view
-            SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '.php',
-            SPT_PLUGIN_PATH. '/'. $this->currentPlugin. '/views/'. $fullname. '/index.php',
-            // default view
-            SPT_PLUGIN_PATH. '/core/views/'. $fullname. '.php',
-            SPT_PLUGIN_PATH. '/core/views/'. $fullname. '/index.php'
-        ];*/
         
         $this->logs[$name] = $overrides;
-        $this->paths[$name] = false;
+        $this->paths[$type. '_'. $name] = false;
         foreach($overrides as $file)
         {
             if(file_exists($file))
             {
-                $this->paths[$name] = $file;
+                $this->paths[$type. '_'.$name] = $file;
                 return;
             }
         }
@@ -114,24 +91,18 @@ class View
         // absolute path, nothing to worry
         if(file_exists($name)) return $name;
         
+        $name = str_replace('.', '/', $name);
 
-        $safeName = 0 !== strpos($name, $type. 's.') ? $type. 's.'. $name : $name;
-
-        if(!isset($this->paths[$safeName]))
+        if(!isset($this->paths[$type. '_'. $name]))
         {
-            $this->preparePath($safeName, $type); 
+            $this->preparePath($name, $type); 
         }
 
-        return $this->paths[$safeName];
+        return $this->paths[$type. '_'. $name];
     }
 
     public function renderPage(string $page, string $layout, array $data = [])
     {
-        if( 0 !== strpos($layout, 'layouts.') )
-        {
-            $layout = 'layouts.'. $layout;
-        }
-
         if($this->mainLayout)
         {
             throw new \Exception('Generate page twice is not supported ');
@@ -140,13 +111,14 @@ class View
         {
             $this->mainLayout = $layout;
         }
-        // Support more complex structure page
+        
+        
         $file = SPT_THEME_PATH. '/'. $page. '/index.php';
         if( !file_exists($file) )
         {
             $file = SPT_THEME_PATH. '/'. $page. '.php';
         }
-
+        
         if( !file_exists($file) )
         {
             throw new \Exception('Invalid theme page '. $page);
@@ -156,7 +128,7 @@ class View
 
         if($this->isMVVM)
         {
-            ViewModelHelper::deployVM($layout, $data, []);
+            ViewModelHelper::deployVM('layout', $layout, $data, []);
         }
 
         if(is_array($data) || is_object($data))
@@ -176,13 +148,13 @@ class View
         $file = $this->getPath($layoutPath, $type);
         if( false === $file )
         {
-            // $this->debugPath();
+             $this->debugPath();
             throw new \Exception('Invalid layout '. $layoutPath);
         }
 
         if($this->isMVVM && $layoutPath != $this->mainLayout)
         {
-            ViewModelHelper::deployVM($layoutPath, $data, $this->_shares);
+            ViewModelHelper::deployVM($type, $layoutPath, $data, $this->_shares);
         }
 
         $layout = new ViewLayout(

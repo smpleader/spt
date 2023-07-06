@@ -90,7 +90,7 @@ class Controller extends Client
         return $view->renderLayout($layout, $data);
     }
 
-    public function setCurrentPlugin(string $name = '')
+    public function setCurrentPlugin(string $name = '', $silent=true)
     {
         $current = $this->app->get('currentPlugin', true);
         if(true === $current)
@@ -109,7 +109,7 @@ class Controller extends Client
         {
             if(!$silent)
             {
-                throw new Exception('Can not set current plugin twice');
+                throw new \Exception('Can not set current plugin twice');
             }
             return false;
         }

@@ -119,4 +119,10 @@ class Web extends \SPT\Application\Base
                     $this->plgManager->getDetail($name) 
                 );
     }
+
+    protected array $vmClasses;
+    public function getVMList(string $plgName)
+    {
+        return isset($this->vmClasses[$plgName]) ? $this->vmClasses[$plgName] : [];
+    }
 }

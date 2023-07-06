@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\View\Gui;
+namespace SPT\Web\Gui;
 
 class MenuItem
 {

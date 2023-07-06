@@ -8,7 +8,7 @@
  * 
  */
 
-namespace SPT\View\Gui\FieldType;
+namespace SPT\Web\Gui\FieldType;
 
 class Input
 {

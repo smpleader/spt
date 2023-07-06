@@ -13,6 +13,7 @@ namespace SPT\Request;
 class Cli extends Base
 {
 	public $args = array();
+	private $executable = array();
     
     public function __construct(array $source = null)
     {
@@ -88,13 +89,15 @@ class Cli extends Base
 					}
 				}
 			}
-			// Plain-arg
-			else
-			{
-				$this->args[] = $arg;
-			}
+			
+			$this->args[] = $arg;
 		}
 
 		$this->data = $out; 
     }
+
+	public function getArgs()
+	{
+		return $this->args ?? [];
+	}
 }

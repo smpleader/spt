@@ -33,7 +33,7 @@ class View
         $this->isMVVM = $supportMVVM;
     }
 
-    public function getVar($key, $default)
+    public function getVar($key, $default = null)
     {
         return $this->_shares[$key] ?? $default; 
     }
@@ -111,6 +111,10 @@ class View
 
     public function getPath(string $name, string $type = 'layout')
     {
+        // absolute path, nothing to worry
+        if(file_exists($name)) return $name;
+        
+
         $safeName = 0 !== strpos($name, $type. 's.') ? $type. 's.'. $name : $name;
 
         if(!isset($this->paths[$safeName]))

@@ -34,6 +34,13 @@ class Controller extends Client
             $plugin = $this->app->get('currentPlugin');
             $themePath = $this->app->get('themePath', '');
             $theme = $this->app->get('theme', '');
+            $listPlg = $this->app->plugin(true);
+            $paths = [];
+            foreach($listPlg as $plgName => $d)
+            {
+                $paths[$plgName] = $d['path'];
+            }
+
             if( $themePath && $theme )
             {
                 $themePath .= '/'. $theme. '/'; 
@@ -43,13 +50,14 @@ class Controller extends Client
                         $pluginPath. 'views/layouts/'
                     ],
                     'widget' => [
-                        $themePath.'_widgets/',
-                        $pluginPath. 'views/widgets/'
+                        $themePath.'_widgets/__PLG__/',
+                        '__PLG_PATH__/views/widgets/'
                     ],
                     'vcom' => [
-                        $themePath.'_vcoms/',
-                        $pluginPath. 'views/vcoms/'
-                    ]
+                        $themePath.'_vcoms/__PLG__/',
+                        '__PLG_PATH__/views/vcoms/'
+                    ],
+                    '_path' => $paths
                 ];
             }
             else
@@ -57,8 +65,9 @@ class Controller extends Client
                 $themePath = $pluginPath. 'views/';
                 $this->overrides = [
                     'layout' => [$pluginPath. 'views/layouts/'],
-                    'widget' => [$pluginPath. 'views/widgets/'],
-                    'vcom' => [$pluginPath. 'views/vcoms/']
+                    'widget' => ['__PLG_PATH__/views/widgets/'],
+                    'vcom' => ['__PLG_PATH__/views/vcoms/'],
+                    '_path' => $paths
                 ];
             }
     

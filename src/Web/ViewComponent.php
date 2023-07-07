@@ -95,13 +95,13 @@ class ViewComponent
             if($form->hasField())
             {
                 $field = $form->getField();
-                $layout = $field->layout ? $field->layout : 'fields.'. $field->type;
+                $layout = $field->layout ? $field->layout : 'core::fields.'. $field->type;
             }
         }
         else
         {
             $field = $form->getField($name);
-            $layout = $field->layout ? $field->layout : 'fields.'. $field->type;
+            $layout = $field->layout ? $field->layout : 'core::fields.'. $field->type;
         }
 
         return $this->_layout->render( $layout, ['field'=>$field], 'vcom');

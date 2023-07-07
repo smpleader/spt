@@ -56,10 +56,40 @@ class View
     protected function preparePath(string $name, string $type)
     {
         $overrides = [];
+        $plugin = '';
+        $layout = '';
+        if(in_array($type, ['widget', 'vcom']))
+        {
+            @list($plugin, $layout) = explode('::', $name);
+            if(empty($plugin) || empty($layout))
+            {
+                throw new \Exception($type.' needs plugin name or path ( input: '. $name.')');
+            } 
+            
+            $realPath = $this->overrides['_path'][$plugin] ?? '';
+
+            if(empty($realPath))
+            {
+                throw new \Exception($type.' does not exists in '. $plugin);
+            }
+
+            $layout = str_replace('.', '/', $layout);
+        }
+        else
+        {
+            $layout = str_replace('.', '/', $name);
+        }
+
         foreach($this->overrides[$type] as $line)
         {
-            $overrides[] = $line. $name. '.php';
-            $overrides[] = $line. $name. '/index.php';
+            if($plugin)
+            {
+                $line = str_replace('__PLG__', $plugin, $line);
+                $line = str_replace('__PLG_PATH__', $realPath, $line);
+            }
+
+            $overrides[] = $line. $layout. '.php';
+            $overrides[] = $line. $layout. '/index.php';
         }
         
         $this->logs[$name] = $overrides;
@@ -90,8 +120,6 @@ class View
     {
         // absolute path, nothing to worry
         if(file_exists($name)) return $name;
-        
-        $name = str_replace('.', '/', $name);
 
         if(!isset($this->paths[$type. '_'. $name]))
         {

@@ -87,18 +87,26 @@ class ViewModelHelper
             $this->vms[$type][$layout] = [];
         }
 
-        $try = explode('|', $layout);
-        if( sizeof($try) > 1)
+        $try = strrpos($layout, '|');
+        if(false === $try)
         {
-            $layout = array_shift($try);
-            $this->vms[$type][$layout][] = [$vmName, $try];
+            $try = strrpos($layout, '.');
+            if(false === $try)
+            {
+                $try = strrpos($layout, '::');
+                $func = substr($layout, $try+2);
+            }
+            else
+            {
+                $func = substr($layout, $try+1);
+            }
         }
         else
         {
-            $try = explode('.', $layout);
-            $try = end( $try );
-            $this->vms[$type][$layout][] = [$vmName, [$try]];
-        }
+            $func = substr($layout, $try+1);
+        } 
+        
+        $this->vms[$type][$layout][] = [$vmName, $func];
     }
 
     public function getVM($name)
@@ -124,17 +132,16 @@ class ViewModelHelper
         {
             foreach($this->vms[$type][$layout] as $array)
             {
-                list($vm, $functions) = $array;
+                list($vm, $fnc) = $array;
                  
                 $ViewModel = $this->getVM($vm);
-                foreach($functions as $fnc)
-                {   
-                    if(!method_exists($ViewModel, $fnc))
-                    {
-                        throw new \Exception('Invalid function '. $fnc. ' of ViewModel '.$vm);
-                    }
-                    $data = array_merge($data, $ViewModel->$fnc($data, $viewData));
+                
+                if(!method_exists($ViewModel, $fnc))
+                {
+                    throw new \Exception('Invalid function '. $fnc. ' of ViewModel '.$vm);
                 }
+                $data = array_merge($data, $ViewModel->$fnc($data, $viewData));
+                    
             }
         }
         return $data;

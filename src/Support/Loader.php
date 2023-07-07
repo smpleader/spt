@@ -41,14 +41,14 @@ class Loader
         {
             foreach($tmp as $fullname=>$detail)
             {
-                list($fullname, $deep) = $detail;
+                list($classname, $deep) = $detail;
                 if(class_exists($fullname))
                 {
                     $callback($classname, $fullname, $deep);
                 }
             }
         }
-        
+
         return $tmp;
     }
 }

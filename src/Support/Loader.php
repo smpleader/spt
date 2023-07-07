@@ -12,7 +12,7 @@ namespace SPT\Support;
 
 class Loader
 {
-    public static function findClass($dir, $namespace='', $callback = null)
+    public static function findClass($dir, $namespace='', $callback = null, $nodes = [])
     {
         $tmp = [];
         if( is_dir($dir) )
@@ -24,13 +24,14 @@ class Loader
                 {
                     if( is_dir($dir. '/'. $x) )
                     {
-                        $tmp = array_merge( $tmp, static::findClass($dir. '/'. $x, $x));
+                        $nodes[] = $x;
+                        $tmp = array_merge( $tmp, static::findClass($dir. '/'. $x, $x, $callback, $nodes));
                     }
                     elseif(!is_link($dir. '/'. $x) && '.php' == substr($x, -4))
                     {
                         $x = substr($x, 0, (strlen($x) - 4));
                         $name = empty( $namespace ) ? $x : $namespace. '\\'.$x;
-                        $tmp[$name] = $x;
+                        $tmp[$name] = [$x, $nodes];
                     }
                 }
             }
@@ -38,17 +39,16 @@ class Loader
 
         if($callback !== null && is_callable($callback))
         {
-            foreach($tmp as $fullname=>$classname)
+            foreach($tmp as $fullname=>$detail)
             {
+                list($fullname, $deep) = $detail;
                 if(class_exists($fullname))
                 {
-                    $callback($classname, $fullname);
+                    $callback($classname, $fullname, $deep);
                 }
             }
         }
-        else
-        {
-            return $tmp;
-        }
+        
+        return $tmp;
     }
 }

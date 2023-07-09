@@ -70,6 +70,11 @@ class View
 
             if(empty($realPath))
             {
+                $realPath = $this->overrides['_path'][$type.'_'.$plugin] ?? '';
+            }
+
+            if(empty($realPath))
+            {
                 throw new \Exception($type.' does not exists in '. $plugin);
             }
 

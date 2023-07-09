@@ -94,7 +94,7 @@ class ViewModelHelper
             if(false === $try)
             {
                 $try = strrpos($layout, '::');
-                $func = substr($layout, $try+2);
+                $func = false === $try ? $layout : substr($layout, $try+2);
             }
             else
             {

@@ -82,11 +82,6 @@ class ViewModelHelper
             $this->vms[$type] = [];
         }
 
-        if(!isset($this->vms[$type][$layout]))
-        {
-            $this->vms[$type][$layout] = [];
-        }
-
         $try = strrpos($layout, '|');
         if(false === $try)
         {
@@ -103,8 +98,14 @@ class ViewModelHelper
         }
         else
         {
-            $func = substr($layout, $try+1);
+            $func = substr($layout, $try+1); 
+            $layout = substr($layout, 0, $try);
         } 
+
+        if(!isset($this->vms[$type][$layout]))
+        {
+            $this->vms[$type][$layout] = [];
+        }
         
         $this->vms[$type][$layout][] = [$vmName, $func];
     }

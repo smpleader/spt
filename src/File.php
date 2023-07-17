@@ -19,6 +19,7 @@ class File extends BaseObj
     use Log, ErrorString;
 
     protected $targetDir;
+    protected $targetFile;
     protected $overwrite;
     protected $newName;
     protected $maxFileSize;

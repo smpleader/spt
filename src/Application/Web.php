@@ -49,6 +49,13 @@ class Web extends \SPT\Application\Base
     public function execute(string $themePath = '')
     {
         $this->routing();
+
+        if( $this->cf('homeEndpoint') )
+        {
+            $this->router->import([
+                '' => $this->cf('homeEndpoint')
+            ]);
+        }
         
         if($themePath) $this->set('themePath', $themePath);
 

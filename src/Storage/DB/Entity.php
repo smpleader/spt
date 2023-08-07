@@ -312,7 +312,7 @@ class Entity
         return true;
     }
 
-    public function bind($data = [], $returnObject = true)
+    public function bind($data = [], $returnObject = false)
     {
         $row = [];
         $data = (array) $data;
@@ -320,7 +320,7 @@ class Entity
         foreach ($fields as $key => $field)
         {
             $default = isset($field['default']) ? $field['default'] : '';
-            $row[$key] = isset($dat[$key]) ? $dat[$key] : $default;
+            $row[$key] = isset($data[$key]) ? $data[$key] : $default;
         }
 
         return $returnObject ? (object)$row : $row;

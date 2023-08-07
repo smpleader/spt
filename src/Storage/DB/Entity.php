@@ -72,7 +72,8 @@ class Entity
 
     public function add( $data, array $where = [])
     {
-        if (!$this->validate($data))
+        $data = $this->validate($data);
+        if (!$data)
         {
             return false;
         }
@@ -94,7 +95,8 @@ class Entity
 
     public function update( $data, array $where = [])
     {
-        if (!$this->validate($data))
+        $data = $this->validate($data);
+        if (!$data)
         {
             return false;
         }

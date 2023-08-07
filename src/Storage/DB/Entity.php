@@ -17,6 +17,8 @@ use SPT\Support\FncString;
 
 class Entity
 {
+    use \SPT\Traits\ErrorString;
+
     protected $db; 
     protected $table;
     protected $pk; 

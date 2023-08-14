@@ -17,6 +17,8 @@ use SPT\Support\FncString;
 
 class Entity
 {
+    use \SPT\Traits\ErrorString;
+
     protected $db; 
     protected $table;
     protected $pk; 
@@ -70,7 +72,8 @@ class Entity
 
     public function add( $data, array $where = [])
     {
-        if (!$this->validate($data))
+        $data = $this->validate($data);
+        if (!$data)
         {
             return false;
         }
@@ -92,7 +95,8 @@ class Entity
 
     public function update( $data, array $where = [])
     {
-        if (!$this->validate($data))
+        $data = $this->validate($data);
+        if (!$data)
         {
             return false;
         }
@@ -312,7 +316,7 @@ class Entity
         return true;
     }
 
-    public function bind($data = [], $returnObject = true)
+    public function bind($data = [], $returnObject = false)
     {
         $row = [];
         $data = (array) $data;
@@ -320,7 +324,7 @@ class Entity
         foreach ($fields as $key => $field)
         {
             $default = isset($field['default']) ? $field['default'] : '';
-            $row[$key] = isset($dat[$key]) ? $dat[$key] : $default;
+            $row[$key] = isset($data[$key]) ? $data[$key] : $default;
         }
 
         return $returnObject ? (object)$row : $row;

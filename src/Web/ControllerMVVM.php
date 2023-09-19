@@ -29,12 +29,15 @@ class ControllerMVVM extends Controller
         return parent::toAjax();
     }
 
-    public function registerViewModels()
+    public function registerViewModels(array $vms = array())
     { 
         $this->getOverrideLayouts();
         
-        $plgName = $this->app->get('currentPlugin');
-        $vms = $this->app->getVMList($plgName);
+        if(!count($vms))
+        {
+            $plgName = $this->app->get('currentPlugin');
+            $vms = $this->app->getVMList($plgName);
+        }
         $container = $this->getContainer();
         
         foreach($vms as $vm)

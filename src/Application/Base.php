@@ -19,8 +19,9 @@ use SPT\Application\Plugin\Manager;
 class Base extends ACore implements IApp
 {
     protected $plgManager;
+    protected $packages;
 
-    public function __construct(IContainer $container, string $publicPath, string $pluginPath, string $configPath, string $namespace = '')
+    public function __construct(IContainer $container, string $publicPath, string $pluginPath, string $configPath, string $namespace = '', array $packages = [])
     {
         if(!file_exists($publicPath) || !file_exists($pluginPath) || !file_exists($configPath))
         {
@@ -30,6 +31,12 @@ class Base extends ACore implements IApp
         define('SPT_PUBLIC_PATH', $publicPath);
         define('SPT_PLUGIN_PATH', $pluginPath);
         define('SPT_CONFIG_PATH', $configPath);
+
+        $this->packages = [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\'];
+        if( count($packages) )
+        {
+            $this->packages = array_merge($this->packages, $packages);
+        }
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
 
@@ -47,7 +54,7 @@ class Base extends ACore implements IApp
         $this->config = new Configuration(null);
         $this->plgManager = new Manager(
             $this,
-            [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\']
+            $this->packages
         );
     }
 

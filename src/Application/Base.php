@@ -32,13 +32,13 @@ class Base extends ACore implements IApp
         define('SPT_PLUGIN_PATH', $pluginPath);
         define('SPT_CONFIG_PATH', $configPath);
 
+        $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
+
         $this->packages = [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\'];
         if( count($packages) )
         {
             $this->packages = array_merge($this->packages, $packages);
         }
-
-        $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
 
         $this->container = $container;
 

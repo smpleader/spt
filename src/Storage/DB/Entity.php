@@ -129,9 +129,14 @@ class Entity
         return $this->db->table( $this->table )->delete( [$this->pk => $id ] );
     }
 
-    public function list( $start, $limit, array $where = [], $order = '', $select = '*')
+    protected function prepareSelect($select='*')
     {
-        $list = $this->db->select( $select )->table( $this->table );
+        return $this->db->select( $select )->table( $this->table );
+    }
+
+    public function list( $start, $limit, array $where = [], $order = '', $select = '')
+    {
+        $list = empty($select) ? $this->prepareSelect() :  $this->prepareSelect($select); // use default
 
         if( count($where) )
         {

@@ -161,10 +161,13 @@ class Theme extends BaseObj
         {
             if( count($sth->get('parents') ) )
             {
+                $assets = $this->get($sth->get('type'));
                 foreach($sth->get('parents') as $pid)
                 {
-                    $assets = $this->get($sth->get('type'));
-                    $result = array_merge($result, $this->createTag($assets[$pid]));
+                    if(isset($assets[$pid]))
+                    {
+                        $result = array_merge($result, $this->createTag($assets[$pid]));
+                    }
                 }
             }
     

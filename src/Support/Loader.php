@@ -25,7 +25,8 @@ class Loader
                     if( is_dir($dir. '/'. $x) )
                     {
                         $nodes[] = $x;
-                        $tmp = array_merge( $tmp, static::findClass($dir. '/'. $x, $x, $callback, $nodes));
+                        $namespace = empty( $namespace ) ? $x : $namespace. '\\'.$x;
+                        $tmp = array_merge( $tmp, static::findClass($dir. '/'. $x, $namespace, $callback, $nodes));
                     }
                     elseif(!is_link($dir. '/'. $x) && '.php' == substr($x, -4))
                     {

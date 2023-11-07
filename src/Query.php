@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Query class, wrap db.class for simpler and more advanced usage
+ * SPT software - A Query builder class
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Just a query builder
+ * @description: A query builder wrap SPT\Extend\Pdo for simpler and more advanced usage
  * 
  */
 
@@ -15,24 +15,106 @@ use SPT\Extend\Pdo as PDOWrapper;
 
 class Query
 {
+    /**
+     * Internal database connection
+     * @var PDOWrapper $db
+     */
     protected $db;
+
+    /**
+     * Internal string query to get list, it's kept to re-use in many functions at one process flow
+     * @var string $query
+     */
     protected $query;
+
+    /**
+     * Internal string query for CRUD
+     * @var string $sql
+     */
     protected $sql;
 
-    protected $prefix;
-    protected $qq;
-    protected $table;
-    protected $fields;
-    protected $join;
-    protected $where;
-    protected $value;
-    protected $orderby;
-    protected $groupby;
-    protected $limit;
-    protected $countTotal;
-    protected $total;
+    /**
+     * Internal array to keep database prefix ( support many prefixes )
+     * @var array $prefix
+     */
+    protected array $prefix;
 
-    public function __construct(PDOWrapper $db, $prefix, $fquota='`')
+    /**
+     * Internal string to keep database quotation 
+     * @var string $qq
+     */
+    protected $qq;
+
+    /**
+     * Internal string to keep table name in current query, mostly use for main table
+     * @var string $table
+     */
+    protected $table;
+
+    /**
+     * Internal array to keep table's fields in current query
+     * @var array $fields
+     */
+    protected $fields;
+
+    /**
+     * Internal array to keep query joins senetence
+     * @var array $join
+     */
+    protected $join;
+
+    /**
+     * Internal array to keep query where conditions
+     * @var array $where
+     */
+    protected $where;
+
+    /**
+     * Internal array to keep query value
+     * @var array $value
+     */
+    protected $value;
+
+    /**
+     * Internal string to keep order by information
+     * @var string $orderby
+     */
+    protected $orderby;
+
+    /**
+     * Internal string to keep group by information
+     * @var string $groupby
+     */
+    protected $groupby;
+
+    /**
+     * Internal string to keep record limit information, could be include limits and offset
+     * @var string $limit
+     */
+    protected $limit;
+
+    /**
+     * Set if next query need to get the total of current query or not.
+     * @var bool $countTotal
+     */
+    protected bool $countTotal;
+
+    /**
+     * Cache the total of records with current query
+     * @var int $total
+     */
+    protected int $total;
+
+    /**
+     * Require minium 2 dependencies
+     *
+     * @param PDOWrapper $db  SPT\Extend\Pdo object to work with database
+     * @param array     $prefix Table prefix(es) array
+     * @param string     $fquota Database quatation information
+     * 
+     * @return void
+     */ 
+    public function __construct(PDOWrapper $db, array $prefix, $fquota='`')
     {
         $this->db = $db;
         $this->prefix = $prefix;
@@ -41,6 +123,11 @@ class Query
         $this->reset();
     }
 
+    /**
+     * Set default empty value for properties used for query
+     * 
+     * @return void
+     */ 
     protected function reset()
     {
         $this->query = '';
@@ -55,19 +142,33 @@ class Query
         $this->countTotal = false;
     }
 
-    protected function prefix($q)
+    /**
+     * Fill prefix for a query string
+     *
+     * @param string  $query Query string
+     * 
+     * @return string $query Query string after filled prefix
+     */ 
+    protected function prefix(string $query)
     {
         if(Arr::isReady($this->prefix))
         {
             foreach($this->prefix as $find=>$replace)
             {
-                $q = str_replace($find, $replace, $q);
+                $query = str_replace($find, $replace, $query);
             }
         }
-        return $q;
+        return $query;
     }
 
-    protected function qq($name)
+    /**
+     * Fill quotation for a table or field 
+     *
+     * @param string  $name Table or field string
+     * 
+     * @return string $name Table or field with quotation
+     */ 
+    protected function qq(string $name)
     {
         if(  
             strpos($name, $this->qq) === false 
@@ -88,11 +189,21 @@ class Query
         return $name;
     }
 
+    /**
+     * Check if connection is ready or not
+     * 
+     * @return bool  Alias to object database's connection status
+     */ 
     public function isConnected()
     {
         return $this->db->connected;
     }
 
+    /**
+     * Get total records of current query
+     * 
+     * @return int $total
+     */ 
     public function total()
     {
         $total = $this->total;
@@ -100,18 +211,39 @@ class Query
         return $total;
     }
 
-    public function countTotal($boolean = true)
+    /**
+     * Remark if we need to get total of recrod with current query
+     *
+     * @param bool  $boolean true to count
+     * 
+     * @return Query $this
+     */ 
+    public function countTotal(bool $boolean = true)
     {
         $this->countTotal = $boolean;
         return $this;
     }
 
-    public function table($name)
+    /**
+     * Set table name
+     *
+     * @param string  $name
+     * 
+     * @return Query $this
+     */ 
+    public function table(string $name)
     {
         $this->table = $this->qq($this->prefix($name));
         return $this;
     }
 
+    /**
+     * Set selected fields
+     *
+     * @param string|array  $fields
+     * 
+     * @return Query $this
+     */ 
     public function select($fields)
     {
         if(Arr::isReady($fields))
@@ -131,39 +263,14 @@ class Query
         return $this;
     }
 
-    /*public function where($conditions){
-
-        if(Arr::isReady($conditions))
-        {
-            foreach($conditions as $key=>$val)
-            {
-                
-                if(is_array($val))
-                {
-                    $ws = stripos($val[0], 'LIKE') === false ? $this->qq($key). ' '. $val[0]. ' ?' :  $this->qq($key). ' '. $val[0]. ' %?%';
-                    $this->value($val[1]);
-                }
-                elseif(is_numeric($key))
-                {
-                    $ws = $val;
-                }
-                else
-                {
-                    $ws = $this->qq($key).' = ?';
-                    $this->value($val);
-                }
-
-                $this->where($ws);
-            }
-        }
-        elseif(is_string($conditions))
-        {
-            $this->where[] = $conditions;
-        }
-  
-        return $this;
-    }*/
-
+    /**
+     * Set value and its place
+     *
+     * @param mixed  $value
+     * @param string  $place  because of query types, need to differ if the value for condition or value, 3 types: udpate, insert, where
+     * 
+     * @return Query $this
+     */ 
     public function value($value, $place="where"){
 
         if(is_object($value) || is_array($value))
@@ -181,6 +288,13 @@ class Query
         return $this;
     }
 
+    /**
+     * Get value order by its place
+     * Value for "update" or "insert" should come first.
+     * The condition "where" is always in the last.
+     * 
+     * @return array $arr
+     */ 
     public function getValue()
     {
         $arr = [];
@@ -197,6 +311,13 @@ class Query
         return $arr;
     }
 
+    /**
+     * Set orderby
+     *
+     * @param mixed  $order
+     *  
+     * @return Query $this
+     */ 
     public function orderby($order){
 
         if(Arr::isReady($order))
@@ -211,6 +332,13 @@ class Query
         return $this;
     }
 
+    /**
+     * Set groupby
+     *
+     * @param mixed  $group
+     *  
+     * @return Query $this
+     */ 
     public function groupby($group){
 
         if(Arr::isReady($group))
@@ -225,6 +353,13 @@ class Query
         return $this;
     }
 
+    /**
+     * Set limit & offset
+     *
+     * @param mixed  $limit
+     *  
+     * @return Query $this
+     */ 
     public function limit($limit){
 
         if(Arr::isReady($limit))
@@ -239,6 +374,13 @@ class Query
         return $this;
     }
 
+    /**
+     * Set join condition
+     *
+     * @param mixed  $joins
+     *  
+     * @return Query $this
+     */ 
     public function join($joins){
 
         if(Arr::isReady($joins))
@@ -270,7 +412,14 @@ class Query
         return $this;
     }
 
-    protected function buildSelect($buildForCount = false)
+    /**
+     * Build query Select
+     *
+     * @param bool  $buildForCount check if want to return query to count the total
+     *  
+     * @return Query $this
+     */ 
+    protected function buildSelect(bool $buildForCount = false)
     { 
         if(empty($this->table)) Response::_404('Invalid table');
         if(empty($this->fields)) $this->fields[] = '*';
@@ -306,6 +455,13 @@ class Query
         $this->query = $this->prefix($q);
     }
 
+    /**
+     * Get a row in array format
+     *
+     * @param mixed  $conditions Value for where conition
+     *  
+     * @return array $data
+     */ 
     public function row($conditions=array())
     {
         $this->where($conditions);
@@ -315,6 +471,14 @@ class Query
         return $data;
     }
 
+    /**
+     * Get an array list
+     *
+     * @param string|integer  $start Offset index to start query
+     * @param string|integer  $limit Total recrod to request
+     *  
+     * @return array $data
+     */ 
     public function list($start='0', $limit='20')
     {
         if(empty($start) && empty($limit))
@@ -333,13 +497,20 @@ class Query
         {
             $this->limit(''); // reset to count
             $this->buildSelect(true);
-            $this->total = $this->db->fetchColumn($this->query, $this->getValue());
+            $this->total = (int) $this->db->fetchColumn($this->query, $this->getValue());
         }
 
         $this->reset();
         return $data;
     }
 
+    /**
+     * Insert a new row
+     *
+     * @param array|object  $data Insert object data or an array into a table
+     *  
+     * @return int $id
+     */ 
     public function insert($data=array())
     {
         $indexNum = false;
@@ -374,6 +545,14 @@ class Query
         return $id;
     }
 
+    /**
+     * Insert array of array data
+     *
+     * @param array  $data An array of data
+     * @param array  $fields An array of columns
+     *  
+     * @return bool $try Return true if the query run successfully
+     */ 
     public function insertBulk($data=array(), $fields=array())
     {
         if(!count($fields))
@@ -403,6 +582,14 @@ class Query
         return $try;
     }
 
+    /**
+     * Update a row
+     *
+     * @param array|object  $data An array or object
+     * @param array  $conditions Where for a condition
+     *  
+     * @return bool $res Return true if the query run successfully
+     */ 
     public function update($data=array(), $conditions=array())
     {
         $updates = array();
@@ -431,6 +618,13 @@ class Query
         return $res;
     }
 
+    /**
+     * Remove a row
+     *
+     * @param array  $conditions Where for a condition
+     *  
+     * @return bool $res Return true if the query run successfully
+     */ 
     public function delete($conditions=array())
     { 
         $q = 'DELETE FROM '. $this->table ;
@@ -451,7 +645,14 @@ class Query
         return $res;
     }
 
-    public function exec($sql)
+    /**
+     * A general command to execute a query string
+     *
+     * @param string  $sql Query string
+     *  
+     * @return bool $res Return true if the query run successfully
+     */ 
+    public function exec(string $sql)
     { 
         $this->query = $this->prefix($sql);
         $res = $this->db->exec($this->query);
@@ -460,11 +661,25 @@ class Query
         return $res;
     }
 
+    /**
+     * A way to get log from PDO
+     *  
+     * @return array Alias to database log
+     */ 
     public function getLog()
     {
         return $this->db->getLog();
     }
 
+    /**
+     * A way to insert record once
+     * 0 means there is existing one 
+     *
+     * @param array|object  $data 
+     * @param array|string  $conditions 
+     *  
+     * @return int id
+     */ 
     public function insertOnce($data, $conditions = [])
     {
         $table = $this->table;
@@ -477,11 +692,22 @@ class Query
             $id = $this->table( $table )->insert($data);
         }
 
-        // silent about the duplicate
+        // silent if there is an existence 
         $this->reset();
         return $id;
     }
 
+    /**
+     * Get a row, run like this
+     *  $this->table($name)->detail($where)
+     *  or
+     *  $this->table($name)->select('*')->detail($where)
+     *
+     * @param array|object  $conditions 
+     * @param array|string  $select 
+     *  
+     * @return array row
+     */ 
     public function detail(array $conditions, $select = null)
     {
         $try = $this->where($conditions);
@@ -494,7 +720,14 @@ class Query
         return $try->row();
     }
 
-    public function truncate($table = null)
+    /**
+     * Empty a table
+     *
+     * @param string  $table 
+     *  
+     * @return bool 
+     */ 
+    public function truncate(string $table = null)
     {
         if( null === $table )
         {
@@ -509,6 +742,14 @@ class Query
         return $this->exec( 'TRUNCATE TABLE '. $table );
     }
 
+    /**
+     * Get columns belongs to a table
+     * Available with Mysql, PostgreSQl
+     *
+     * @param string  $table 
+     *  
+     * @return array 
+     */ 
     public function structureTable($table = null)
     {
         if( null === $table )
@@ -524,6 +765,14 @@ class Query
         return $this->db->fetchAll( 'SHOW COLUMNS FROM '. $this->prefix($table) );
     }
 
+    /**
+     * Edit a table structure
+     *
+     * @param mixed  $fields 
+     * @param string  $table 
+     *  
+     * @return bool 
+     */ 
     public function alterTable( $fields, $table = null)
     {
         if( null === $table )
@@ -544,6 +793,14 @@ class Query
         return $this->exec( 'ALTER TABLE '. $table. " \n". $fields );
     }
 
+    /**
+     * Edit a table structure
+     *
+     * @param mixed  $fields 
+     * @param string  $table 
+     *  
+     * @return bool 
+     */ 
     public function createTable( $fields, $table = null)
     {
         if( null === $table )
@@ -564,8 +821,14 @@ class Query
         return $this->exec( 'CREATE TABLE '. $table. " \n(". $fields. "\n)" );
     }
 
-    // improve where
-    // support OR / AND
+    /**
+     * An internal function to support function "where" to deal with OR / AND
+     *
+     * @param array  $conditions 
+     * @param bool|string  $key 
+     *  
+     * @return array 
+     */ 
     protected function subWhere( array $conditions, $key = false)
     {
         $ws = [];
@@ -653,6 +916,13 @@ class Query
         return [ $ws, $vals ];
     }
 
+    /**
+     * Set conditions for query
+     *
+     * @param array|string  $conditions 
+     *  
+     * @return Query $this 
+     */ 
     public function where($conditions)
     {
         if(Arr::isReady($conditions))

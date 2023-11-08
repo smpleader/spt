@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Core
+ * SPT software - File
  * 
  * @project: https://github.com/smpleader/spt-boilerplate
  * @author: Pham Minh - smpleader
- * @description: Just class for file
+ * @description: Class support to work with file and folder
  * 
  */
 
@@ -18,16 +18,71 @@ class File extends BaseObj
 {
     use Log, ErrorString;
 
+    /**
+     * Internal variable for target directory
+     * @var string $targetDir
+     */
     protected $targetDir;
+
+    /**
+     * Internal variable for target file
+     * @var string $targetFile
+     */
     protected $targetFile;
+
+    /**
+     * Internal variable to allow overwrite if file exists
+     * @var bool $overwrite
+     */
     protected $overwrite;
+
+    /**
+     * Internal variable for new name
+     * @var string $newName
+     */
     protected $newName;
+
+    /**
+     * Internal variable for max file size in byte
+     * define('KB', 1024);
+     * define('MB', 1048576);
+     * define('GB', 1073741824);
+     * define('TB', 1099511627776);
+     * to compare like this $size > 5*MB
+     * 
+     * @var integer $maxFileSize
+     */
     protected $maxFileSize;
+
+    /**
+     * Internal variable for array of allowed file extension
+     * @var array $fileTypes
+     */
     protected $fileTypes;
+
+    /**
+     * Internal variable for array of allowed file MIME
+     * @var array $fileMime
+     */
     protected $fileMime;
+
+    /**
+     * Internal variable to run clean after upload
+     * @var bool $cleanUpload
+     */
     protected $cleanUpload;
+
+    /**
+     * Internal variable to run clean after extract
+     * @var bool $cleanExtract
+     */
     protected $cleanExtract;
 
+    /**
+     * A constructor
+     * 
+     * @return void
+     */ 
     public function __construct()
     {
         // prepare a default properties;
@@ -35,10 +90,18 @@ class File extends BaseObj
         $this->error = '';
     }
 
+    /**
+     * Set options for the tool
+     *
+     * @param array $options  Allow change internal variables
+     * @param bool  $reset Allow reset previous options when set options
+     * 
+     * @return File $this
+     */ 
     public function setOptions(array $options, $reset = false)
     {
         $arr = [
-            'targetDir' => SPT_STORAGE_PATH. 'upload',
+            'targetDir' => 'upload_not_set',
             'overwrite' => false,
             'newName' => '',
             'maxFileSize' => '',
@@ -63,6 +126,13 @@ class File extends BaseObj
         return $this;
     }
 
+    /**
+     * Check file availability to upload
+     *
+     * @param array $file  This is an alias of $_FILE form PHP
+     * 
+     * @return bool
+     */ 
     public function check(array $file)
     {
         $newFileName = $this->newName ?  $this->newName : basename($file["name"]);
@@ -112,6 +182,13 @@ class File extends BaseObj
         return true;
     }
 
+    /**
+     * Try to upload a file
+     *
+     * @param array $file  This is an alias of $_FILE form PHP
+     * 
+     * @return bool
+     */ 
     public function upload(array $file)
     {
         if( ! $this->check($file) ) return false;
@@ -124,7 +201,15 @@ class File extends BaseObj
         return true;
     }
 
-    public function extract(array $file, string $extractDir = SPT_STORAGE_PATH. 'extract')
+    /**
+     * Try to extract a file
+     *
+     * @param array $file  This is an alias of $_FILE form PHP
+     * @param string $extractDir  Path to extract file
+     * 
+     * @return bool
+     */ 
+    public function extract(array $file, string $extractDir)
     {
         if( $this->cleanExtract && !$this->emptyFolder($extractDir) )
         {
@@ -153,6 +238,13 @@ class File extends BaseObj
         }
     }
 
+    /**
+     * Try to remove a folder
+     *
+     * @param string $dir  Path to a folder
+     * 
+     * @return bool
+     */ 
     public function removeFolder(string $dir)
     {
         if( !$this->emptyFolder($dir) ) return false;
@@ -165,6 +257,13 @@ class File extends BaseObj
         return true;
     }
 
+    /**
+     * Try to empty a folder
+     *
+     * @param string $dir  Path to a folder
+     * 
+     * @return bool
+     */ 
     public function emptyFolder(string $dir)
     {
         if( !is_dir($dir) )
@@ -192,6 +291,13 @@ class File extends BaseObj
         return true;
     }
 
+    /**
+     * Try to copy a folder
+     *
+     * @param string $dir  Path to a folder
+     * 
+     * @return bool
+     */ 
     public function copyFolder(string $dir, string $dest, $mode = 0755)
     {
         if( !is_dir($dir) )
@@ -235,6 +341,13 @@ class File extends BaseObj
         return true;
     }
 
+    /**
+     * Try to upload a file ( W.I.P )
+     *
+     * @param string $dir  This is an alias of $_FILE form PHP
+     * 
+     * @return bool
+     */ 
     public function uploadImage(array $file)
     { 
         $imageFileType = strtolower(pathinfo($this->targetFile,PATHINFO_EXTENSION));

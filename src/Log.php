@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Log
+ * SPT software - Log class
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: A way to log some information for admin
+ * @description: Calss support to log information for a debug
  * 
  */
 
@@ -12,8 +12,19 @@ namespace SPT;
 
 class Log extends StaticObj
 {
+    /**
+     * Internal array
+     * @var array $_vars
+     */
     static protected $_vars = array();
 
+    /**
+     * Pass any parameters into internal _vars
+     *
+     * @param mixed   Hidden parameters, add anything we want to log
+     * 
+     * @return void
+     */ 
     public static function add(){
         $arg_list = func_get_args();
         foreach($arg_list as $arg){
@@ -21,6 +32,11 @@ class Log extends StaticObj
         }
     }
 
+    /**
+     * Print all items from _vars
+     * 
+     * @return void
+     */ 
     public static function show(){
         foreach( static::$_vars as $item ){
             print_r( $item );
@@ -28,10 +44,20 @@ class Log extends StaticObj
         }
     }
 
+    /**
+     * Return _vars for any use
+     * 
+     * @return array _vars
+     */ 
     public static function all(){
         return static::$_vars;
     }
 
+    /**
+     * Write all items from _vars into a log file
+     * 
+     * @return void
+     */ 
     public static function toFile($name = null, $append = true){
 
         ob_start();

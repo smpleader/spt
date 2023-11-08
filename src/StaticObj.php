@@ -18,7 +18,7 @@ class StaticObj
      * Assign value into internal variable array by key
      * Accept overwrite if existing or not
      *
-     * @param string   $key  internal variable array key name
+     * @param string|integer   $key  internal variable array key name
      * @param mixed    $value Assign value
      * 
      * @return void

@@ -4,7 +4,7 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: A way to manage assets for frontend
+ * @description: A way to manage assets for theme engine
  * 
  */
 

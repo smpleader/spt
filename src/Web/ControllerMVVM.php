@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Controller
+ * SPT software - A Controller using MVVM
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Just a core controller
+ * @description: Just a core controller with MVVM
  * 
  */
 
@@ -15,20 +15,42 @@ use SPT\Container\Client;
 
 class ControllerMVVM extends Controller
 {
+    /**
+     * Internal variable to check if we apply MVVM or not
+     * @var bool $supportMVVM
+     */
     protected $supportMVVM = true;
 
+    /**
+     * Return HTML format after a process
+     * 
+     * @return string HTML content body
+     */ 
     public function toHtml()
     {
         $this->registerViewModels();
         return parent::toHtml();
     }
 
+    /**
+     * Return a content body for ajax response
+     * Mostly it's for a html layout or  non-json content
+     * 
+     * @return string A content body
+     */ 
     public function toAjax()
     {
         $this->registerViewModels();
         return parent::toAjax();
     }
 
+    /**
+     * Register ViewModel list to current system
+     *
+     * @param array   $vms  ViewModel list
+     * 
+     * @return void 
+     */ 
     public function registerViewModels(array $vms = array())
     { 
         $this->getOverrideLayouts();

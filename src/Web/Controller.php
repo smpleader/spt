@@ -1,6 +1,6 @@
 <?php
 /**
- * SPT software - Controller
+ * SPT software - A Controller using MVC ( in default )
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
@@ -15,9 +15,25 @@ use SPT\Container\Client;
 
 class Controller extends Client
 {
+    /**
+     * Internal variable to check if we apply MVVM or not
+     * This is important for View
+     * 
+     * @var bool $supportMVVM
+     */
     protected $supportMVVM = false;
+
+    /**
+     * Internal variable to keep override layout paths
+     * @var array $overrides
+     */
     protected $overrides;
 
+    /**
+     * Get current internal variable $overrides
+     * 
+     * @return array $overrides
+     */ 
     protected function getOverrideLayouts()
     {
         if(empty($this->overrides))
@@ -76,6 +92,11 @@ class Controller extends Client
         return $this->overrides;
     }
 
+    /**
+     * Return an View Instance based current override paths, theme, ViewComponent instance, mvvm mode
+     * 
+     * @return View new View instance
+     */ 
     protected function getView()
     {
         return new View(
@@ -86,6 +107,11 @@ class Controller extends Client
         );
     }
 
+    /**
+     * Return HTML format after a process
+     * 
+     * @return string HTML content body
+     */ 
     public function toHtml()
     {
         $data = (array) $this->getAll();
@@ -96,6 +122,13 @@ class Controller extends Client
         return $view->renderPage( $page, $layout, $data );
     }
 
+    /**
+     * Return Jsom format after a process
+     *
+     * @param object|array   $data  Data of json to be shown in content body
+     * 
+     * @return string Json content body
+     */ 
     public function toJson($data=null)
     {
         header('Content-Type: application/json;charset=utf-8');
@@ -103,6 +136,12 @@ class Controller extends Client
         return json_encode($data);
     }
 
+    /**
+     * Return a content body for ajax response
+     * Mostly it's for a html layout or  non-json content
+     * 
+     * @return string A content body
+     */ 
     public function toAjax()
     {
         $data = (array) $this->getAll();
@@ -112,6 +151,15 @@ class Controller extends Client
         return $view->renderLayout($layout, $data);
     }
 
+    /**
+     * Set plugin information, after Dispatcher found and dispatch the process
+     *
+     * @param string   $name  plugin name
+     * @param bool    $silent through exception if a plugin is aleardy set
+     * 
+     * @throws Exception if plugin not found or plugin is already set 
+     * @return bool 
+     */ 
     public function setCurrentPlugin(string $name = '', $silent=true)
     {
         $current = $this->app->get('currentPlugin', true);

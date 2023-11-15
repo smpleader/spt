@@ -17,10 +17,23 @@ use SPT\Support\FncArray;
 
 class Theme extends BaseObj
 {
-    protected $themePat = '';
+    /**
+     * Internal variable to store array of asset
+     * @var array $_assets
+     */
     protected $_assets = [];
+
+    /**
+     * Internal variable to store array of value
+     * @var array $_assets
+     */
     protected $_vars = [];
 
+    /**
+     * Constructor
+     * 
+     * @return void 
+     */ 
     public function __construct()
     {
         if(!defined('SPT_THEME_PATH'))
@@ -31,6 +44,14 @@ class Theme extends BaseObj
         $this->registerAssets();
     }
 
+    /**
+     * Register Asset links based theme file or array
+     *
+     * @param string   $profile  profile name, empty mean auto load from file _assets.php in theme
+     * @param array   $list array of asset links
+     * 
+     * @return void 
+     */ 
     public function registerAssets(string $profile = '', array $list = [])
     {
         if( '' === $profile && file_exists(SPT_THEME_PATH. '/_assets.php'))
@@ -45,6 +66,13 @@ class Theme extends BaseObj
         $this->_assets = array_merge($this->_assets, $arr);
     }
 
+    /**
+     * Add Asset links based array of profile name
+     *
+     * @param array   $profiles array of profile name
+     * 
+     * @return void 
+     */ 
     public function prepareAssets(array $profiles)
     {
         foreach($profiles as $profile)
@@ -62,7 +90,15 @@ class Theme extends BaseObj
         }
     }
 
-    public function echo($type, $url = '')
+    /**
+     * Generate assets string, replace __domain__ with domain for a absolute link
+     *
+     * @param string   $type type of asset, could be inlineJs, inlineJavscript, inlinceCss, inlineStylesheet, js, css
+     * @param string   $url url of the assets, it could be subpath
+     * 
+     * @return void 
+     */ 
+    public function echo(string $type, string $url = '')
     {
         $generate = $this->generate($type);
         if ($url)
@@ -72,7 +108,14 @@ class Theme extends BaseObj
         echo implode("\n", $generate);
     }
 
-    public function generate($type)
+    /**
+     * Generate resource with tags or inline script, inline stylesheet with content
+     *
+     * @param string   $type type of asset
+     * 
+     * @return string 
+     */ 
+    public function generate(string $type)
     {
         $output = []; 
 
@@ -109,7 +152,17 @@ class Theme extends BaseObj
         return $output;
     }
 
-    public function add(string $link, $dependencies = array(), $id = '', $group = '')
+    /**
+     * Add a link into assets array
+     *
+     * @param string   $link asset link
+     * @param array|string   $dependencies id of asset which current asset link depend on ( required before add into HTML document )
+     * @param string   $id ID of a asset 
+     * @param string   $group asset group, if not set asset type is assigned
+     * 
+     * @return string 
+     */ 
+    public function add(string $link, $dependencies = array(), string $id = '', string $group = '')
     {
         $dependencies = empty($dependencies) ? array() : (array) $dependencies;
         $asset = new Asset($link, $dependencies, $group);
@@ -133,13 +186,28 @@ class Theme extends BaseObj
         $this->set($key, $current);
     }
 
+    /**
+     * Add a stylesheet or javascript into assets
+     *
+     * @param string   $type type of a asset 
+     * @param string   $lines content need be added
+     * 
+     * @return void 
+     */ 
     public function addInline(string $type, string $lines)
     {
         $key = 'inline'. FncString::uc($type);
         $this->_vars[$key][] = $lines;
     }
 
-    public function createTagByType($type)
+    /**
+     * Return array of asset links based a type
+     *
+     * @param string   $type type of a asset  
+     * 
+     * @return array 
+     */ 
+    public function createTagByType(string $type)
     {
         $result = [];
         $assets = $this->get($type);
@@ -153,6 +221,13 @@ class Theme extends BaseObj
         return $result;
     }
 
+    /**
+     * Add asset object into array of asset based a type
+     *
+     * @param Asset   $sth object of asset
+     * 
+     * @return array 
+     */ 
     protected function createTag(Asset $sth)
     {
         $result = [];

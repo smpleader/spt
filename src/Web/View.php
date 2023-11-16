@@ -14,17 +14,66 @@ use SPT\Web\Theme;
 use SPT\Web\ViewLayout;
 
 class View
-{
+{    
+    /**
+    * Internal variable to see MVVM is applied or not
+    * @var bool $isMVVM
+    */
     protected $isMVVM;
+
+    /**
+    * Internal variable for Theme instance
+    * @var Theme $theme
+    */
     protected Theme $theme;
+
+    /**
+    * Internal variable for ViewComponent instance
+    * @var ViewComponent $isMVVM
+    */
     protected ViewComponent $component;
+
+    /**
+    * Internal variable for logs
+    * @var array $logs
+    */
     protected $logs = [];
+
+    /**
+    * Internal variable for paths
+    * @var array $paths
+    */
     protected $paths = [];
+
+    /**
+    * Internal variable for shared varialbel accros layouts
+    * @var array $_shares
+    */
     protected $_shares = [];
+
+    /**
+    * Internal variable for main layout
+    * @var string $mainLayout
+    */
     protected $mainLayout = '';
+
+    /**
+    * Internal variable for current plugin name, this is important for a view
+    * @var string $currentPlugin
+    */    
     protected $currentPlugin = '';
+
+    /**
+    * Internal variable for override layouts
+    * @var array $overrides
+    */    
     protected $overrides = [];
 
+    /**
+     * Constructor
+     * 
+     * @return void 
+     */ 
     public function __construct(array $overrides, Theme $theme, ViewComponent $component, $supportMVVM = true)
     {
         $this->overrides = $overrides;
@@ -32,27 +81,65 @@ class View
         $this->component = $component;
         $this->isMVVM = $supportMVVM;
     }
-
-    public function getVar($key, $default = null)
+    
+    /**
+     * Get golbal variable by key
+     *
+     * @param string   $key  key of array data
+     * @param mixed   $default default if null / not found
+     * 
+     * @return mixed 
+     */
+    public function getVar(string $key, $default = null)
     {
         return $this->_shares[$key] ?? $default; 
     }
 
+    /**
+     * Set golbal variable by key
+     *
+     * @param string   $key  key of array data
+     * @param mixed   $value 
+     * 
+     * @return void 
+     */
     public function setVar($key, $value)
     {
         $this->_shares[$key] = $value; 
     }
 
+    /**
+     * Get current theme instance
+     * 
+     * @return Theme 
+     */
     public function getTheme()
     {
         return $this->theme;
     }
 
+    /**
+     * Get View Component
+     *
+     * @param ViewLayout   $layout  layou which sticked into View Component
+     * 
+     * @return ViewComponent 
+     */
     public function getViewComponent(ViewLayout $layout)
     {
         return $this->component->support($layout);
     }
 
+    /**
+     * Prepare available path based overrides info 
+     *
+     * @param string   $name  layou path
+     * @param string   $type  layou type
+     * 
+     * @throw Exception If path not ready with defined plugin
+     * 
+     * @return void 
+     */
     protected function preparePath(string $name, string $type)
     {
         $overrides = [];
@@ -109,6 +196,13 @@ class View
         }
     }
 
+    /**
+     * Find path logs
+     *
+     * @param bool   $vardump echo content directly or return array log
+     * 
+     * @return void|array 
+     */
     public function debugPath($vardump = true)
     {
         if($vardump)
@@ -121,6 +215,14 @@ class View
         }
     }
 
+    /**
+     * Get real path based path name
+     *
+     * @param string   $name layout name
+     * @param string   $type layout type
+     * 
+     * @return string
+     */
     public function getPath(string $name, string $type = 'layout')
     {
         // absolute path, nothing to worry
@@ -134,6 +236,17 @@ class View
         return $this->paths[$type. '_'. $name];
     }
 
+    /**
+     * Generate a main content based path name, with fully structured body content
+     *
+     * @param string   $page theme layout file name
+     * @param string   $layout layout name
+     * @param array   $data array of data, keep as global variable
+     * 
+     * @throw Exception   If renderPage called twice or theme is not exist
+     * 
+     * @return string
+     */
     public function renderPage(string $page, string $layout, array $data = [])
     {
         if($this->mainLayout)
@@ -175,7 +288,18 @@ class View
         $layout = new ViewLayout($file, $this);
         return $layout->_render();
     }
-    
+
+    /**
+     * Generate a layout based layout path
+     *
+     * @param string   $layoutPath  layout file apath
+     * @param array   $data array of data, keep as global variable
+     * @param string   $type layout type
+     * 
+     * @throw Exception   if layout is not ready
+     * 
+     * @return string
+     */    
     public function renderLayout(string $layoutPath, array $data = [], string $type = 'layout')
     {
         $file = $this->getPath($layoutPath, $type);

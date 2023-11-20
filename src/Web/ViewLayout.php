@@ -14,12 +14,30 @@ use SPT\BaseObj;
 
 class ViewLayout extends BaseObj
 { 
-    protected $_file = '';
+    /**
+    * Internal variable cache file path
+    * @var string $_path
+    */
+    protected $_path = '';
+
+    /**
+    * Internal variable point to current view
+    * @var View $_view
+    */
     protected $_view;
 
-    public function __construct($filePath, $view, $data = null)
+    /**
+     * Constructor
+     * 
+     * @param string   $filePath layout path
+     * @param View   $view View instance
+     * @param array   $data data used in the layout
+     * 
+     * @return void 
+     */ 
+    public function __construct(string $filePath, View $view, array $data = [])
     {
-        $this->_file = $filePath;
+        $this->_path = $filePath;
         $this->_view = $view;
         
         if(is_array($data) && count($data))
@@ -31,6 +49,13 @@ class ViewLayout extends BaseObj
         }
     }
 
+    /**
+     * Magic get
+     * 
+     * @param string   $name key to output in query, could be null if not exist
+     * 
+     * @return mixed 
+     */ 
     public function __get(string $name)
     { 
         if('theme' == $name) return $this->_view->getTheme();
@@ -41,29 +66,65 @@ class ViewLayout extends BaseObj
         return $this->_view->getVar($name, NULL);
     }
 
+    /**
+     * Check exist, because using magic call cause issue if check is_null() empty()
+     * 
+     * @param string   $name key to output in query, could be null if not exist
+     * 
+     * @return bool 
+     */ 
     public function exists(string $name)
     { 
         return isset( $this->_vars[$name] ) || null !== $this->_view->getVar($name, NULL);
     }
 
-    public function render($layout, array $data=[], $type='layout')
+    /**
+     * Render a layout, alias to renderLayout() of View
+     * 
+     * @param string   $layout layout path or layout name
+     * @param array   $data data attached
+     * @param string   $type layout type
+     * 
+     * @return string 
+     */ 
+    public function render(string $layout, array $data=[], string $type='layout')
     {
         return $this->_view->renderLayout($layout, $data, $type);
     }
 
+    /**
+     * Render a layout, alias to render() with type "widget"
+     * 
+     * @param string   $layout layout path or layout name
+     * @param array   $data data attached
+     * 
+     * @return string 
+     */ 
     public function renderWidget(string $layout, array $data=[])
     {
         return $this->render($layout, $data, 'widget');
     }
 
+    /**
+     * After calling renderLayout from View instance, this function will be called to keep variables attached into ViewLayout
+     * 
+     * @return string 
+     */ 
     public function _render()
     {
         ob_start();
-        include $this->_file;
+        include $this->_path;
         $content = ob_get_clean();
         return $content;
     }
 
+    /**
+     * Alias to translate function or print format with sprintf 
+     * 
+     * @param string   $vars unpredicted parameters with func_get_args
+     * 
+     * @return string 
+     */ 
     public function txt()
     {
         $arg_list = func_get_args();
@@ -83,6 +144,14 @@ class ViewLayout extends BaseObj
         return '';
     }
 
+    /**
+     * Alias to createUrl from ViewComponent instance
+     * TODO: when ViewCompnent support SEF link generate from an object, need to upgrade this function, too
+     * 
+     * @param string   $alias slug to add into URL path
+     * 
+     * @return string 
+     */ 
     public function url($alias='')
     {
         return $this->ui->createUrl($alias);

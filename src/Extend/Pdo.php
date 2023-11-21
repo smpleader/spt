@@ -11,6 +11,7 @@
 namespace SPT\Extend;
 
 use SPT\Traits\Log as LogTrait;
+use SPT\Extend\PdoDrivers\Connector;
 
 class Pdo
 {
@@ -19,61 +20,30 @@ class Pdo
 	protected $connection;
 	public $connected = false; 
 
-	function __construct(array $config, $parameters=array()){
-		
-		$arr = ['host', 'username', 'password', 'database'];
-		foreach($arr as $key)
-		{
-			$$key = $config[$key] ?? '';
-		}
+	function __construct(array $config, array $parameters=array()){
 
-		if(empty($parameters))
+
+		$driver = isset($config['driver']) ? $config['driver'] : 'mysql';
+
+		if(!count($parameters))
 		{
 			if(isset($config['options']))
 			{
-				$parameters = (array) $config['options'];
+				$parameters = $config['options'];
 			}
 			else if(isset($config['parameters']))
 			{
-				$parameters = (array) $config['parameters'];
+				$parameters = $config['parameters'];
 			}	
 		}
 
-		try{ 
-			$this->connected = true;
-
-			if( isset($parameters['connection']))
-			{
-				$this->connection = new \PDO($parameters['connection'], $username, $password);
-			}
-			else
-			{
-				$this->connection = new \PDO("mysql:host=" . $host . ";dbname=" . $database. ";charset=utf8mb4", $username, $password);
-			}
-
-			if( isset($parameters['fetch_mode']))
-			{
-				$this->connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, $parameters['fetch_mode']);
-			}
-			else
-			{
-				$this->connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-			}
-
-			$this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-			$this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-			
-		}
-		catch(\PDOException $e)
+		if(!is_array($parameters))
 		{
-			$this->connected = false;
-			 
-			return $this->logError(
-				$e->getMessage(),
-				'Tried to connect DB',
-				[$host, $username, $password, $database, $parameters]
-			);
+			throw new \Exception('Invalid database parameters');	
 		}
+
+		$this->connection = Connector::load($driver, $config, $parameters);
+		$this->connected = is_object($this->connection);
 	}
 
 	function __destruct()
@@ -82,24 +52,16 @@ class Pdo
 		$this->connection = null;
 	}
 
-	public function logError($error, $sql, $input)
+	public function error($error, $sql, $input)
 	{
-		$this->log($sql, $input, $error);
+		$this->addLog('** Error !!', $error);
+		$this->log($sql, $input);
 		return false;
 	}
 
-	public function log($sql, $input, $error='')
+	public function log($sql, $input)
 	{
-		if($error)
-		{
-			$this->addLog('>> Mysql error:', $error);
-		}
-		else
-		{
-			$this->addLog('* Mysql query log *');
-		}
-
-		$this->addLog('>> SQL:', $sql);
+		$this->addLog('>> Run SQL:', $sql);
 		$this->addLog('>> Inputed value:', $input);
 	}
 
@@ -114,7 +76,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->logError($e->getMessage(), $query, $parameters);
+				return $this->error($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -132,7 +94,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->logError($e->getMessage(), $query, $parameters);
+				return $this->error($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -150,7 +112,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->logError($e->getMessage(), $query, $parameters);
+				return $this->error($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -169,7 +131,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->logError($e->getMessage(), $query, $parameters);
+				return $this->error($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -187,7 +149,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->logError($e->getMessage(), $query, '--');
+				return $this->error($e->getMessage(), $query, '--');
 			}
 		}
 		
@@ -207,7 +169,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->logError($e->getMessage(), $query, $parameters);
+				return $this->error($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -238,7 +200,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->logError($e->getMessage(), $query, $parameters);
+				return $this->error($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -255,7 +217,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->logError($e->getMessage(), "SHOW TABLES LIKE '$table'", $table);
+				return $this->error($e->getMessage(), "SHOW TABLES LIKE '$table'", $table);
 			}
 		}
 		

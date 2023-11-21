@@ -28,7 +28,7 @@ abstract class Instance
      */ 
     public function __construct(object $object)
     {
-        $this->adapter = $adapter;
+        $this->adapter = $object;
     }
 
     /**

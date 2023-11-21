@@ -4,7 +4,7 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Just a core view model
+ * @description: Just a core view model, is a type of container
  * 
  */
 
@@ -14,6 +14,17 @@ use SPT\Container\Client;
 
 class ViewModel extends Client
 {
+    /**
+     * Get a state from a session
+     * 
+     * @param string   $key value name
+     * @param mixed   $default default value if not set
+     * @param string   $format value format filter
+     * @param string   $request_type method type POST|GET|PUT|DELETE
+     * @param string   $sessionName alias name in the session, in the case of field name is different to session name
+     * 
+     * @return mixed 
+     */ 
     public function state(string $key, $default='', string $format='cmd', string $request_type='post', string $sessionName='')
     {
         if(empty($sessionName)) $sessionName = $key;

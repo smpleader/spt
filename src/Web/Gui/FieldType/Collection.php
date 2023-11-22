@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Gui Field
+ * SPT software - Input type which has value of array
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Easily display data object property
+ * @description: Support to display a list of value into one input
  * 
  */
 
@@ -12,6 +12,11 @@ namespace SPT\Web\Gui\FieldType;
 
 class Collection extends Input
 {
+    /**
+     * Constructor
+     * 
+     * @return void 
+     */ 
     public function __construct( $id, $params )
     {
         parent::__construct( $id, $params );

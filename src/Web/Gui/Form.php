@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Gui
+ * SPT software - GUI form
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Easily display data object
+ * @description: Class support to generate and work with a form 
  * 
  */
 

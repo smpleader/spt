@@ -57,13 +57,6 @@ class Listing
     * @var object|array $row
     */
     protected $row;
-
-    /**
-    * Internal variable to cache current data array index
-    *
-    * @var object|array $index
-    */
-    protected $index;
     
     /**
      * Constructor
@@ -112,16 +105,6 @@ class Listing
     public function getLimit()
     {
         return $this->limit;
-    }
-
-    /**
-     * Get index of an array
-     * 
-     * @return int 
-     */
-    public function getIndex()
-    {
-        return $this->index;
     }
 
     /**

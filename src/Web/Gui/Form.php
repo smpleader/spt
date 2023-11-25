@@ -14,10 +14,32 @@ class Form
 {
     use \SPT\Traits\Index;
 
-    protected $record; 
+    /**
+     * Current data to bind into the form
+     * 
+     * @var array|object $record
+     */
+    protected $record;
+
+    /**
+     * Array list of form field
+     * 
+     * @var array $fields
+     */
     protected $fields;
+
+    /**
+     * Array list of field name
+     * 
+     * @var array $fieldIds
+     */
     protected $fieldIds;
 
+    /**
+     * Constructor
+     * 
+     * @return void
+     */
     public function __construct(array $fields, array $record = [] )
     {
         foreach($fields as $id => $field)
@@ -50,26 +72,51 @@ class Form
         $this->index = 0;
     }
 
+    /**
+     * Get data which attached to form 
+     * 
+     * @return array|object
+     */
     public function getData()
     {
         return $this->record;
     }
 
+    /**
+     * Get list of fields
+     * 
+     * @return array
+     */
     public function getFields()
     {
         return $this->fields;
     }
 
+    /**
+     * Get list of field id
+     * 
+     * @return array
+     */
     public function getfieldIds()
     {
         return $this->fieldIds;
     }
 
+    /**
+     * Check if field exists in a loop call
+     * 
+     * @return bool
+     */
     public function hasField()
     {
         return isset( $this->fieldIds[$this->index] );
     }
 
+    /**
+     * Get field object by an id, return false if not found
+     * 
+     * @return bool|object
+     */
     public function getField($key = null)
     {
         if( null === $key )

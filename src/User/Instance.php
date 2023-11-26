@@ -4,7 +4,7 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: User Adapter
+ * @description: Create User Object based User Adapter
  * 
  */
 
@@ -15,6 +15,13 @@ use SPT\Instance as Ins;
 
 class Instance extends Ins
 {
+    /**
+     * A constructor
+     *
+     * @param UserAdapter   $adapter  Here we change user based configuration of an user
+     * 
+     * @return void
+     */ 
     public function __construct(UserAdapter $adapter)
     {
         $this->adapter = $adapter;

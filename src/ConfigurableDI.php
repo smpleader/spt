@@ -12,7 +12,17 @@ namespace SPT;
 
 abstract class ConfigurableDI 
 {
+    /**
+     * Internal token string or array to recognize current context
+     * @var mixed $context
+     */
     protected $context;
+
+    /**
+     * Get context information
+     * 
+     * @return mixed
+     */     
     public function getContext()
     {
         if( empty($this->context) )
@@ -23,6 +33,13 @@ abstract class ConfigurableDI
         return $this->context;
     }
 
+    /**
+     * Assign properties based defined "mutable fileds" array
+     *
+     * @param array   $options Variable need to set into properties
+     * 
+     * @return void
+     */ 
     public function init(array $options)
     {
         foreach($this->getMutableFields() as $key => $type)
@@ -52,5 +69,10 @@ abstract class ConfigurableDI
         }
     }
 
+    /**
+     * Return defined "mutable fileds" array
+     * 
+     * @return array
+     */ 
     abstract protected function getMutableFields(): array;
 }

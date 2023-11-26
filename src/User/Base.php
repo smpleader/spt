@@ -15,10 +15,26 @@ use SPT\ConfigurableDI;
 
 class Base extends ConfigurableDI
 {
+    /**
+     * Attached Session
+     * @var object $session
+     */
     protected $session;
+
+    /**
+     * Attached data
+     * @var mixed $data
+     */
     protected $data;
 
-    public function init($options)
+    /**
+     * Load user based options, this helps us change user instance according to user type ( joomla, laravel, symfony )
+     *
+     * @param array   $options  Add properties
+     * 
+     * @return void
+     */ 
+    public function init(array $options)
     {
         parent::init($options);
 
@@ -31,6 +47,11 @@ class Base extends ConfigurableDI
         }
     }
 
+    /**
+     * Get array mutable fields
+     * 
+     * @return array
+     */
     public function getMutableFields(): array
     {
         return [
@@ -38,6 +59,11 @@ class Base extends ConfigurableDI
         ];
     }
 
+    /**
+     * Get array of default value
+     * 
+     * @return array
+     */
     public function getDefault()
     {
         return [
@@ -51,16 +77,34 @@ class Base extends ConfigurableDI
         ];
     }
 
+    /**
+     * Check if user belong to a group
+     * 
+     * @return bool
+     */
     public function is(string $group)
     {
         return is_array($this->data['groups']) ? in_array($group, $this->data['groups']) : false;
     }
 
+    /**
+     * Check if user has a permission
+     * 
+     * @return bool
+     */
     public function can(string $permission)
     {
         return is_array($this->data['permission']) ? in_array($permission, $this->data['permission']) : false;
     }
 
+    /**
+     * Set value to private data data
+     *
+     * @param string   $key  Data key
+     * @param mixed   $value  Data value
+     * 
+     * @return void
+     */ 
     public function set(string $key, $value)
     {
         $this->data[$key] = $value;
@@ -68,11 +112,24 @@ class Base extends ConfigurableDI
         $this->session->set($storage, $this->data);
     }
 
+    /**
+     * Get value by a data key
+     *
+     * @param string   $key  Data key
+     * @param mixed   $default  Data default if not found
+     * 
+     * @return mixed
+     */
     public function get(string $key, $default = null)
     {
         return isset($this->data[$key]) ? $this->data[$key] : $default;
     }
 
+    /**
+     * Reset data session
+     * 
+     * @return void
+     */
     public function reset()
     {
         $this->data = $this->getDefault();

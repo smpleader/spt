@@ -15,7 +15,17 @@ use SPT\User\Base;
 
 class User extends Base
 {
+    /**
+     * Attached Entity to support work with db
+     * @var \SPT\Storage\DB\Entity $entity
+     */
     protected $entity;
+
+    /**
+     * Get mutaable fields
+     * 
+     * @return array
+     */ 
     public function getMutableFields(): array
     {
         return [
@@ -24,6 +34,11 @@ class User extends Base
         ];
     }
 
+    /**
+     * Get array of default value
+     * 
+     * @return array
+     */
     public function getDefault()
     {
         return [
@@ -37,9 +52,17 @@ class User extends Base
         ];
     }
 
+    /**
+     * Login with supplied username and password
+     * TODO apply middleware or authentication
+     *
+     * @param string   $username 
+     * @param string   $password 
+     * 
+     * @return bool|User
+     */ 
     public function login(string $username, string $password)
     {
-        // TODO apply middleware or authentication
         $user = $this->entity->findOne(['username' => $username, 'password' => md5($password)]);
         if ($user)
         {
@@ -55,6 +78,11 @@ class User extends Base
         return false;
     }
 
+    /**
+     * Logout by a reset
+     * 
+     * @return bool
+     */ 
     public function logout()
     {
         if ( $this->get('id') )
@@ -65,6 +93,13 @@ class User extends Base
         return true;
     }
 
+    /**
+     * Get User group by user id
+     *
+     * @param int   $user_id 
+     * 
+     * @return array
+     */ 
     public function getGroups(int $user_id = 0)
     {
         if(empty($user_id))
@@ -91,6 +126,13 @@ class User extends Base
         return $groups;
     }
 
+    /**
+     * Get User permmission by user id
+     *
+     * @param int   $user_id 
+     * 
+     * @return array
+     */
     public function getPermissions(int $user_id = 0)
     {
         if(empty($user_id))

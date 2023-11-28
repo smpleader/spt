@@ -15,9 +15,23 @@ use SPT\Query;
 
 class UserGroupEntity extends Entity
 {
+    /**
+     * Table name
+     * @var string $table
+     */
     protected $table = '#__user_usergroup_map';
+    
+    /**
+     * PK name
+     * @var string $pk
+     */
     protected $pk = 'id';
 
+    /**
+     * Get array of fields
+     * 
+     * @return array
+     */
     public function getFields()
     {
         return [

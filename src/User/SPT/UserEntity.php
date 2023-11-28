@@ -14,9 +14,23 @@ use SPT\Storage\DB\Entity;
 
 class UserEntity extends Entity
 {
+    /**
+     * Table name
+     * @var string $table
+     */
     protected $table = '#__users';
+    
+    /**
+     * PK name
+     * @var string $pk
+     */
     protected $pk = 'id';
 
+    /**
+     * Get array of fields
+     * 
+     * @return array
+     */
     public function getFields()
     {
         return [

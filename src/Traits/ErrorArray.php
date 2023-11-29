@@ -12,8 +12,18 @@ namespace SPT\Traits;
 
 trait ErrorArray
 { 
+    /**
+     * Array of error lis
+     * 
+     * @var array errors
+     */ 
     protected $errors = [];
 
+    /**
+     * Return current error list
+     * 
+     * @return array
+     */ 
     public function getErrors()
     {
         return $this->errors;

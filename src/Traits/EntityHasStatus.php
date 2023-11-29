@@ -12,6 +12,14 @@ namespace SPT\Traits;
 
 trait EntityHasStatus
 {
+    /**
+     * Change status
+     *
+     * @param int   $id record ID 
+     * @param string|int   $action how we update the value 
+     * 
+     * @return bool
+     */ 
     public function toggleStatus( $id, $action = null)
     {
         if(null === $action)

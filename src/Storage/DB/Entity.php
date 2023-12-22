@@ -161,6 +161,11 @@ class Entity
         return $this->db->table( $this->table )->truncate();
     }
 
+    public function dropTable()
+    {
+        return $this->db->exec('DROP TABLE '. $this->table);
+    }
+
     public function column(array $list, string $col, $allowEmpty = [])
     {
         $res = [];

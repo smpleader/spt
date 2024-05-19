@@ -12,7 +12,7 @@
 namespace SPT\Application;
  
 use SPT\Router\ArrayEndpoint as Router;
-use SPT\Request\Base as Request;
+use SPT\Request\Singleton as Request;
 use SPT\Response; 
 
 class Web extends \SPT\Application\Base
@@ -25,7 +25,7 @@ class Web extends \SPT\Application\Base
         // setup container
         $this->container->set('app', $this);
         // create request
-        $this->request = new Request(); 
+        $this->request = Request::instance(); 
         $this->container->set('request', $this->request);
         // create router
         $this->router = new Router($this->config->subpath, '');

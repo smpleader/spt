@@ -10,7 +10,7 @@
  */
 
 namespace SPT\Application;
-use SPT\Request\Base as Request;
+use SPT\Request\Singleton as Request;
 
 class Cli extends Web
 {
@@ -21,7 +21,7 @@ class Cli extends Web
         // setup container
         $this->container->set('app', $this);
         // create request
-        $this->request = new Request(); 
+        $this->request = Request::instance(); 
         $this->container->set('request', $this->request);
         // access to app config 
         $this->container->set('config', $this->config);

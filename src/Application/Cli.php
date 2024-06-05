@@ -81,7 +81,7 @@ class Cli extends Web
         $this->set('controller', $controller);
         $this->set('function', $function);
 
-        return $this->plgManager->call($plugin)->run('Dispatcher', 'dispatch', true);
+        return $this->plgManager->call($plugin)->run('Dispatcher', 'terminal', true);
     }
 
     public function commandHelp()

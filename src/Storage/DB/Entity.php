@@ -166,6 +166,11 @@ class Entity
         return $this->db->exec('DROP TABLE '. $this->table);
     }
 
+    public function countTotalRow()
+    {
+        return $this->db->table( $this->table)->countTotalRow($this->pk);
+    }
+
     public function column(array $list, string $col, $allowEmpty = [])
     {
         $res = [];

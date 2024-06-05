@@ -941,4 +941,17 @@ class Query
         
         return $this;
     }
+
+    /**
+     * Get total of record in the table
+     *
+     * @param string  $ct 
+     *  
+     * @return number  
+     */ 
+
+    public function countTotalRow($ct='*')
+    {
+        return $this->db->fetchColumn('SELECT COUNT('. $ct. ') FROM '. $this->prefix($this->table));
+    }
 }

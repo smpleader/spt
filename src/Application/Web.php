@@ -132,4 +132,9 @@ class Web extends \SPT\Application\Base
     {
         return isset($this->vmClasses[$plgName]) ? $this->vmClasses[$plgName] : [];
     }
+
+    public function addVM(string $plgName, string $name, string $fullName)
+    {
+        $this->vmClasses[$plgName][] = [$name, $fullName];
+    }
 }

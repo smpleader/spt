@@ -44,6 +44,8 @@ class Web extends \SPT\Application\Base
         $this->plgManager->call('all')->run('routing', 'registerEndpoints', false, function ($endpoints) use ($router){
             $router->import($endpoints);
         });
+        
+        $this->plgManager->call('all')->run('routing', 'afterRouting');
     }
 
     public function execute(string $themePath = '')

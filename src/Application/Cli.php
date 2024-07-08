@@ -10,6 +10,8 @@
  */
 
 namespace SPT\Application;
+
+use SPT\Application\Plugin\Manager;
 use SPT\Request\Singleton as Request;
 
 class Cli extends Web
@@ -23,7 +25,7 @@ class Cli extends Web
             $this,
             $this->packages
         );
-        
+
         // setup container
         $this->container->set('app', $this);
         // create request

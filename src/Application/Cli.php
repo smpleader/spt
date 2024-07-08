@@ -18,6 +18,12 @@ class Cli extends Web
 
     public function envLoad()
     {
+        $this->config = new Configuration(null);
+        $this->plgManager = new Manager(
+            $this,
+            $this->packages
+        );
+        
         // setup container
         $this->container->set('app', $this);
         // create request

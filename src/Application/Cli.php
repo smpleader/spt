@@ -20,19 +20,19 @@ class Cli extends Web
 
     public function envLoad()
     {
-        $this->config = new Configuration(null);
-        $this->plgManager = new Manager(
-            $this,
-            $this->packages
-        );
-
         // setup container
         $this->container->set('app', $this);
         // create request
         $this->request = Request::instance(); 
         $this->container->set('request', $this->request);
         // access to app config 
+        $this->config = new Configuration(null);
         $this->container->set('config', $this->config);
+        // load packages
+        $this->plgManager = new Manager(
+            $this,
+            $this->packages
+        );
     }
 
     public function execute(string $themePath = '')

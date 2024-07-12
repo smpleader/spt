@@ -59,22 +59,22 @@ class Cli extends Web
         $args = $this->request->cli->getArgs();
         if (!$args)
         {
-            $this->raiseError('Invalid Command Line');
+            $this->raiseError('Invalid Parameter');
         }
 
         $exec = $args[0];
-        if ($exec == '--help' || $exec == '-h' )
+        if ($exec == 'help' || $exec == 'h' )
         {
             echo $this->getCommandHelp();
             exit(0);
         }
-
-        $todo = isset($this->commands[$exec]) ? $this->commands[$exec] : '';
        
-        if (!$todo)
+        if (!isset($this->_commands[$exec]))
         {
-            $this->raiseError('Invalid Command Line');
+            $this->raiseError('Invalid Command');
         }
+
+        $todo = $this->_commands[$exec];
 
         if(is_array($todo))
         {
@@ -99,22 +99,22 @@ class Cli extends Web
         return $this->plgManager->call($plugin)->run('Dispatcher', 'terminal', true);
     }
 
-    public function getCommandHelp()
+    public function getCommandHelp($asString=true)
     {
-        $commands = $this->commands;
-
         $arr = ["All the commands:\n"];
-        foreach($this->commands as $key=>$cmd)
+        $count = 1;
+        foreach($this->_commands as $key=>$cmd)
         {
             if(isset($cmd['description']))
             {
-                $arr[] = "\t" . $key ."\t". "\t". $cmd['description'] ."\n";
+                $arr[] = $count. " - " . $key .": ". $cmd['description'] ."\n";
+                $count++;
             }
         }
 
-        $arr[] = "\t --help\t". "\t List all commands\n";
+        $arr[] = $count." - help: List all commands\n";
 
-        return $arr;
+        return $asString ? implode($arr) : $arr;
     }
 
     public function raiseError(string $msg, $code = 500)

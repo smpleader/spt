@@ -65,7 +65,7 @@ class Cli extends Web
         $exec = $args[0];
         if ($exec == '--help' || $exec == '-h' )
         {
-            echo $this->displayCommandHelp();
+            echo $this->getCommandHelp();
             exit(0);
         }
 
@@ -99,7 +99,7 @@ class Cli extends Web
         return $this->plgManager->call($plugin)->run('Dispatcher', 'terminal', true);
     }
 
-    public function displayCommandHelp()
+    public function getCommandHelp()
     {
         $commands = $this->commands;
 

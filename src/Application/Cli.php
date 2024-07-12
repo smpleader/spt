@@ -16,7 +16,7 @@ use SPT\Request\Singleton as Request;
 
 class Cli extends Web
 {
-    private $commands;
+    private $_commands;
 
     public function envLoad()
     {
@@ -44,11 +44,17 @@ class Cli extends Web
 
         $commands = [];
         // load CommandLine to start the work
-        $this->plgManager->call('all')->run('cli', 'registerCommands', false, function ($items) use (&$commands){
-            $commands = array_merge($commands, $items);
+        $this->plgManager->call('all')->run('cli', 'registerCommands', false, function (array $items) use (&$commands){
+            foreach( $items as $key=>$item)
+            {
+                if(!array_key_exists($key, $commands))
+                {
+                    $commands[$key] = $item;
+                }
+            }
         });
 
-        $this->commands = $commands;
+        $this->_commands = $commands;
 
         $args = $this->request->cli->getArgs();
         if (!$args)
@@ -57,9 +63,10 @@ class Cli extends Web
         }
 
         $exec = $args[0];
-        if ($exec == '--help')
+        if ($exec == '--help' || $exec == '-h' )
         {
-            return $this->commandHelp();
+            echo $this->displayCommandHelp();
+            exit(0);
         }
 
         $todo = isset($this->commands[$exec]) ? $this->commands[$exec] : '';
@@ -92,20 +99,22 @@ class Cli extends Web
         return $this->plgManager->call($plugin)->run('Dispatcher', 'terminal', true);
     }
 
-    public function commandHelp()
+    public function displayCommandHelp()
     {
         $commands = $this->commands;
-        $commands['--help'] = [
-            'description' => 'Information commands',
-        ];
 
-        echo "Command Helper:\n";
-        foreach($commands as $key => $command)
+        $arr = ["All the commands:\n"];
+        foreach($this->commands as $key=>$cmd)
         {
-            $description = is_array($command) ? $command['description'] : '';
-            
-            echo "\t" . $key ."\t". "\t". $description ."\n";
+            if(isset($cmd['description']))
+            {
+                $arr[] = "\t" . $key ."\t". "\t". $cmd['description'] ."\n";
+            }
         }
+
+        $arr[] = "\t --help\t". "\t List all commands\n";
+
+        return $arr;
     }
 
     public function raiseError(string $msg, $code = 500)

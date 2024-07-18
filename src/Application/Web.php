@@ -19,21 +19,37 @@ class Web extends Base
 {
     protected function envLoad()
     {   
+        // setup container
+        $this->container->set('app', $this);
+
         // private properties
         parent::envLoad();
 
-        // setup container
-        $this->container->set('app', $this);
         // create request
         $this->request = Request::instance(); 
-        $this->container->set('request', $this->request);
+        if( !$this->container->exists('request') )
+        {
+            $this->container->set('request', $this->request);
+        }
+
         // create router
         $this->router = new Router($this->config->subpath, '');
-        $this->container->set('router', $this->router);
+        if( !$this->container->exists('router') )
+        {
+            $this->container->set('router', $this->router);
+        }
+
         // access to app config 
-        $this->container->set('config', $this->config);
+        if( !$this->container->exists('config') )
+        {
+            $this->container->set('config', $this->config);
+        }
+
         // token
-        $this->container->set('token', new Token($this->config, $this->request));
+        if( !$this->container->exists('token') )
+        {
+            $this->container->set('token', new Token($this->config, $this->request));
+        }
     }
 
     protected function routing()

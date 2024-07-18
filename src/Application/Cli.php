@@ -22,19 +22,28 @@ class Cli extends Base
     {
         // setup container
         $this->container->set('app', $this);
+
+        // private properties
+        parent::envLoad();
+
         // create request
         $this->request = Request::instance(); 
-        $this->container->set('request', $this->request);
+        if( !$this->container->exists('request') )
+        {
+            $this->container->set('request', $this->request);
+        }
+        
         // access to app config 
-        $this->config = new Configuration(null);
-        $this->container->set('config', $this->config);
-        // load packages
-        $this->plgManager = new Manager(
-            $this,
-            $this->packages
-        );
+        if( !$this->container->exists('config') )
+        {
+            $this->container->set('config', $this->config);
+        }
+
         // token
-        $this->container->set('token', new Token($this->config, $this->request));
+        if( !$this->container->exists('token') )
+        {
+            $this->container->set('token', new Token($this->config, $this->request));
+        }
     }
 
     private function getCLICommands()

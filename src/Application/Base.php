@@ -21,7 +21,7 @@ class Base extends ACore implements IApp
     protected $plgManager;
     protected $packages;
 
-    public function __construct(IContainer $container, string $publicPath, string $pluginPath, Configuration $config, string $namespace = '', array $packages = [])
+    public function __construct(IContainer $container, string $publicPath, string $pluginPath, Configuration $config, string $namespace = '')
     {
         if(!file_exists($publicPath) || !file_exists($pluginPath) )
         {
@@ -33,28 +33,29 @@ class Base extends ACore implements IApp
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
 
-        $this->packages = [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\'];
-        if( count($packages) )
+        $this->packages = [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\']; 
+
+        if( !$config->exists('packages') )
         {
-            $this->packages = array_merge($this->packages, $packages);
+            $this->packages = array_merge($this->packages, $config->packages);
         }
 
         $this->container = $container;
+        $this->config = $config;
 
         $this->envLoad();
-        
-        $this->plgManager->call('all')->run('Bootstrap', 'initialize');
 
         return $this;
     }
 
     protected function envLoad()
     {
-        $this->config = new Configuration(null);
         $this->plgManager = new Manager(
             $this,
             $this->packages
         );
+        
+        $this->plgManager->call('all')->run('Bootstrap', 'initialize');
     }
 
     public function execute(string | array $parameters = []){}

@@ -37,7 +37,7 @@ class Base extends ACore implements IApp
 
         if( !$config->exists('packages') )
         {
-            $this->packages = array_merge($this->packages, $config->packages);
+            $this->packages = array_merge($this->packages, $config->packages->toArray());
         }
 
         $this->container = $container;

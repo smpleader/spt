@@ -12,7 +12,7 @@
 
 namespace SPT\Support;
 
-class UploadedFile
+class UploadFile
 {
     /**
      * Internal variable for a file name

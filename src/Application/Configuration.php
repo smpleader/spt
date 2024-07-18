@@ -103,4 +103,9 @@ class Configuration extends MagicObj
     {
         return isset($this->_envs[$key]) ? $this->_envs[$key] : null;
     }
+
+    public function getConfigPath()
+    {
+        return $this->_path;
+    }
 }

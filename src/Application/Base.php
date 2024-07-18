@@ -35,7 +35,7 @@ class Base extends ACore implements IApp
 
         $this->packages = [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\']; 
 
-        if( !$config->exists('packages') )
+        if( $config->exists('packages') )
         {
             $this->packages = array_merge($this->packages, $config->packages->toArray());
         }

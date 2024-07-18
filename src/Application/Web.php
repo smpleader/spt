@@ -33,7 +33,8 @@ class Web extends Base
         }
 
         // create router
-        $this->router = new Router($this->config->subpath, '');
+        $subPath = $this->config->exists('subpath') ? $this->config->subpath : '';
+        $this->router = new Router($subPath, '');
         if( !$this->container->exists('router') )
         {
             $this->container->set('router', $this->router);
@@ -93,7 +94,7 @@ class Web extends Base
                 $try = $this->router->parse($this->request);
                 if(false === $try)
                 {
-                    if($this->config->pageNotFound)
+                    if($this->config->exists('pageNotFound'))
                     {
                         $try = [$this->config->pageNotFound, []];
                     }

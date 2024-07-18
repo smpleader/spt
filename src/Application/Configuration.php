@@ -36,9 +36,9 @@ class Configuration extends MagicObj
         $this->import($pathConfig, $this);
     }
 
-    private function import(string $path, &$_var)
+    public function import(string $path, &$_var = null)
     {
-        
+        if( null === $_var) $_var= $this;
         if( is_dir($path) )
         {
             foreach(new \DirectoryIterator($path) as $item) 

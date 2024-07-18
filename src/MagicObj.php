@@ -19,22 +19,13 @@ class MagicObj
     protected $_vars;
 
     /**
-     * Internal default value
-     * @var mixed $_default
-     */
-    protected $_default;
-
-    /**
      * A constructor
-     *
-     * @param mixed   $default  Set default value of Magic object
      * 
      * @return void
      */ 
-    public function __construct($default)
+    public function __construct()
     {
         $this->_vars = [];
-        $this->_default = $default;
     }
 
     /**
@@ -55,10 +46,10 @@ class MagicObj
      *
      * @param string    $key  Get value by array index 
      * 
-     * @return mixed    Return value from array _vars, return _default if key not found
+     * @return mixed    Return value from array _vars, return null if key not found
      */ 
     public function __get(string $key)
     {
-        return isset($this->_vars[$key]) ? $this->_vars[$key] : $this->_default;
+        return isset($this->_vars[$key]) ? $this->_vars[$key] : null;
     }
 }

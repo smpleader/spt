@@ -79,7 +79,7 @@ class Cli extends Base
 
         if( is_string($_parameters) )
         {
-            $todo = explode('.', $_parameters);
+            $todo = $_parameters;
             $siteParams = [];
         }
         elseif(isset($_parameters['fnc']))

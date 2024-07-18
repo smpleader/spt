@@ -52,4 +52,14 @@ class MagicObj
     {
         return isset($this->_vars[$key]) ? $this->_vars[$key] : null;
     }
+
+    /**
+     * Get all the variables in an array
+     * 
+     * @return mixed    Return array _vars
+     */ 
+    public function toArray()
+    {
+        return $this->_vars;
+    }
 }

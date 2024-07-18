@@ -12,6 +12,7 @@
 namespace SPT\Application;
 
 use SPT\MagicObj;
+use SPT\Support\FncMagicObj;
 
 class Configuration extends MagicObj
 {
@@ -36,42 +37,9 @@ class Configuration extends MagicObj
         $this->import($pathConfig, $this);
     }
 
-    public function import(string $path, &$_var = null)
+    public function import(string $path)
     {
-        if( null === $_var) $_var= $this;
-        if( is_dir($path) )
-        {
-            foreach(new \DirectoryIterator($path) as $item) 
-            {
-                if($item->isDot()) continue;
-                
-                if($item->isDir())
-                {
-                    $name =  $item->getBasename();
-                    $_var->{$name} = new MagicObj();
-                    $this->import($path. '/'. $name, $_var->{$name});
-                }
-                elseif($item->isFile() && 'php' == $item->getExtension())
-                {
-                    $name =  $item->getBasename('.php');
-                    $_var->{$name} = new MagicObj();
-                    $this->import( $path. '/'. $item->getBasename(), $_var->{$name});
-                }
-            }
-
-            return;
-        }
-
-        $try = require_once $path;
-        if(is_array($try) || is_object($try))
-        {
-            foreach ($try as $key => $value) {
-                if(!is_numeric($key))
-                {
-                    $_var->{$key} = $value; 
-                }
-            } 
-        }
+        FncMagicObj::import($path, $this);
     }
 
     public function exists($key)

@@ -33,48 +33,42 @@ class Configuration extends MagicObj
 
         $this->_vars = [];
         $this->_path = $pathConfig;
-
-        // TODO: consider file name / folder name as a scope of information
-        if(is_file($this->_path))
-        {
-            $this->import($this->_path, $this);
-        }
-        elseif(is_dir($this->_path))
-        {
-            foreach(new \DirectoryIterator($this->_path) as $item) 
-            {
-                if (!$item->isDot())
-                { 
-                    if($item->isFile() && 'php' == $item->getExtension())
-                    {
-                        $this->import( $this->_path. '/'. $item->getBasename(), $this);
-                    }
-                    elseif($item->isDir())
-                    {
-                        $name =  $item->getBasename();
-                        $this->{$name} = new MagicObj();
-                        foreach(new \DirectoryIterator($this->_path. '/'. $name) as $inner) 
-                        {
-                            if (!$inner->isDot() && $inner->isFile() && 'php' == $inner->getExtension())
-                            {
-                                $this->import($this->_path. '/'. $name. '/'. $inner->getBasename(), $this->{$name});
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        $this->import($pathConfig, $this);
     }
 
-    private function import(string $path, &$b)
+    private function import(string $path, &$_var)
     {
+        
+        if( is_dir($path) )
+        {
+            foreach(new \DirectoryIterator($path) as $item) 
+            {
+                if($item->isDot()) continue;
+                
+                if($item->isDir())
+                {
+                    $name =  $item->getBasename();
+                    $_var->{$name} = new MagicObj();
+                    $this->import($path. '/'. $name, $_var->{$name});
+                }
+                elseif($item->isFile() && 'php' == $item->getExtension())
+                {
+                    $name =  $item->getBasename('.php');
+                    $_var->{$name} = new MagicObj();
+                    $this->import( $path. '/'. $item->getBasename(), $_var->{$name});
+                }
+            }
+
+            return;
+        }
+
         $try = require_once $path;
         if(is_array($try) || is_object($try))
         {
             foreach ($try as $key => $value) {
                 if(!is_numeric($key))
                 {
-                    $b->{$key} = $value;
+                    $_var->{$key} = $value; 
                 }
             } 
         }

@@ -21,16 +21,15 @@ class Base extends ACore implements IApp
     protected $plgManager;
     protected $packages;
 
-    public function __construct(IContainer $container, string $publicPath, string $pluginPath, string $configPath, string $namespace = '', array $packages = [])
+    public function __construct(IContainer $container, string $publicPath, string $pluginPath, Configuration $config, string $namespace = '', array $packages = [])
     {
-        if(!file_exists($publicPath) || !file_exists($pluginPath) || !file_exists($configPath))
+        if(!file_exists($publicPath) || !file_exists($pluginPath) )
         {
             die('System path not exists');
         }
 
         define('SPT_PUBLIC_PATH', $publicPath);
-        define('SPT_PLUGIN_PATH', $pluginPath);
-        define('SPT_CONFIG_PATH', $configPath);
+        define('SPT_PLUGIN_PATH', $pluginPath); 
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
 
@@ -58,7 +57,7 @@ class Base extends ACore implements IApp
         );
     }
 
-    public function execute(string $themePath = ''){}
+    public function execute(string | array $parameters = []){}
 
     public function redirect(string $url, $code = 302)
     {
@@ -77,6 +76,12 @@ class Base extends ACore implements IApp
         Response::_200($content);
         exit(0);
     }
+
+    /**
+     * 
+     *  SUPPORT PLUGIN ENGINE
+     * 
+     */
 
     public function plgLoad(string $event, string $function, $callback = null, bool $getResult = false)
     {
@@ -103,5 +108,31 @@ class Base extends ACore implements IApp
         }
 
         return $this->plgManager->call($plugin['name'], 'family')->run($event, $function, false, $callback, $getResult);
+    }
+
+    public function plugin($name = '')
+    {
+        return '' == $name ? $this->get('mainPlugin') : 
+                ( true === $name ? 
+                    $this->plgManager->getList() : 
+                    $this->plgManager->getDetail($name) 
+                );
+    }
+
+    /**
+     * 
+     *  SUPPORT MVVM ENGINE
+     * 
+     */
+
+    protected array $vmClasses;
+    public function getVMList(string $plgName)
+    {
+        return isset($this->vmClasses[$plgName]) ? $this->vmClasses[$plgName] : [];
+    }
+
+    public function addVM(string $plgName, string $name, string $fullName)
+    {
+        $this->vmClasses[$plgName][] = [$name, $fullName];
     }
 }

@@ -15,7 +15,7 @@ use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Singleton as Request;
 use SPT\Response; 
 
-class Web extends \SPT\Application\Base
+class Web extends Base
 {
     protected function envLoad()
     {   
@@ -48,7 +48,7 @@ class Web extends \SPT\Application\Base
         $this->plgManager->call('all')->run('routing', 'afterRouting');
     }
 
-    public function execute(string $themePath = '')
+    public function execute( string | array $_parameters = [])
     {
         $this->routing();
 
@@ -58,30 +58,42 @@ class Web extends \SPT\Application\Base
                 '' => $this->cf('homeEndpoint')
             ]);
         }
-        
-        if($themePath) $this->set('themePath', $themePath);
 
         try{
 
-            $try = $this->router->parse($this->request);
-            if(false === $try)
+            if( is_string($_parameters) )
             {
-                if($this->config->pageNotFound)
+                $todo = $_parameters;
+                $siteParams = [];
+            }
+            elseif(isset($_parameters['fnc']))
+            {
+                $todo = $_parameters['fnc'];
+                unset($_parameters['fnc']);
+                $siteParams = $_parameters;
+            }
+            else
+            {
+                $try = $this->router->parse($this->request);
+                if(false === $try)
                 {
-                    $try = [$this->config->pageNotFound, []];
+                    if($this->config->pageNotFound)
+                    {
+                        $try = [$this->config->pageNotFound, []];
+                    }
+                    else
+                    {
+                        $this->raiseError('Invalid request', 500);
+                    }
                 }
-                else
-                {
-                    $this->raiseError('Invalid request', 500);
-                }
+                list($todo, $siteParams) = $try;
             }
 
-            list($todo, $params) = $try;
             $try = explode('.', $todo);
             
             if(count($try) !== 3)
             {
-                $this->raiseError('Not correct routing', 500);
+                $this->raiseError('Incorrect routing', 500);
             } 
 
             list($pluginName, $controller, $function) = $try;
@@ -93,15 +105,15 @@ class Web extends \SPT\Application\Base
                 $this->raiseError('Invalid plugin '.$pluginName, 500);
             }
             
-            if(count($params))
+            if(count($siteParams))
             {
-                foreach($params as $key => $value)
+                foreach($siteParams as $key => $value)
                 {
                     $this->set($key, $value);
                 }
             }
 
-            // support if this is home - special deals
+            // support if this is  home and need a special deal
             if($this->router->get('isHome'))
             {
                 $this->plgManager->call('all')->run('Routing', 'isHome');
@@ -120,23 +132,5 @@ class Web extends \SPT\Application\Base
         }
     }
 
-    public function plugin($name = '')
-    {
-        return '' == $name ? $this->get('mainPlugin') : 
-                ( true === $name ? 
-                    $this->plgManager->getList() : 
-                    $this->plgManager->getDetail($name) 
-                );
-    }
-
-    protected array $vmClasses;
-    public function getVMList(string $plgName)
-    {
-        return isset($this->vmClasses[$plgName]) ? $this->vmClasses[$plgName] : [];
-    }
-
-    public function addVM(string $plgName, string $name, string $fullName)
-    {
-        $this->vmClasses[$plgName][] = [$name, $fullName];
-    }
+    
 }

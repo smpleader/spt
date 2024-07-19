@@ -40,7 +40,7 @@ class Manager
         }
     }
 
-    protected function add($path, $namespace, $filterActive)
+    protected function add(string $path, string $namespace, $filterActive)
     {
         foreach(new \DirectoryIterator($path) as $item) 
         {

@@ -37,7 +37,8 @@ class Base extends ACore implements IApp
 
         if( $config->exists('packages') )
         {
-            $this->packages = array_merge($this->packages, $config->packages->toArray());
+            $_pkg = $config->packages instanceof MagicObj ?  $config->packages->toArray() : (array) $config->packages;
+            $this->packages = array_merge($this->packages, $_pkg);
         }
 
         $this->container = $container;

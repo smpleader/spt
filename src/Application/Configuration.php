@@ -42,10 +42,65 @@ class Configuration extends MagicObj
         FncMagicObj::import($path, $this);
     }
 
-    public function exists($key)
+    // Check key exists in the configuraton by token format a.b.c
+    public function exists(string $key)
     {
-        return isset($this->_vars[$key]);
-    }
+        $tmp = explode('.', $key);
+
+        $var = $this;
+
+        foreach($tmp as $k)
+        {
+            if($var instanceof MagicObj)
+            {
+                if(!$var->isset($k)) return false;
+                $var = $var->{$k};
+            }
+            elseif( is_array($var))
+            {
+                if(!isset($var[$k]))  return false;
+                $var = $var[$k];
+            }
+            elseif( is_object($var))
+            {
+                if( !isset($var->{$k}) ) return false;
+                $var = $var->{$k};
+            }
+            else return false;
+        }
+        
+        return  true;
+    } 
+
+    // Get value of configuraton by key token format a.b.c
+    public function of(string $key)
+    {
+        $tmp = explode('.', $key);
+
+        $var = $this;
+
+        foreach($tmp as $k)
+        {
+            if($var instanceof MagicObj)
+            {
+                if(!$var->isset($k)) return NULL;
+                $var = $var->{$k};
+            }
+            elseif( is_array($var))
+            {
+                if(!isset($var[$k]))  return NULL;
+                $var = $var[$k];
+            }
+            elseif( is_object($var))
+            {
+                if( !isset($var->{$k}) ) return NULL;
+                $var = $var->{$k};
+            }
+            else return NULL;
+        }
+
+        return $var;
+    } 
 
     public function empty($key)
     {

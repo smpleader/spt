@@ -12,13 +12,14 @@ namespace SPT\Router;
 
 use SPT\Request\Base as Request;
 use SPT\Support\FncArray;
+use SPT\Application\Configuration;
 
 class Sitemap extends Base
 {
     protected $nodes; 
     protected $table;
 
-    public function __construct(SitemapEntity $entity, $config, Request $request)
+    public function __construct(SitemapEntity $entity, Configuration $config, Request $request)
     {
         $this->table = $entity;
 
@@ -99,7 +100,7 @@ class Sitemap extends Base
         return $found;
     } 
 
-    public function parse($config, $request)
+    public function parse(Configuration $config, Request $request)
     {
         $method = $request->header->getRequestMethod();
         $defaultEndpoint = $config->exists('defaultEndpoint') ? $config->defaultEndpoint : '';

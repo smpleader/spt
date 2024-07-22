@@ -62,4 +62,15 @@ class MagicObj
     {
         return $this->_vars;
     }
+
+    /**
+     * Check if key exists
+     * 
+     * @return boolean 
+     */ 
+
+    public function isset($key)
+    {
+        return isset($this->_vars[$key]);
+    }
 }

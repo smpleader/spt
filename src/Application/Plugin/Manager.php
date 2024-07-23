@@ -44,7 +44,7 @@ class Manager
                 if (!$item->isDot() && $item->isDir())
                 {
                     $name = $item->getBasename(); 
-                    $this->add($path. $name. '/', $namespace. $name. '\\');
+                    $this->add($path. $name. '/', $namespace. '\\'. $name);
                 }
             }
         }

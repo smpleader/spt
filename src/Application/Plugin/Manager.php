@@ -28,38 +28,38 @@ class Manager
     {
         $this->app = $app;
 
-        $filterActive = false;
-        if(is_array($app->cf('activePlugins')))
-        {
-            $filterActive = $app->cf('activePlugins');
-        }
-
         foreach($packages as $path=>$namespace)
         {
-            $this->add($path, $namespace, $filterActive);
+            $this->add($path, $namespace);
         }
     }
 
-    protected function add(string $path, string $namespace, $filterActive)
+    // ALWAYS HAS slash AT END OF PARAMETER !!!
+    protected function add(string $path, string $namespace)
     {
-        foreach(new \DirectoryIterator($path) as $item) 
+        if( file_exists($path. 'about.php') ) // a solution
         {
-            if (!$item->isDot() && $item->isDir())
+            foreach(new \DirectoryIterator($path) as $item) 
             {
-                $plg = $item->getBasename();
-                if(is_array($filterActive) && !in_array($plg, $filterActive))
+                if (!$item->isDot() && $item->isDir())
                 {
-                    continue;
+                    $name = $item->getBasename(); 
+                    $this->add($path. $name. '/', $namespace. $name. '\\');
                 }
-
-                $name = $namespace. $plg;
-                $installer = $name. '\\registers\\Installer';
-                $this->list[$plg] = class_exists($installer) ? $installer::info() : [];
-                $this->list[$plg]['namespace'] =  $name;
-                $this->list[$plg]['path'] =  $path. $plg. '/';
-                $this->list[$plg]['name'] =  $plg;
             }
         }
+        elseif( file_exists($path. 'registers') && is_dir($path. 'registers') ) // a plugin
+        {
+            $name = basename($path);
+            $installer = $namespace. '\\registers\\Installer';
+
+            $this->list[$name] = [
+                'namespace' => $namespace,
+                'path' => $path,
+                'name' => $name,
+                'details' => class_exists($installer) ? $installer::info() : []
+            ];
+        } 
     }
 
     public function call($sth, string $mode = 'single')

@@ -29,7 +29,8 @@ class Base extends ACore implements IApp
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
 
-        $this->packages = [SPT_PLUGIN_PATH => $this->namespace. '\\plugins\\']; 
+        // support single app
+        $this->packages = file_exists(SPT_PLUGIN_PATH. 'about.php') ? [SPT_PLUGIN_PATH => $this->namespace] : []; 
 
         if( $config->exists('packages') )
         {

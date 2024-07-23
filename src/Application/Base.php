@@ -21,7 +21,7 @@ class Base extends ACore implements IApp
     protected $plgManager;
     protected $packages;
 
-    public function __construct(IContainer $container, string $pluginPath, Configuration $config, string $namespace = '')
+    public function __construct(IContainer $container, string $pluginPath, Configuration $config, string $namespace = 'App')
     {
         file_exists($pluginPath) or  die('System path not exists');
 

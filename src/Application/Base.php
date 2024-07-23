@@ -21,14 +21,10 @@ class Base extends ACore implements IApp
     protected $plgManager;
     protected $packages;
 
-    public function __construct(IContainer $container, string $publicPath, string $pluginPath, Configuration $config, string $namespace = '')
+    public function __construct(IContainer $container, string $pluginPath, Configuration $config, string $namespace = '')
     {
-        if(!file_exists($publicPath) || !file_exists($pluginPath) )
-        {
-            die('System path not exists');
-        }
+        file_exists($pluginPath) or  die('System path not exists');
 
-        define('SPT_PUBLIC_PATH', $publicPath);
         define('SPT_PLUGIN_PATH', $pluginPath); 
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;

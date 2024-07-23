@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - CLI application
+ * SPT software - SPT application for CLI
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: An application for CLI
+ * @description: A CLI application based SPT framework
  * @version 0.8
  * 
  */
@@ -175,6 +175,13 @@ class Cli extends Base
 
     public function raiseError(string $msg, $code = 500)
     {
+        $this->set('error', $msg);
+        $this->set('errorCode', $code);
+        $this->set('env', 'cli');
+
+        $this->plgManager->call('all')->run('Error', 'catch', false);
+
+        // if no plugin handle this error, just stop
         echo $msg ."\n";
         exit(0);
     }

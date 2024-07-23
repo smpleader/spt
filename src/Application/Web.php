@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Asset
+ * SPT software - SPT application for a website
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: A web application based Joomla container
+ * @description: A web application based SPT framework
  * @version: 0.8
  * 
  */
@@ -94,15 +94,9 @@ class Web extends Base
                 $try = $this->router->parse($this->request);
                 if(false === $try)
                 {
-                    if($this->config->exists('pageNotFound'))
-                    {
-                        $try = [$this->config->pageNotFound, []];
-                    }
-                    else
-                    {
-                        $this->raiseError('Invalid request', 500);
-                    }
+                    $this->raiseError('PageNotFound', 404);
                 }
+
                 list($todo, $siteParams) = $try;
             }
 
@@ -149,5 +143,15 @@ class Web extends Base
         }
     }
 
-    
+    public function raiseError(string $msg, $code = 500)
+    {
+        $this->set('error', $msg);
+        $this->set('errorCode', $code);
+        $this->set('env', 'web');
+
+        $this->plgManager->call('all')->run('Error', 'catch', false);
+
+        // if no plugin handle this error, just stop
+        parent::raiseError( $msg, $code);
+    }    
 }

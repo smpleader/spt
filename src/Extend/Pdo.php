@@ -25,6 +25,7 @@ class Pdo
 
 		$driver = isset($config['driver']) ? $config['driver'] : 'mysql';
 
+		/* TODO: those code is redundancy
 		if(!count($parameters))
 		{
 			if(isset($config['options']))
@@ -40,7 +41,7 @@ class Pdo
 		if(!is_array($parameters))
 		{
 			throw new \Exception('Invalid database parameters');	
-		}
+		}*/
 
 		$this->connection = Connector::load($driver, $config, $parameters);
 		$this->connected = is_object($this->connection);

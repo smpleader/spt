@@ -39,7 +39,7 @@ class FncMagicObj
             return;
         }
 
-        $try = require_once $path;
+        $try = require $path;
         if(is_array($try) || is_object($try))
         {
             foreach ($try as $key => $value) {

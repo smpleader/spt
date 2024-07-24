@@ -26,7 +26,7 @@ class Response extends StaticObj
      * 
      * @return string content of response body
      */ 
-    public static function _($content=false, $http_code=200)
+    public static function _($content=false, int $http_code=200)
     {
         http_response_code($http_code);
 

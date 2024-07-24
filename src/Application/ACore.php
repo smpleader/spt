@@ -47,7 +47,7 @@ abstract class ACore
     }
 
     // -- Config --
-	protected MagicObj $config; 
+	protected Configuration $config; 
     public function getConfig()
     {
         return $this->config;
@@ -60,34 +60,31 @@ abstract class ACore
         return isset($this->_vars[$key]) ? $this->_vars[$key] : $default;
     }
 
-    // -- Variables :: Just set once
     public function set($key, $value)
     {
-        if(!isset($this->_vars[$key]))
-        {
-            $this->_vars[$key] = $value;
-        }
+        $this->_vars[$key] = $value;
     }
 
     // -- Shortcut :: no factory pattern
-    public function rt(string $path = '////')
+    public function _(string $name)
     {
-        return $path !== '////' ? $this->getRouter()->url($path) : $this->getRouter();
+        return $this->container->get($name);
     }
 
-    public function cn(string $name = '')
+    public function any(string $key, string $cfgName = '', $default = null)
     {
-        return $name == '' ? $this->getContainer() : $this->getContainer()->get($name);
+        if(isset($this->_vars[$key]))
+        {
+            return $this->_vars[$key];
+        }
+
+        if(!$cfgName) return $default;
+
+        return $this->config->of($cfgName);
     }
 
-    public function cf(string $name = '')
+    public function input($key, string $method = '')
     {
-        return $name == '' ? $this->getConfig() : $this->getConfig()->{$name};
-    }
-
-    public function rq($key, string $method = '')
-    {
-        return empty($key)? ( $method == '' ? $this->getRequest() : $this->getRequest()->{$method} ) 
-                    : ( $method == '' ? $this->getRequest()->get($key) : $this->getRequest()->{$method}->get($key) ) ;
+        return $method == '' ? $this->request->get($key) : $this->request->{$method}->get($key);
     }
 }

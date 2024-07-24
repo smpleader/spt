@@ -30,17 +30,24 @@ class Theme extends BaseObj
     protected $_vars = [];
 
     /**
+     * Readonlye theme path
+     * @var string $path
+     */
+    public readonly $path = ''; # since PHP 8.1
+
+    /**
      * Constructor
      * 
      * @return void 
      */ 
-    public function __construct()
+    public function __construct(string $path)
     {
-        if(!defined('SPT_THEME_PATH'))
+        if(empty($path))
         {
             throw new \Exception('Invalid theme path');
         }
-        
+
+        $this->path = $path;
         $this->registerAssets();
     }
 
@@ -54,9 +61,9 @@ class Theme extends BaseObj
      */ 
     public function registerAssets(string $profile = '', array $list = [])
     {
-        if( '' === $profile && file_exists(SPT_THEME_PATH. '/_assets.php'))
+        if( '' === $profile && file_exists($this->path. '/_assets.php'))
         {
-            $arr = require_once SPT_THEME_PATH. '/_assets.php';
+            $arr = require_once $this->path. '/_assets.php';
         }
         else
         {

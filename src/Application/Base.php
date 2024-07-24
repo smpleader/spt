@@ -21,23 +21,18 @@ class Base extends ACore implements IApp
     protected $plgManager;
     protected $packages;
 
-    public function __construct(IContainer $container, string $pluginPath, Configuration $config, string $namespace = 'App')
+    public function __construct(IContainer $container, Configuration $config, string $namespace = 'App')
     {
-        file_exists($pluginPath) or  die('System path not exists');
-
-        define('SPT_PLUGIN_PATH', $pluginPath); 
-
-        $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-
-        // support single app
-        $this->packages = file_exists(SPT_PLUGIN_PATH. 'about.php') ? [SPT_PLUGIN_PATH => $this->namespace] : []; 
-
-        if( $config->exists('packages') )
+        $config->exists('packages') or  die('System path not exists');
+        
+        $_pkg = $config->packages instanceof \SPT\MagicObj ?  $config->packages->toArray() : (array) $config->packages;
+        foreach($_pkg as $path=>$namespace)
         {
-            $_pkg = $config->packages instanceof \SPT\MagicObj ?  $config->packages->toArray() : (array) $config->packages;
-            $this->packages = array_merge($this->packages, $_pkg);
+            if(!file_exists($path)) die ('Invalid package '. $namespace);
         }
 
+        $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
+        $this->packages = $_pkg;
         $this->container = $container;
         $this->config = $config;
 
@@ -48,11 +43,7 @@ class Base extends ACore implements IApp
 
     protected function envLoad()
     {
-        $this->plgManager = new Manager(
-            $this,
-            $this->packages
-        );
-        
+        $this->plgManager = new Manager( $this, $this->packages );
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
     }
 

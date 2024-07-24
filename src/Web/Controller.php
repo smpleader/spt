@@ -40,16 +40,14 @@ class Controller extends Client
         {
             // mainPlugin | childPlugin -> currentPlugin
             $this->setCurrentPlugin();
-            // auto use default theme
-            if(empty( $this->app->get('theme', '') ))
-            {
-                $this->app->set('theme', $this->app->cf('defaultTheme'));
-            }
             
+            /**
+             * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
+             */
             $pluginPath = $this->app->get('pluginPath');
             $plugin = $this->app->get('currentPlugin');
             $themePath = $this->app->get('themePath', '');
-            $theme = $this->app->get('theme', '');
+            $theme = $this->app->any('theme', 'defaultTheme', '');
             $listPlg = $this->app->plugin(true);
             $paths = [];
             foreach($listPlg as $plgName => $d)
@@ -90,6 +88,58 @@ class Controller extends Client
             define('SPT_THEME_PATH', $themePath);
         }
         return $this->overrides;
+    }
+
+    public function getTheme()
+    {
+        // mainPlugin | childPlugin -> currentPlugin
+        $this->setCurrentPlugin();
+            
+        /**
+         * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
+         */
+        $pluginPath = $this->app->get('pluginPath');
+        $plugin = $this->app->get('currentPlugin');
+        $themePath = $this->app->get('themePath', '');
+        $theme = $this->app->any('theme', 'defaultTheme', '');
+        $listPlg = $this->app->plugin(true);
+        $paths = [];
+        foreach($listPlg as $plgName => $d)
+        {
+            $paths[$plgName] = $d['path'];
+        }
+
+        if( $themePath && $theme )
+        {
+            $_themePath .= '/'. $theme. '/'; 
+            $_overrides = [
+                'layout' => [
+                    $themePath. '_layouts/'. $plugin. '/',
+                    $pluginPath. 'views/layouts/'
+                ],
+                'widget' => [
+                    $themePath.'_widgets/__PLG__/',
+                    '__PLG_PATH__/views/widgets/'
+                ],
+                'vcom' => [
+                    $themePath.'_vcoms/__PLG__/',
+                    '__PLG_PATH__/views/vcoms/'
+                ],
+                '_path' => $paths
+            ];
+        }
+        else
+        {
+            $_themePath = $pluginPath. 'views/';
+            $_overrides = [
+                'layout' => [$pluginPath. 'views/layouts/'],
+                'widget' => ['__PLG_PATH__/views/widgets/'],
+                'vcom' => ['__PLG_PATH__/views/vcoms/'],
+                '_path' => $paths
+            ];
+        }
+
+        return new Theme($themePath, $_overrides);
     }
 
     /**

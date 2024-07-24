@@ -26,16 +26,14 @@ class ControllerNoTemplate extends Controller
         {
             // mainPlugin | childPlugin -> currentPlugin
             $this->setCurrentPlugin();
-            // auto use default theme
-            if(empty( $this->app->get('theme', '') ))
-            {
-                $this->app->set('theme', $this->app->cf('defaultTheme'));
-            }
             
+            /**
+             * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
+             */
             $pluginPath = $this->app->get('pluginPath');
-            $plugin = $this->app->get('currentPlugin');
+            //$plugin = $this->app->get('currentPlugin');
             $themePath = $this->app->get('themePath', '');
-            $theme = $this->app->get('theme', '');
+            $theme = $this->app->any('theme', 'defaultTheme', '');
             $listPlg = $this->app->plugin(true);
             $paths = [];
             foreach($listPlg as $plgName => $d)

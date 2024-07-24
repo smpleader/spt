@@ -259,10 +259,10 @@ class View
         }
         
         
-        $file = SPT_THEME_PATH. '/'. $page. '/index.php';
+        $file = $this->theme->path. '/'. $page. '/index.php';
         if( !file_exists($file) )
         {
-            $file = SPT_THEME_PATH. '/'. $page. '.php';
+            $file = $this->theme->path. '/'. $page. '.php';
         }
         
         if( !file_exists($file) )

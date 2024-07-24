@@ -15,43 +15,33 @@ use SPT\Container\Client;
 
 class ControllerNoTemplate extends Controller
 {
-    /**
-     * Get current internal variable $overrides
-     * 
-     * @return array $overrides
-     */ 
-    protected function getOverrideLayouts()
+    protected function getTheme()
     {
-        if(empty($this->overrides))
+        $this->setCurrentPlugin();
+        
+        /**
+         * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
+         */
+        $pluginPath = $this->app->get('pluginPath');
+        //$plugin = $this->app->get('currentPlugin');
+        $themePath = $this->app->get('themePath', '');
+        $theme = $this->app->any('theme', 'defaultTheme', '');
+        $listPlg = $this->app->plugin(true);
+        $paths = [];
+        foreach($listPlg as $plgName => $d)
         {
-            // mainPlugin | childPlugin -> currentPlugin
-            $this->setCurrentPlugin();
-            
-            /**
-             * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
-             */
-            $pluginPath = $this->app->get('pluginPath');
-            //$plugin = $this->app->get('currentPlugin');
-            $themePath = $this->app->get('themePath', '');
-            $theme = $this->app->any('theme', 'defaultTheme', '');
-            $listPlg = $this->app->plugin(true);
-            $paths = [];
-            foreach($listPlg as $plgName => $d)
-            {
-                $paths[$plgName] = $d['path'];
-            } 
+            $paths[$plgName] = $d['path'];
+        } 
 
-            $themePath = $pluginPath. 'views/';
-            $this->overrides = [
-                'layout' => [$pluginPath. 'views/layouts/'],
-                'widget' => ['__PLG_PATH__/views/widgets/'],
-                'vcom' => ['__PLG_PATH__/views/vcoms/'],
-                '_path' => $paths
-            ]; 
-    
-            define('SPT_THEME_PATH', $themePath);
-        }
-        return $this->overrides;
+        $_themePath = $pluginPath. 'views/';
+        $_overrides = [
+            'layout' => [$pluginPath. 'views/layouts/'],
+            'widget' => ['__PLG_PATH__/views/widgets/'],
+            'vcom' => ['__PLG_PATH__/views/vcoms/'],
+            '_path' => $paths
+        ]; 
+
+        return new Theme($_themePath, $_overrides);
     }
 
     /**

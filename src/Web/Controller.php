@@ -23,74 +23,7 @@ class Controller extends Client
      */
     protected $supportMVVM = false;
 
-    /**
-     * Internal variable to keep override layout paths
-     * @var array $overrides
-     */
-    protected $overrides;
-
-    /**
-     * Get current internal variable $overrides
-     * 
-     * @return array $overrides
-     */ 
-    protected function getOverrideLayouts()
-    {
-        if(empty($this->overrides))
-        {
-            // mainPlugin | childPlugin -> currentPlugin
-            $this->setCurrentPlugin();
-            
-            /**
-             * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
-             */
-            $pluginPath = $this->app->get('pluginPath');
-            $plugin = $this->app->get('currentPlugin');
-            $themePath = $this->app->get('themePath', '');
-            $theme = $this->app->any('theme', 'defaultTheme', '');
-            $listPlg = $this->app->plugin(true);
-            $paths = [];
-            foreach($listPlg as $plgName => $d)
-            {
-                $paths[$plgName] = $d['path'];
-            }
-
-            if( $themePath && $theme )
-            {
-                $themePath .= '/'. $theme. '/'; 
-                $this->overrides = [
-                    'layout' => [
-                        $themePath. '_layouts/'. $plugin. '/',
-                        $pluginPath. 'views/layouts/'
-                    ],
-                    'widget' => [
-                        $themePath.'_widgets/__PLG__/',
-                        '__PLG_PATH__/views/widgets/'
-                    ],
-                    'vcom' => [
-                        $themePath.'_vcoms/__PLG__/',
-                        '__PLG_PATH__/views/vcoms/'
-                    ],
-                    '_path' => $paths
-                ];
-            }
-            else
-            {
-                $themePath = $pluginPath. 'views/';
-                $this->overrides = [
-                    'layout' => [$pluginPath. 'views/layouts/'],
-                    'widget' => ['__PLG_PATH__/views/widgets/'],
-                    'vcom' => ['__PLG_PATH__/views/vcoms/'],
-                    '_path' => $paths
-                ];
-            }
-    
-            define('SPT_THEME_PATH', $themePath);
-        }
-        return $this->overrides;
-    }
-
-    public function getTheme()
+    protected function getTheme()
     {
         // mainPlugin | childPlugin -> currentPlugin
         $this->setCurrentPlugin();
@@ -139,7 +72,7 @@ class Controller extends Client
             ];
         }
 
-        return new Theme($themePath, $_overrides);
+        return new Theme($_themePath, $_overrides);
     }
 
     /**
@@ -150,8 +83,7 @@ class Controller extends Client
     protected function getView()
     {
         return new View(
-            $this->getOverrideLayouts(), 
-            new Theme(),
+            $this->getTheme(),
             new ViewComponent($this->app->getRouter()),
             $this->supportMVVM
         );

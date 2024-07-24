@@ -64,19 +64,12 @@ class View
     protected $currentPlugin = '';
 
     /**
-    * Internal variable for override layouts
-    * @var array $overrides
-    */    
-    protected $overrides = [];
-
-    /**
      * Constructor
      * 
      * @return void 
      */ 
-    public function __construct(array $overrides, Theme $theme, ViewComponent $component, $supportMVVM = true)
+    public function __construct(Theme $theme, ViewComponent $component, $supportMVVM = true)
     {
-        $this->overrides = $overrides;
         $this->theme = $theme;
         $this->component = $component;
         $this->isMVVM = $supportMVVM;
@@ -153,11 +146,11 @@ class View
                 throw new \Exception($type.' needs plugin name or path ( input: '. $name.')');
             } 
             
-            $realPath = $this->overrides['_path'][$plugin] ?? '';
+            $realPath = $this->theme->overrides['_path'][$plugin] ?? '';
 
             if(empty($realPath))
             {
-                $realPath = $this->overrides['_path'][$type.'_'.$plugin] ?? '';
+                $realPath = $this->theme->overrides['_path'][$type.'_'.$plugin] ?? '';
             }
 
             if(empty($realPath))
@@ -172,7 +165,7 @@ class View
             $layout = str_replace('.', '/', $name);
         }
 
-        foreach($this->overrides[$type] as $line)
+        foreach($this->theme->overrides[$type] as $line)
         {
             if($plugin)
             {

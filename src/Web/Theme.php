@@ -30,17 +30,23 @@ class Theme extends BaseObj
     protected $_vars = [];
 
     /**
-     * Readonlye theme path
+     * Readonlye theme path (since PHP 8.1)
      * @var string $path
      */
-    public readonly $path = ''; # since PHP 8.1
+    public readonly string $path; 
+
+    /**
+     * Readonlye theme override layouts (since PHP 8.1)
+     * @var array $overrides
+     */
+    public readonly array $overrides;
 
     /**
      * Constructor
      * 
      * @return void 
      */ 
-    public function __construct(string $path)
+    public function __construct(string $path, array $overrides)
     {
         if(empty($path))
         {
@@ -48,6 +54,7 @@ class Theme extends BaseObj
         }
 
         $this->path = $path;
+        $this->overrides = $overrides;
         $this->registerAssets();
     }
 

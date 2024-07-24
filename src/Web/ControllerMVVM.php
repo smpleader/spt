@@ -53,7 +53,7 @@ class ControllerMVVM extends Controller
      */ 
     public function registerViewModels(array $vms = array())
     { 
-        $this->getOverrideLayouts();
+        $this->setCurrentPlugin();
         
         if(!count($vms))
         {

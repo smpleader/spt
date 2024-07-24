@@ -13,6 +13,8 @@ namespace SPT\Application;
  
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Response;
+use SPT\Query;
+use SPT\Extend\Pdo;
 use SPT\Container\IContainer;
 use SPT\Application\Plugin\Manager;
 
@@ -47,6 +49,26 @@ class Base extends ACore implements IApp
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
     }
 
+    public function useDatabase($db='database.mysql')
+    {
+        $container = $this->getContainer();
+
+        if( !$this->container->exists('query') )
+        {
+            
+            $pdo = new Pdo( $this->config->of($db) );
+            if(!$pdo->connected)
+            {
+                $this->raiseError('Connection failed.', 'DatabaseConnectFailed'); 
+            }
+
+            $prefix = $this->config->exists($db.'.prefix') ? ['#__' => $this->config->of($db.'.prefix') ] : [];
+
+            $query = new Query( $pdo, $prefix);
+            $this->container->set('query', $query);
+        }
+    }
+
     public function execute(string | array $parameters = []){}
 
     public function redirect(string $url, $code = 302)
@@ -57,7 +79,7 @@ class Base extends ACore implements IApp
 
     public function raiseError(string $msg, $code = 500)
     {
-        Response::_($msg, $code);
+        Response::_($msg, is_numeric($code) ? (int)$code : 500);
         exit(0);
     }
 

@@ -115,6 +115,9 @@ class Cli extends Base
                 $todo = $cmd['fnc'];
                 unset($cmd['fnc']);
                 unset($cmd['description']);
+                /**
+                 * TODO: filter commands based script name | bypass key | group
+                 */
                 $siteParams = $cmd;
             }
             elseif( is_string($cmd) )

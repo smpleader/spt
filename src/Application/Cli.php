@@ -116,7 +116,7 @@ class Cli extends Base
                 unset($cmd['fnc']);
                 unset($cmd['description']);
                 /**
-                 * TODO: filter commands based script name | bypass key | group
+                 * TODO: filter commands based script name $_SERVER['SCRIPT_FILENAME'] | bypass key | group
                  */
                 $siteParams = $cmd;
             }

@@ -20,28 +20,9 @@ class Pdo
 	protected $connection;
 	public $connected = false; 
 
-	function __construct(array $config, array $parameters=array()){
-
-
+	function __construct(array $config, array $parameters=array())
+	{
 		$driver = isset($config['driver']) ? $config['driver'] : 'mysql';
-
-		/* TODO: those code is redundancy
-		if(!count($parameters))
-		{
-			if(isset($config['options']))
-			{
-				$parameters = $config['options'];
-			}
-			else if(isset($config['parameters']))
-			{
-				$parameters = $config['parameters'];
-			}	
-		}
-
-		if(!is_array($parameters))
-		{
-			throw new \Exception('Invalid database parameters');	
-		}*/
 
 		$this->connection = Connector::load($driver, $config, $parameters);
 		$this->connected = is_object($this->connection);
@@ -226,7 +207,7 @@ class Pdo
 	}
 }
 
-/*
+/* -- MANUAL --
 
 $db = new db("localhost", "root", "password", "database");
 

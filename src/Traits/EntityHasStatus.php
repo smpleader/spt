@@ -32,7 +32,7 @@ trait EntityHasStatus
             $status = $action;
         }
 
-        return $this->db->table( $this->table )->update([
+        return $this->table->update([
             'status' => $status,
         ], ['id' => $id ]);
     }

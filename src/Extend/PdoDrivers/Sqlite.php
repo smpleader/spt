@@ -16,8 +16,18 @@ class Sqlite extends Connection
 {
     public function __construct(array $config)
     {
-        $this->host = isset($config['host']) ? $config['host'] : '';
-        $this->database = isset($config['database']) ? $config['database'] : '';
+        $arr = [
+            'host' => 'localhost',
+            //'username' => 'root',
+            //'password' => '',
+            'database' => ''
+        ];
+
+        foreach($arr as $key => $default)
+        {
+            $this->{$key} = isset($config[$key]) ? $config[$key] : $default;
+        }
+
         if(empty($this->database))
         {
             if(empty($this->host))
@@ -26,10 +36,6 @@ class Sqlite extends Connection
             }
             $this->database = $this->host;
         }
-
-        $this->username = isset($config['username']) ? $config['username'] : 'root';
-        $this->password = isset($config['password']) ? $config['password'] : '';
-        $this->port = '';
     }
 
     public function toString()

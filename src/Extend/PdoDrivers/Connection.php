@@ -20,7 +20,7 @@ class Connection
     protected string $username;
     protected string $password;
     protected string $database;
-    protected $pdo;
+    protected \PDO $pdo;
 
     public function toString()
     {

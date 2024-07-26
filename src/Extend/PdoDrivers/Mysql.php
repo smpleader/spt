@@ -18,12 +18,19 @@ class Mysql extends Connection
 
     public function __construct(array $config)
     {
-        $this->host = isset($config['host']) ? $config['host'] : 'localhost';
-        $this->username = isset($config['username']) ? $config['username'] : 'root';
-        $this->password = isset($config['password']) ? $config['password'] : '';
-        $this->database = isset($config['database']) ? $config['database'] : '';
-        $this->port = isset($config['port']) ? $config['port'] : '3306';
-        $this->charset = isset($config['charset']) ? $config['charset'] : 'utf8mb4';
+        $arr = [
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => '',
+            'port' => '3306',
+            'charset' => 'utf8mb4'
+        ];
+
+        foreach($arr as $key => $default)
+        {
+            $this->{$key} = isset($config[$key]) ? $config[$key] : $default;
+        }
 
         if(empty($this->database) || empty($this->host))
         {

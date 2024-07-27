@@ -22,6 +22,7 @@ class Entity
     protected $db; 
     protected $table;
     protected $pk; 
+    protected $fields = []; 
 
     public function __construct(Query $query, array $options = [])
     {
@@ -36,6 +37,11 @@ class Entity
         {
             $this->pk = $options['pk'];
         }
+
+        if(isset($options['fields']))
+        {
+            $this->fields = $options['fields'];
+        }
     }
 
     public function logs()
@@ -45,7 +51,7 @@ class Entity
 
     public function getFields()
     {
-        return [];
+        return $this->fields;
     }
 
     public function findOne(array $where, $select = '*')

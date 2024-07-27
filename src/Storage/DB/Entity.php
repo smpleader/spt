@@ -205,8 +205,7 @@ class Entity
     }
 
     public function checkAvailability()
-    {
-        
+    {        
         $fields_db = $this->table->tableExists() ? $this->table->structureTable() : [];
         $fields = $this->getFields();
 

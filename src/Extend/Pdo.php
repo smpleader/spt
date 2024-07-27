@@ -11,11 +11,12 @@
 namespace SPT\Extend;
 
 use SPT\Traits\Log as LogTrait;
+use SPT\Traits\ErrorString as ErrorTrait;
 use SPT\Extend\PdoDrivers\Connector;
 
 class Pdo
 {
-	use LogTrait;
+	use LogTrait, ErrorTrait;
 
 	protected $connection;
 	public $connected = false; 
@@ -34,17 +35,19 @@ class Pdo
 		$this->connection = null;
 	}
 
-	public function error($error, $sql, $input)
+	public function setError($msg, $sql, $input)
 	{
-		$this->addLog('** Error !!', $error);
+		$this->error = $msg;
+		$this->addLog("\n** Error: \n", $msg);
 		$this->log($sql, $input);
+		$this->addLog("\n** ---- \n");
 		return false;
 	}
 
 	public function log($sql, $input)
 	{
-		$this->addLog('>> Run SQL:', $sql);
-		$this->addLog('>> Inputed value:', $input);
+		$this->addLog("\n>> Run SQL: \n", $sql);
+		$this->addLog("\n>> Inputed value: \n", $input);
 	}
 
 	public function fetch($query, $parameters = array()){
@@ -58,7 +61,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->error($e->getMessage(), $query, $parameters);
+				return $this->setError($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -76,7 +79,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->error($e->getMessage(), $query, $parameters);
+				return $this->setError($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -94,7 +97,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->error($e->getMessage(), $query, $parameters);
+				return $this->setError($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -113,7 +116,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->error($e->getMessage(), $query, $parameters);
+				return $this->setError($e->getMessage(), $query, $parameters);
 			}
 		}
 
@@ -131,7 +134,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->error($e->getMessage(), $query, '--');
+				return $this->setError($e->getMessage(), $query, '--');
 			}
 		}
 		
@@ -151,7 +154,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->error($e->getMessage(), $query, $parameters);
+				return $this->setError($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -182,7 +185,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->error($e->getMessage(), $query, $parameters);
+				return $this->setError($e->getMessage(), $query, $parameters);
 			}
 		}
 		
@@ -199,7 +202,7 @@ class Pdo
 			}
 			catch(\PDOException $e)
 			{
-				return $this->error($e->getMessage(), "SHOW TABLES LIKE '$table'", $table);
+				return $this->setError($e->getMessage(), "SHOW TABLES LIKE '$table'", $table);
 			}
 		}
 		

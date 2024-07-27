@@ -743,6 +743,28 @@ class Query
     }
 
     /**
+     * Check table exists 
+     *
+     * @param string  $table 
+     *  
+     * @return array 
+     */ 
+    public function tableExists($table = null)
+    {
+        if( null === $table )
+        {
+            if( empty($this->table) )
+            {
+                return false;
+            }
+
+            $table = $this->table;
+        }
+        
+        return $this->db->fetch( 'SHOW TABLES LIKE "'. substr( $table, 1, -1 ).'"' );
+    }
+
+    /**
      * Get columns belongs to a table
      * Available with Mysql, PostgreSQl
      *

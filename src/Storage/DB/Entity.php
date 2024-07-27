@@ -140,7 +140,7 @@ class Entity
 
     protected function prepareSelect($select='*')
     {
-        return $this->table->select( $select )->table( $this->table );
+        return $this->table->select( $select );
     }
 
     public function list( $start, $limit, array $where = [], $order = '', $select = '')
@@ -172,7 +172,7 @@ class Entity
 
     public function dropTable()
     {
-        return $this->table->exec('DROP TABLE '. $this->table);
+        return $this->table->exec('DROP TABLE '. $this->tableName);
     }
 
     public function countTotalRow()
@@ -207,7 +207,7 @@ class Entity
     public function checkAvailability()
     {
         
-        $fields_db = $this->table->structureTable();
+        $fields_db = $this->table->tableExists() ? $this->table->structureTable() : [];
         $fields = $this->getFields();
 
         //check type fields in database and update type fields
@@ -329,11 +329,11 @@ class Entity
         {
             if( $fields_db )
             {
-                return $this->table->alterTable($fields_build, $this->table);
+                return $this->table->alterTable($fields_build, $this->tableName);
             }
             else
             {
-                return $this->table->createTable($fields_build, $this->table);
+                return $this->table->createTable($fields_build, $this->tableName);
             }
         }
         

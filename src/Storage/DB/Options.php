@@ -14,26 +14,9 @@ use SPT\Query;
 
 class Options extends Entity
 { 
-    protected $table = 'spt_options';
+    protected $tableName = 'spt_options';
     protected $pk = 'id';
     protected $cache;
-
-    public function __construct(Query $query, array $options = [])
-    {
-        $this->db = $query;
-
-        if(isset($options['table']))
-        {
-            $this->table = $options['table'];
-        }
-
-        if(isset($options['pk']))
-        {
-            $this->pk = $options['pk'];
-        }
-
-        $this->db->checkAvailability();
-    }
 
     public function getFields()
     {
@@ -71,7 +54,7 @@ class Options extends Entity
             $serialized = 0;
         }
 
-        $this->db->updateIfExist(['data'=>$data, 'serialized'=>$serialized], ['name'=>$name]);
+        $this->table->updateIfExist(['data'=>$data, 'serialized'=>$serialized], ['name'=>$name]);
 
         $this->cache[$name] = $value;
     }
@@ -80,7 +63,7 @@ class Options extends Entity
 	{
         if(isset($this->cache[$name])) return $this->cache[$name];
 
-		if ($try = $this->db->findOne(['name'=>$name], 'data, datatype'))
+		if ($try = $this->table->findOne(['name'=>$name], 'data, datatype'))
 		{
             $this->cache[$name] = $try->serialized ? unserialize($try->data) : $try->data;
             return $this->cache[$name];

@@ -19,18 +19,19 @@ class Entity
 {
     use \SPT\Traits\ErrorString;
 
-    protected $db; 
-    protected $table;
-    protected $pk; 
-    protected $fields = []; 
+    protected Query $query; 
+    protected Query $table; 
+    protected string $tableName;
+    protected string $pk; 
+    protected array $fields = []; 
 
     public function __construct(Query $query, array $options = [])
     {
-        $this->db = $query;
-        
-        if(isset($options['table']))
+        $this->query = $query;
+
+        if(isset($options['tableName']))
         {
-            $this->table = $options['table'];
+            $this->tableName = $options['tableName'];
         }
 
         if(isset($options['pk']))
@@ -42,11 +43,13 @@ class Entity
         {
             $this->fields = $options['fields'];
         }
+
+        $this->table = $this->query->table($this->tableName);
     }
 
-    public function logs()
+    public function getLog()
     {
-        return $this->db->getLog();
+        return $this->query->getLog();
     }
 
     public function getFields()
@@ -56,7 +59,7 @@ class Entity
 
     public function findOne(array $where, $select = '*')
     {
-        return count($where) ? $this->db->table( $this->table )->detail($where, $select ) : false;
+        return count($where) ? $this->table->detail($where, $select ) : false;
     }
     
     public function findByPK( $pk, $select = '*')
@@ -95,8 +98,8 @@ class Entity
         $data = $this->fill( $data );
 
         return count($where) ? 
-            $this->db->table( $this->table )->insertOnce($data, $where) :
-            $this->db->table( $this->table )->insert($data);
+            $this->table->insertOnce($data, $where) :
+            $this->table->insert($data);
     }
 
     public function update( $data, array $where = [])
@@ -127,17 +130,17 @@ class Entity
             return false;
         }
 
-        return $this->db->table( $this->table )->update($data, $where);
+        return $this->table->update($data, $where);
     }
 
     public function remove( $id )
     {   
-        return $this->db->table( $this->table )->delete( [$this->pk => $id ] );
+        return $this->table->delete( [$this->pk => $id ] );
     }
 
     protected function prepareSelect($select='*')
     {
-        return $this->db->select( $select )->table( $this->table );
+        return $this->table->select( $select )->table( $this->table );
     }
 
     public function list( $start, $limit, array $where = [], $order = '', $select = '')
@@ -159,22 +162,22 @@ class Entity
 
     public function getListTotal()
     {
-        return $this->db->total();
+        return $this->table->total();
     }
 
     public function truncate()
     {
-        return $this->db->table( $this->table )->truncate();
+        return $this->table->truncate();
     }
 
     public function dropTable()
     {
-        return $this->db->exec('DROP TABLE '. $this->table);
+        return $this->table->exec('DROP TABLE '. $this->table);
     }
 
     public function countTotalRow()
     {
-        return $this->db->table( $this->table)->countTotalRow($this->pk);
+        return $this->table->countTotalRow($this->pk);
     }
 
     public function column(array $list, string $col, $allowEmpty = [])
@@ -204,7 +207,7 @@ class Entity
     public function checkAvailability()
     {
         
-        $fields_db = $this->db->table($this->table)->structureTable();
+        $fields_db = $this->table->structureTable();
         $fields = $this->getFields();
 
         //check type fields in database and update type fields
@@ -326,11 +329,11 @@ class Entity
         {
             if( $fields_db )
             {
-                return $this->db->alterTable($fields_build, $this->table);
+                return $this->table->alterTable($fields_build, $this->table);
             }
             else
             {
-                return $this->db->createTable($fields_build, $this->table);
+                return $this->table->createTable($fields_build, $this->table);
             }
         }
         
@@ -407,6 +410,6 @@ class Entity
     public function removeBulks(array $ids, $field = null)
     {
         if( empty($field) ) $field = $this->pk;
-        $this->db->table( $this->table )->delete([ $field => $ids]);
+        $this->table->delete([ $field => $ids]);
     }
 }

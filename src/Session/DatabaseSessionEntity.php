@@ -22,7 +22,7 @@ class DatabaseSessionEntity extends Entity
 
     public function __construct(Query $query, array $options = [])
     {
-        $this->db = $query;
+        $this->query = $query;
 
         if(isset($options['tableName']))
         {
@@ -39,7 +39,7 @@ class DatabaseSessionEntity extends Entity
             $this->pk = $options['pk'];
         }
 
-        $this->checkAvailability();
+        $this->table = $this->query->table($this->tableName);
     }
 
     public function getFields()

@@ -44,7 +44,7 @@ class Entity
             $this->fields = $options['fields'];
         }
 
-        $this->table = $this->query->table($this->tableName);
+        $this->table = $this->query->getActiveRecord($this->tableName);
     }
 
     public function getLog()

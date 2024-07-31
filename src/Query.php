@@ -43,25 +43,31 @@ class Query
      * Internal string to keep database quotation 
      * @var string $qq
      */
-    protected $qq;
+    protected string $qq;
 
     /**
      * Internal string to keep table name in current query, mostly use for main table
      * @var string $table
      */
-    protected $table;
+    protected string $table;
+
+    /**
+     * Instance to stick to a table or not
+     * @var bool is active record
+     */
+    protected readonly bool $activerecord;
 
     /**
      * Internal array to keep table's fields in current query
      * @var array $fields
      */
-    protected $fields;
+    protected array $fields;
 
     /**
      * Internal array to keep query joins senetence
      * @var array $join
      */
-    protected $join;
+    protected array $join;
 
     /**
      * Internal array to keep query where conditions
@@ -114,12 +120,21 @@ class Query
      * 
      * @return void
      */ 
-    public function __construct(PDOWrapper $db, array $prefix, $fquota='`')
+    public function __construct(PDOWrapper $db, array $prefix, $fquota='`', $tableName='')
     {
         $this->db = $db;
         $this->prefix = $prefix;
         $this->qq = $fquota;
         $this->total = 0;
+        if($tableName)
+        {
+            $this->table($tableName);
+            $this->activerecord = true;
+        }
+        else
+        {
+            $this->activerecord = false;
+        }
         $this->reset();
     }
 
@@ -131,7 +146,6 @@ class Query
     protected function reset()
     {
         $this->query = '';
-        $this->table = '';
         $this->fields = [];
         $this->join = [];
         $this->where = [];
@@ -140,6 +154,7 @@ class Query
         $this->groupby = '';
         $this->limit = '';
         $this->countTotal = false;
+        if(!$this->activerecord) $this->table = '';
     }
 
     /**
@@ -975,5 +990,19 @@ class Query
     public function countTotalRow($ct='*')
     {
         return $this->db->fetchColumn('SELECT COUNT('. $ct. ') FROM '. $this->prefix($this->table));
+    }
+
+
+    /**
+     * Get an active record based a table
+     *
+     * @param string  $tableName 
+     *  
+     * @return Query  
+     */ 
+
+    public function getActiveRecord(string $tableName)
+    {
+        return new self($this->db, $this->prefix, $this->qq, $tableName);
     }
 }

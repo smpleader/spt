@@ -39,7 +39,7 @@ class DatabaseSessionEntity extends Entity
             $this->pk = $options['pk'];
         }
 
-        $this->table = $this->query->table($this->tableName);
+        $this->table = $this->query->getActiveRecord($this->tableName);
     }
 
     public function getFields()

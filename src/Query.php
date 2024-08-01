@@ -687,6 +687,16 @@ class Query
     }
 
     /**
+     * A way to get error from PDO
+     *  
+     * @return array Alias to database error
+     */ 
+    public function getError()
+    {
+        return $this->db->getError();
+    }
+
+    /**
      * A way to insert record once
      * 0 means there is existing one 
      *

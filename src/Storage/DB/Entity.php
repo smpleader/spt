@@ -52,6 +52,11 @@ class Entity
         return $this->query->getLog();
     }
 
+    public function getError()
+    {
+        return $this->query->getError();
+    }
+
     public function getFields()
     {
         return $this->fields;

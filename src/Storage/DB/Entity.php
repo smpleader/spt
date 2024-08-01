@@ -101,6 +101,10 @@ class Entity
         }
 
         $data = $this->fill( $data );
+        if($this->pk)
+        {
+            unset($data[$this->pk]);
+        }
 
         return count($where) ? 
             $this->table->insertOnce($data, $where) :

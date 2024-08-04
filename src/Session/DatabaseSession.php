@@ -66,4 +66,9 @@ class DatabaseSession implements SessionAdapter
             'data' => json_encode($this->session),
         ], ['session_id' =>  $this->session_id]);
     }
+
+    public function id()
+    {
+        return $this->session_id;
+    }
 }

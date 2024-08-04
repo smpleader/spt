@@ -18,6 +18,7 @@ class DatabaseSessionEntity extends Entity
 { 
     protected string $tableName = '#__spt_sessions';
     protected string $pk = 'session_id';
+    protected bool $skipPkWhenInsert=true; 
     protected $user;
 
     public function __construct(Query $query, array $options = [])

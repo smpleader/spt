@@ -17,23 +17,23 @@ class DatabaseSession implements SessionAdapter
 {
     private $session = array();
     private $session_id = false;
-    private $table;
+    private $entity;
 
-    public function __construct(DatabaseSessionEntity $table, string $session_id)
+    public function __construct(DatabaseSessionEntity $entity, string $session_id)
     {
-        $this->table = $table;
+        $this->entity = $entity;
         $this->session_id = $session_id;
         $this->reload();
     }
 
     public function reload($username = false, $userid = 0)
     {
-        $data = $this->table->findOne( ['session_id' =>  $this->session_id]);
+        $data = $this->entity->findOne( ['session_id' =>  $this->session_id]);
         $this->session = $data ? json_decode($data['data'], true) : [];
         
         if(empty($data))
         {
-            $this->table->add( [
+            $this->entity->add( [
                 'session_id' =>  $this->session_id,
                 'created_at' => strtotime("now"),
                 'modified_at' => strtotime("now"),
@@ -44,7 +44,7 @@ class DatabaseSession implements SessionAdapter
         }
         elseif( false !== $username )
         {
-            $this->table->update([
+            $this->entity->update([
                 'modified_at' => strtotime("now"),
                 'username' => $username,
                 'user_id' => $userid 
@@ -54,14 +54,14 @@ class DatabaseSession implements SessionAdapter
 
     public function get(string $key, $default = null)
     {
-        if('_logs' == $key) return $this->table->logs();
+        if('_logs' == $key) return $this->entity->getLog();
         return isset($this->session[$key]) ? $this->session[$key] : $default;
     }
     
     public function set(string $key, $value)
     {
         $this->session[$key] = $value;
-        $try = $this->table->update([
+        $try = $this->entity->update([
             'modified_at' => strtotime("now"),
             'data' => json_encode($this->session),
         ], ['session_id' =>  $this->session_id]);

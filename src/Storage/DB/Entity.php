@@ -23,6 +23,7 @@ class Entity
     protected Query $table; 
     protected string $tableName;
     protected string $pk; 
+    protected bool $skipPkWhenInsert=false; 
     protected array $fields = []; 
 
     public function __construct(Query $query, array $options = [])
@@ -101,7 +102,7 @@ class Entity
         }
 
         $data = $this->fill( $data );
-        if($this->pk)
+        if($this->pk && !$this->skipPkWhenInsert)
         {
             unset($data[$this->pk]);
         }

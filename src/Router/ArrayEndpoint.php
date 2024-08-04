@@ -11,11 +11,13 @@
 namespace SPT\Router;
 
 use SPT\Support\FncArray;
+use SPT\Support\Filter;
 use SPT\Application\IRouter;
 
 class ArrayEndpoint extends Base implements IRouter
 {
     protected $nodes;
+    protected array $_slugs;
 
     public function __construct(string $siteSubpath = '', string $protocol = '')
     {
@@ -152,7 +154,8 @@ class ArrayEndpoint extends Base implements IRouter
 
             if(isset($intruction['parameters']))
             {
-                $request->set('urlVars', $this->parseUrl($intruction['parameters']));
+                $this->_slugs = $this->parseUrl($intruction['parameters']);
+                $request->set('urlVars', $this->_slugs); // support old version
                 unset($intruction['parameters']);
             }
 
@@ -190,5 +193,11 @@ class ArrayEndpoint extends Base implements IRouter
         }
 
         return [$fnc, $parameters];
+    }
+
+    public function slug($name, $format=null)
+    {
+        $value = isset($this->_slugs[$name]) ? $this->_slugs[$name] : null;
+        return null === $format ? $value : Filter::{$format}($value);
     }
 }

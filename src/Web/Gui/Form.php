@@ -26,22 +26,37 @@ class Form
      * 
      * @var array $fields
      */
-    protected $fields;
+    protected array $fields;
 
     /**
      * Array list of field name
      * 
      * @var array $fieldIds
      */
-    protected $fieldIds;
+    protected array $fieldIds;
+
+    /**
+     * Token for field name
+     * 
+     * @var string $prefix
+     */
+    protected string $prefix;
 
     /**
      * Constructor
      * 
      * @return void
      */
-    public function __construct(array $fields, array $record = [] )
+    public function __construct(array $fields, array $record = [], string $prefix = '')
     {
+        $parent = '';
+        $this->prefix = $prefix;
+        if($prefix && strpos($prefix, '[') === 0)
+        {
+            $parent = substr($prefix, 1, -1);
+            $prefix = '';
+        } 
+
         foreach($fields as $id => $field)
         {
             $className = '\SPT\Web\Gui\FieldType\Input';
@@ -64,8 +79,20 @@ class Form
             $default = isset($field['default']) ? $field['default'] : NULL;
             $field['value'] = isset($record[$id]) ? $record[$id] : $default;
             $field['type'] = isset($field['type']) ? $field['type'] : $type;
+            $field_id = $id;
 
-            $this->fields[$id] = new $className($id, $field);
+            if($parent)
+            {
+                $field_id = $parent. '_'. $id;
+                $field['name'] = $parent. '['. $id. ']';
+            }
+            elseif($prefix)
+            {
+                $field_id = $prefix. '_'. $id;
+                $field['name'] = $prefix. '_'. $id;
+            }
+
+            $this->fields[$id] = new $className($field_id, $field);
             $this->fieldIds[] = $id;
         }
         $this->record = $record;

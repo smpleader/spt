@@ -163,7 +163,7 @@ class ViewComponent
 
             if(false === $field)
             {
-                return '<!-- None field found -->';
+                return '!! <!-- No field found -->';
             } 
         }
         else
@@ -172,7 +172,7 @@ class ViewComponent
 
             if(false === $field)
             {
-                return '<!-- Field "'. $name. '" not found -->';
+                return '!! <!-- Field "'. $name. '" not found -->';
             } 
 
             if(!isset($field->layout))

@@ -47,6 +47,7 @@ class Base extends ACore implements IApp
     {
         $this->plgManager = new Manager( $this, $this->packages );
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
+        $this->plgManager->call('all')->run('Bootstrap', 'afterInitialize');
     }
 
     public function useDatabase($db='database.mysql')

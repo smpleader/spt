@@ -149,21 +149,38 @@ class ViewComponent
         $form = $this->form($formName);
         if(!$form) return '';
         
-        $layout = false;
+        $field = false;
         if(null === $name)
         {
             if($form->hasField())
             {
                 $field = $form->getField();
-                $layout = $field->layout ? $field->layout : __DIR__.'/FieldWithoutLayout.php';
+                if(!isset($field->layout))
+                {
+                    return '!! <!-- Field '. $field->type. ' ('. $field->id. ') needs a layout -->';
+                }
             }
+
+            if(false === $field)
+            {
+                return '<!-- None field found -->';
+            } 
         }
         else
         {
             $field = $form->getField($name);
-            $layout = $field->layout ? $field->layout : __DIR__.'/FieldWithoutLayout.php';
+
+            if(false === $field)
+            {
+                return '<!-- Field "'. $name. '" not found -->';
+            } 
+
+            if(!isset($field->layout))
+            {
+                return '!! <!-- Field '. $field->type. ' ('. $field->id. ') needs a layout -->';
+            }
         }
 
-        return $this->_layout->render( $layout, ['field'=>$field], 'vcom');
+        return $this->_layout->render( $field->layout, ['field'=>$field], 'vcom');
     }
 }

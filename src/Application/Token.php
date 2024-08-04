@@ -28,9 +28,9 @@ class Token
     public function __construct(Configuration $config, Request $request)
     {
         $now = strtotime('now');
-        $this->secrect = $config->empty('secrect') ? $now : $config->secrect;
+        $this->secrect = $config->exists('secrect') ? $config->secrect : '__NO_PRODUCT_MODE__';
         $this->request = $request;
-        $expireDuration = $config->empty('expireSessionDuration') ? $this->expireSessionDuration : $config->expireSessionDuration;
+        $expireDuration = $config->exists('expireSessionDuration') ? $config->expireSessionDuration : $this->expireSessionDuration;
         $expireDuration = (int)$expireDuration * 60; // seconds
         
         $cookie = $request->cookie->get($this->secrect, '_do_not_set_');

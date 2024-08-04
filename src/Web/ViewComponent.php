@@ -155,13 +155,13 @@ class ViewComponent
             if($form->hasField())
             {
                 $field = $form->getField();
-                $layout = $field->layout ? $field->layout : 'core::fields.'. $field->type;
+                $layout = $field->layout ? $field->layout : __DIR__.'/FieldWithoutLayout.php';
             }
         }
         else
         {
             $field = $form->getField($name);
-            $layout = $field->layout ? $field->layout : 'core::fields.'. $field->type;
+            $layout = $field->layout ? $field->layout : __DIR__.'/FieldWithoutLayout.php';
         }
 
         return $this->_layout->render( $layout, ['field'=>$field], 'vcom');

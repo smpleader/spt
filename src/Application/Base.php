@@ -70,6 +70,36 @@ class Base extends ACore implements IApp
         }
     }
 
+    public function useSPTCore()
+    {
+        // use SPT request
+        $this->request = Request::instance(); 
+        if( !$this->container->exists('request') )
+        {
+            $this->container->set('request', $this->request);
+        }
+
+        // use SPT router
+        $subPath = $this->config->exists('subpath') ? $this->config->subpath : '';
+        $this->router = new Router($subPath, '');
+        if( !$this->container->exists('router') )
+        {
+            $this->container->set('router', $this->router);
+        }
+
+        // use SPT config 
+        if( !$this->container->exists('config') )
+        {
+            $this->container->set('config', $this->config);
+        }
+
+        // use token
+        if( !$this->container->exists('token') )
+        {
+            $this->container->set('token', new Token($this->config, $this->request));
+        }
+    }
+
     public function execute(string | array $parameters = []){}
 
     public function redirect(string $url, $code = 302)

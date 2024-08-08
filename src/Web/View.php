@@ -58,6 +58,12 @@ class View
     protected $mainLayout = '';
 
     /**
+    * Internal variable to cache main layout content
+    * @var string $mainContent
+    */
+    protected $mainContent = '';
+
+    /**
     * Internal variable for current plugin name, this is important for a view
     * @var string $currentPlugin
     */    
@@ -235,12 +241,13 @@ class View
      * @param string   $page theme layout file name
      * @param string   $layout layout name
      * @param array   $data array of data, keep as global variable
+     * @param bool   $prepareMain trigger the main process before build a page
      * 
      * @throw Exception   If renderPage called twice or theme is not exist
      * 
      * @return string
      */
-    public function renderPage(string $page, string $layout, array $data = [])
+    public function renderPage(string $page, string $layout, array $data = [], bool $prepareMain = true)
     {
         if($this->mainLayout)
         {
@@ -278,8 +285,13 @@ class View
             }
         }
 
-        $layout = new ViewLayout($file, $this);
-        return $layout->_render();
+        $vlayout = new ViewLayout($file, $this);
+        if($prepareMain)
+        {
+            $this->mainContent = $vlayout->render($layout);
+        }
+
+        return $vlayout->_render();
     }
 
     /**
@@ -314,5 +326,13 @@ class View
         );
         
         return $layout->_render();
+    }
+
+    /**
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->mainContent;
     }
 }

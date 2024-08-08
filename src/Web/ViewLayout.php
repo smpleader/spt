@@ -60,6 +60,7 @@ class ViewLayout extends BaseObj
     { 
         if('theme' == $name) return $this->_view->getTheme();
         if('ui' == $name) return $this->_view->getViewComponent($this);
+        if('mainContent' == $name) return $this->_view->getContent();
         // try local 
         if( isset( $this->_vars[$name] ) ) return $this->_vars[$name];
         // try global

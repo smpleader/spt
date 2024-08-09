@@ -38,6 +38,8 @@ class Filter
                     return (array) $value;
                 case 'cmd': // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result. 
                     return preg_replace('/[^A-Z0-9_\.-]/i', '', $value);
+                case 'title': // Allow a-z, 0-9, underscore, dot, dash, space. 
+                    return preg_replace('/[^\w\-_\.\s]/i', '', $value);
                 case 'base64': // Allow a-z, 0-9, slash, plus, equals.
                     return preg_replace('/[^A-Z0-9\/+=]/i', '', $value);
             default: // raw

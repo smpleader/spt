@@ -44,7 +44,7 @@ class Controller extends Client
 
         if( $themePath && $theme )
         {
-            $_themePath .= '/'. $theme. '/'; 
+            $_themePath .= $themePath. $theme. '/'; 
             $_overrides = [
                 'layout' => [
                     $themePath. '_layouts/'. $plugin. '/',

@@ -42,24 +42,39 @@ class Controller extends Client
             $paths[$plgName] = $d['path'];
         }
 
-        if( $themePath && $theme )
+        if( $theme )
         {
-            $_themePath .= $themePath. $theme. '/'; 
+            if(file_exists($theme))
+            {
+                $_themePath = $theme;
+            }
+            elseif(file_exists($themePath. '/'. $theme))
+            {
+                $_themePath = $themePath. '/'. $theme;
+            }
+            else
+            {
+                throw new \Exception('Invalid theme '.$theme. ' or theme path '. $themePath);
+            }
+
+            $_themePath .= '/';
+
             $_overrides = [
                 'layout' => [
-                    $themePath. '_layouts/'. $plugin. '/',
+                    $_themePath. '_layouts/'. $plugin. '/',
                     $pluginPath. 'views/layouts/'
                 ],
                 'widget' => [
-                    $themePath.'_widgets/__PLG__/',
+                    $_themePath.'_widgets/__PLG__/',
                     '__PLG_PATH__/views/widgets/'
                 ],
                 'vcom' => [
-                    $themePath.'_vcoms/__PLG__/',
+                    $_themePath.'_vcoms/__PLG__/',
                     '__PLG_PATH__/views/vcoms/'
                 ],
                 '_path' => $paths
             ];
+
         }
         else
         {

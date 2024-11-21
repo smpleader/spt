@@ -25,6 +25,7 @@ class Entity
     protected string $pk; 
     protected bool $skipPkWhenInsert=false; 
     protected array $fields = []; 
+    protected int $_total = 0; 
 
     public function __construct(Query $query, array $options = [])
     {
@@ -167,12 +168,16 @@ class Entity
             $list->orderby($order);
         }
 
-        return $list->countTotal(true)->list( $start, $limit);
+        $result = $list->countTotal(true)->list( $start, $limit);
+        // Importance: since PHP 8.3 "return this" will clone new instance 
+        $this->_total = $list->total();
+        return $result;
     }
 
     public function getListTotal()
     {
-        return $this->table->total();
+        return $this->_total ;
+        //$this->table->total() will not work because of new variable $list
     }
 
     public function truncate()

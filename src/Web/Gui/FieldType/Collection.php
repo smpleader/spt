@@ -13,6 +13,13 @@ namespace SPT\Web\Gui\FieldType;
 class Collection extends Input
 {
     /**
+     * A character for separator
+     * 
+     * @var string $separator
+     */
+    public $separator;
+
+    /**
      * Constructor
      * 
      * @return void 

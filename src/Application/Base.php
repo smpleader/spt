@@ -25,7 +25,7 @@ class Base extends ACore implements IApp
 
     public function __construct(IContainer $container, Configuration $config, string $namespace = 'App')
     {
-        $config->exists('packages') or  die('System path not exists');
+        $config->exists('packages') or  die('Package is required in the configuration.');
         
         $_pkg = $config->packages instanceof \SPT\MagicObj ?  $config->packages->toArray() : (array) $config->packages;
         foreach($_pkg as $path=>$namespace)

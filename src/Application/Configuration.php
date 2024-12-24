@@ -28,13 +28,13 @@ class Configuration extends MagicObj
      */
     protected $_path = '';
 
-    public function __construct(string $pathConfig)
+    public function __construct(string $pathConfig = '')
     {
-        file_exists($pathConfig) or die('Configuration path not found');
+        '' == $pathConfig || file_exists($pathConfig) || die('Invalid configuration path '.$pathConfig);
 
         $this->_vars = [];
         $this->_path = $pathConfig;
-        $this->import($pathConfig, $this);
+        if('' != $pathConfig) $this->import($pathConfig, $this);
     }
 
     public function import(string $path)

@@ -12,6 +12,7 @@
 namespace SPT\Application;
  
 use SPT\Router\ArrayEndpoint as Router;
+use SPT\Request\Singleton as Request;
 use SPT\Response;
 use SPT\Query;
 use SPT\Extend\Pdo;
@@ -37,6 +38,9 @@ class Base extends ACore implements IApp
         $this->packages = $_pkg;
         $this->container = $container;
         $this->config = $config;
+        $this->request = Request::instance(); 
+        $subPath = $this->config->exists('subpath') ? $this->config->subpath : '';
+        $this->router = new Router($subPath, '');
 
         $this->envLoad();
 
@@ -45,9 +49,35 @@ class Base extends ACore implements IApp
 
     protected function envLoad()
     {
+        $this->container->set('app', $this);
+
         $this->plgManager = new Manager( $this, $this->packages );
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
         $this->plgManager->call('all')->run('Bootstrap', 'afterInitialize');
+
+        // use SPT request if not set
+        if( !$this->container->exists('request') )
+        {
+            $this->container->set('request', $this->request);
+        }
+
+        // use SPT router if not set
+        if( !$this->container->exists('router') )
+        {
+            $this->container->set('router', $this->router);
+        }
+
+        // use SPT config  if not set
+        if( !$this->container->exists('config') )
+        {
+            $this->container->set('config', $this->config);
+        }
+
+        // use token if not set
+        if( !$this->container->exists('token') )
+        {
+            $this->container->set('token', new Token($this->config, $this->request));
+        }
     }
 
     public function useDatabase($db='database.mysql')

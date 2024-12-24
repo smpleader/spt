@@ -18,37 +18,6 @@ class Cli extends Base
 {
     private $_commands;
 
-    public function envLoad()
-    {
-        // setup container
-        $this->container->set('app', $this);
-
-        // private properties
-        parent::envLoad(); 
-    }
-
-    public function useSPTCore()
-    {
-        // use SPT request
-        $this->request = Request::instance(); 
-        if( !$this->container->exists('request') )
-        {
-            $this->container->set('request', $this->request);
-        }
-
-        // use SPT config 
-        if( !$this->container->exists('config') )
-        {
-            $this->container->set('config', $this->config);
-        }
-
-        // use token
-        if( !$this->container->exists('token') )
-        {
-            $this->container->set('token', new Token($this->config, $this->request));
-        }
-    }
-
     private function getCLICommands()
     {
         if(null === $this->_commands)

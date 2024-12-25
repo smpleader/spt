@@ -38,23 +38,28 @@ class Base extends ACore implements IApp
         $this->packages = $_pkg;
         $this->container = $container;
         $this->config = $config;
-        $this->request = Request::instance(); 
-        $subPath = $this->config->exists('subpath') ? $this->config->subpath : '';
-        $this->router = new Router($subPath, '');
-
-        $this->envLoad();
+        $this->request = Request::instance();  
+        $this->router = new Router(
+            $this->config->of('system.subpath', ''),
+            $this->config->of('system.ssl', '')
+        );
 
         return $this;
     }
 
-    protected function envLoad()
+    public function intialize(Clousre? $beforePlugin = null, Clousre? $afterPlugin = null)
     {
         $this->container->set('app', $this);
+
+        $beforePlugin();
 
         $this->plgManager = new Manager( $this, $this->packages );
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
         $this->plgManager->call('all')->run('Bootstrap', 'afterInitialize');
 
+        $afterPlugin();
+
+        // TODO: move those into Support/App
         // use SPT request if not set
         if( !$this->container->exists('request') )
         {
@@ -80,6 +85,7 @@ class Base extends ACore implements IApp
         }
     }
 
+    // TODO: move this into Support/App
     public function useDatabase($db='database.mysql')
     {
         $container = $this->getContainer();

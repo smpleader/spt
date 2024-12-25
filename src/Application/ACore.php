@@ -71,6 +71,7 @@ abstract class ACore
         return $this->container->get($name);
     }
 
+    // TODO: consider a better way 
     public function any(string $key, string $cfgName = '', $default = null)
     {
         if(isset($this->_vars[$key]))
@@ -80,7 +81,7 @@ abstract class ACore
 
         if(!$cfgName) return $default;
 
-        return $this->config->of($cfgName);
+        return $this->config->of($cfgName, $default);
     }
 
     public function input($key, string $method = '')

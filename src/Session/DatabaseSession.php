@@ -4,7 +4,7 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: PHP Session
+ * @description: Database Session
  * 
  */
 
@@ -12,14 +12,15 @@ namespace SPT\Session;
 
 use SPT\Session\Adapter as SessionAdapter;
 use SPT\Query;
+use SPT\Storage\DB\Session as SessionEntity;
 
 class DatabaseSession implements SessionAdapter
 {
     private $session = array();
     private $session_id = false;
-    private $entity;
+    private SessionEntity $entity;
 
-    public function __construct(DatabaseSessionEntity $entity, string $session_id)
+    public function __construct(SessionEntity $entity, string $session_id)
     {
         $this->entity = $entity;
         $this->session_id = $session_id;
@@ -54,7 +55,7 @@ class DatabaseSession implements SessionAdapter
 
     public function get(string $key, $default = null)
     {
-        if('_logs' == $key) return $this->entity->getLog();
+        if('_logs' == $key) return $this->entity->query->getLog();
         return isset($this->session[$key]) ? $this->session[$key] : $default;
     }
     

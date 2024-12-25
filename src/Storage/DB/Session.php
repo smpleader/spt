@@ -8,18 +8,15 @@
  * 
  */
 
-namespace SPT\Session;
+namespace SPT\Storage\DB;
 
-use SPT\Storage\DB\Entity;
-use SPT\Query; 
-use SPT\Session\Adapter as SessionAdapter;
+use SPT\Query;
 
-class DatabaseSessionEntity extends Entity
+class Session extends Entity
 { 
     protected string $tableName = '#__spt_sessions';
     protected string $pk = 'session_id';
     protected bool $skipPkWhenInsert=true; 
-    protected $user;
 
     public function __construct(Query $query, array $options = [])
     {
@@ -28,11 +25,6 @@ class DatabaseSessionEntity extends Entity
         if(isset($options['tableName']))
         {
             $this->tableName = $options['tableName'];
-        }
-
-        if(isset($options['user']))
-        {
-            $this->user = $options['user'];
         }
 
         if(isset($options['pk']))

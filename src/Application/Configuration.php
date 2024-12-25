@@ -73,7 +73,7 @@ class Configuration extends MagicObj
     } 
 
     // Get value of configuraton by key token format a.b.c
-    public function of(string $key)
+    public function of(string $key, $default = NULL)
     {
         $tmp = explode('.', $key);
 
@@ -83,20 +83,20 @@ class Configuration extends MagicObj
         {
             if($var instanceof MagicObj)
             {
-                if(!$var->isset($k)) return NULL;
+                if(!$var->isset($k)) return $default;
                 $var = $var->{$k};
             }
             elseif( is_array($var))
             {
-                if(!isset($var[$k]))  return NULL;
+                if(!isset($var[$k]))  return $default;
                 $var = $var[$k];
             }
             elseif( is_object($var))
             {
-                if( !isset($var->{$k}) ) return NULL;
+                if( !isset($var->{$k}) ) return $default;
                 $var = $var->{$k};
             }
-            else return NULL;
+            else return $default;
         }
 
         return $var;

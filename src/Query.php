@@ -116,15 +116,15 @@ class Query
      *
      * @param PDOWrapper $db  SPT\Extend\Pdo object to work with database
      * @param array     $prefix Table prefix(es) array
-     * @param string     $fquota Database quatation information
+     * @param string     $quote Database quote information
      * 
      * @return void
      */ 
-    public function __construct(PDOWrapper $db, array $prefix, $fquota='`', $tableName='')
+    public function __construct(PDOWrapper $db, array $prefix, $quote='`', $tableName='')
     {
         $this->db = $db;
         $this->prefix = $prefix;
-        $this->qq = $fquota;
+        $this->qq = $quote;
         $this->total = 0;
         if($tableName)
         {

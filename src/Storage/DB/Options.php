@@ -14,7 +14,7 @@ use SPT\Query;
 
 class Options extends Entity
 { 
-    protected $tableName = 'spt_options';
+    protected $tableName = '#__spt_options';
     protected $pk = 'id';
     protected $cache;
 

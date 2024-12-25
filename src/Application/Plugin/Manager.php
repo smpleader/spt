@@ -37,7 +37,8 @@ class Manager
     // ALWAYS HAS slash AT END OF PARAMETER !!!
     protected function add(string $path, string $namespace)
     {
-        if( file_exists($path. 'about.php') ) // a solution
+        // a solution
+        if( file_exists($path. 'about.php') ) 
         {
             foreach(new \DirectoryIterator($path) as $item) 
             {
@@ -48,7 +49,8 @@ class Manager
                 }
             }
         }
-        elseif( file_exists($path. 'registers') && is_dir($path. 'registers') ) // a plugin
+        // a plugin
+        elseif( file_exists($path. 'registers') && is_dir($path. 'registers') ) 
         {
             $name = basename($path);
             $installer = $namespace. '\\registers\\Installer';

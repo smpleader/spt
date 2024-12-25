@@ -19,7 +19,7 @@ class Entity
 {
     use \SPT\Traits\ErrorString;
 
-    protected Query $query; 
+    public Query $query; 
     protected Query $table; 
     protected string $tableName;
     protected string $pk; 
@@ -47,16 +47,6 @@ class Entity
         }
 
         $this->table = $this->query->getActiveRecord($this->tableName);
-    }
-
-    public function getLog()
-    {
-        return $this->query->getLog();
-    }
-
-    public function getError()
-    {
-        return $this->query->getError();
     }
 
     public function getFields()

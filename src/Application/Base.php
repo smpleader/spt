@@ -22,20 +22,24 @@ use SPT\Application\Plugin\Manager;
 class Base extends ACore implements IApp
 {
     protected $plgManager;
-    protected $packages;
 
     public function __construct(IContainer $container, Configuration $config, string $namespace = 'App')
     {
-        $config->exists('packages') or  die('Package is required in the configuration.');
-        
-        $_pkg = $config->packages instanceof \SPT\MagicObj ?  $config->packages->toArray() : (array) $config->packages;
-        foreach($_pkg as $path=>$namespace)
+        $packages =  $config->of('system.packages');
+        if(!is_array($packages))
         {
-            if(!file_exists($path)) die ('Invalid package '. $namespace);
+            die('Package is required in the configuration.');
+        }
+        
+        foreach($packages as $path=>$_namespace)
+        {
+            if(!is_string($path) || !is_string($_namespace) || !file_exists($path))
+            {
+                die ('Invalid package '. $_namespace);
+            }
         }
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
-        $this->packages = $_pkg;
         $this->container = $container;
         $this->config = $config;
         $this->request = Request::instance();  
@@ -47,62 +51,22 @@ class Base extends ACore implements IApp
         return $this;
     }
 
-    public function intialize(Clousre? $beforePlugin = null, Clousre? $afterPlugin = null)
+    public function intialize($beforePlugin = null, $afterPlugin = null)
     {
         $this->container->set('app', $this);
 
-        $beforePlugin();
+        if( is_callable($beforePlugin))
+        {
+            $beforePlugin($this);
+        }
 
-        $this->plgManager = new Manager( $this, $this->packages );
+        $this->plgManager = new Manager( $this, $this->config->of('system.packages') );
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
         $this->plgManager->call('all')->run('Bootstrap', 'afterInitialize');
 
-        $afterPlugin();
-
-        // TODO: move those into Support/App
-        // use SPT request if not set
-        if( !$this->container->exists('request') )
+        if( is_callable($afterPlugin))
         {
-            $this->container->set('request', $this->request);
-        }
-
-        // use SPT router if not set
-        if( !$this->container->exists('router') )
-        {
-            $this->container->set('router', $this->router);
-        }
-
-        // use SPT config  if not set
-        if( !$this->container->exists('config') )
-        {
-            $this->container->set('config', $this->config);
-        }
-
-        // use token if not set
-        if( !$this->container->exists('token') )
-        {
-            $this->container->set('token', new Token($this->config, $this->request));
-        }
-    }
-
-    // TODO: move this into Support/App
-    public function useDatabase($db='database.mysql')
-    {
-        $container = $this->getContainer();
-
-        if( !$this->container->exists('query') )
-        {
-            
-            $pdo = new Pdo( $this->config->of($db) );
-            if(!$pdo->connected)
-            {
-                $this->raiseError('Connection failed.', 'DatabaseConnectFailed'); 
-            }
-
-            $prefix = $this->config->exists($db.'.prefix') ? ['#__' => $this->config->of($db.'.prefix') ] : [];
-
-            $query = new Query( $pdo, $prefix);
-            $this->container->set('query', $query);
+            $afterPlugin($this);
         }
     }
 

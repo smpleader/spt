@@ -27,10 +27,11 @@ use SPT\Session\Instance as Session;
 use SPT\Session\PhpSession;
 use SPT\Session\DatabaseSession;
 use SPT\Storage\DB\Session as SessionEntity;
+use SPT\Application\Token as AppToken;
 
 class App
 {
-    private IApp $_instance;
+    private static IApp $_instance;
     private static function checkInstance() 
     {
         if(null === self::$_instance)
@@ -45,9 +46,9 @@ class App
         return self::$_instance;
     }
 
-    public static function createInstance(IContainer $container, string $configPath = '', $beforeInit = null, $afterInit = null) 
+    public static function createInstance(IContainer $container, string $configPath = '', $beforeInit = 1, $afterInit = null) 
     {
-        if(null === self::$_instance)
+        if( !isset( self::$_instance) )
         {
             $config = new Configuration( $configPath );
             $className =  $config->of('system.application.type', '\SPT\Application\Web');
@@ -65,7 +66,7 @@ class App
                     throw new \Exception('Invalid SPT Application');
                 }
 
-                if(null === $beforeInit && null === $afterInit)
+                if(1 === $beforeInit)
                 {
                     $beforeInit = ['\SPT\Support\App', 'defaultInit'];
                 }
@@ -91,63 +92,83 @@ class App
     { 
         $container = $ins->getContainer();
         $appConfig = $ins->getConfig();
+        $foundConfig = false;
         $config = $appConfig->of('system.boot');
 
         if($config instanceof MagicObj)
         {
-            if( $config->get('request', true) && !$container->exists('request') )
+            $foundConfig = true;
+            $useRequest = $config->get('request', true);
+            $useRouter = $config->get('router', true);
+            $useToken = $config->get('token', true);
+            $useQuery = $config->get('query', false);
+            $useSession = $config->get('session', false);
+            $database = $config->get('database', false);
+        }
+        elseif( is_array($config) )
+        {
+            $foundConfig = true;
+            $useRequest = $config['request'] ?? true;
+            $useRouter = $config['router'] ?? true;
+            $useToken = $config['token'] ?? true;
+            $useQuery = $config['query'] ?? false;
+            $useSession = $config['session'] ?? false;
+            $database = $config['database'] ?? false;
+        }
+
+        if($foundConfig)
+        {
+            if( $useRequest && !$container->exists('request') )
             {
                 $container->set('request', $ins->getRequest());
             }
     
-            if( $config->get('router', true) &&  !$container->exists('router') )
+            if( $useRouter &&  !$container->exists('router') )
             {
                 $container->set('router', $ins->getRouter());
             }
     
-            if( !$container->exists('config') )
+            if( $useToken &&  !$container->exists('token') )
             {
-                $container->set('config', $appConfig);
+                $container->set('token', new AppToken($appConfig, $ins->getRequest()));
             }
     
-            if( $config->get('token', true) &&  !$container->exists('token') )
+            if( $useQuery && is_array($database) &&  !$container->exists('query') )
             {
-                $container->set('token', new Token($config, $ins->getRequest()));
-            }
-    
-            if( $config->get('query', false) &&
-                $config->get('database', false) &&  
-                !$container->exists('query') )
-            {
-                $database = $config->get('database');
-                $pdo = new Pdo(  );
+                $pdo = new Pdo( $database );
                 if(!$pdo->connected)
                 {
                     die('Connection failed.'); 
                 }
 
-                $prefix = isset($database['prefix']) ? $database['prefix'] : [];
+                $prefix = $database['prefix'] ?? [];
+                if(is_string($prefix)) $prefix = ['#__' => $prefix];
     
                 $query = new Query( $pdo, $prefix);
-                $this->container->set('query', $query);
+                $container->set('query', $query);
     
-                if( $config->get('session', false) &&
-                    !$container->exists('session') )
+                if( $useSession && !$container->exists('session') )
                 {
-                    $container->set('session', 
-                        new Session( 
-                            new DatabaseSession( 
-                                new SessionEntity($container->get('query')),
-                                $container->get('token')->value()
+                    if( $useToken )
+                    {
+                        $container->set('session', 
+                            new Session( 
+                                new DatabaseSession( 
+                                    new SessionEntity($container->get('query')),
+                                    $container->get('token')->value()
+                                )
                             )
-                        )
-                    );
+                        );
+                    }
+                    else
+                    {
+                        $container->set('session', new Session( new PhpSession()));
+                    }
                 }
             }
             else
             {
-                if( $config->get('session', false) &&
-                    !$container->exists('session') )
+                if( $useSession  &&  !$container->exists('session') )
                 {
                     $container->set('session', new Session( new PhpSession()));
                 }

@@ -24,8 +24,6 @@ class ControllerNoTemplate extends Controller
             $this->app->raiseError('Invalid current plugin');
         }
 
-        $themePath = $this->app->any('themePath', 'theme.path', '');
-        $theme = $this->app->any('theme', 'theme.default', '');
         $listPlg = $this->app->plugin(true);
         $paths = [];
         foreach($listPlg as $plgName => $d)

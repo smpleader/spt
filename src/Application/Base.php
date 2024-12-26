@@ -47,11 +47,12 @@ class Base extends ACore implements IApp
             $this->config->of('system.subpath', ''),
             $this->config->of('system.ssl', '')
         );
+        $this->plgManager = new Manager( $this, $this->config->of('system.packages') );
 
         return $this;
     }
 
-    public function intialize($beforePlugin = null, $afterPlugin = null)
+    public function initialize($beforePlugin = null, $afterPlugin = null)
     {
         $this->container->set('app', $this);
 
@@ -60,7 +61,6 @@ class Base extends ACore implements IApp
             $beforePlugin($this);
         }
 
-        $this->plgManager = new Manager( $this, $this->config->of('system.packages') );
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
         $this->plgManager->call('all')->run('Bootstrap', 'afterInitialize');
 

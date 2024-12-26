@@ -22,10 +22,9 @@ class ControllerNoTemplate extends Controller
         /**
          * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
          */
-        $pluginPath = $this->app->get('pluginPath');
-        //$plugin = $this->app->get('currentPlugin');
-        $themePath = $this->app->get('themePath', '');
-        $theme = $this->app->any('theme', 'defaultTheme', '');
+        $pluginPath = $this->app->get('pluginPath'); 
+        $themePath = $this->app->any('themePath', 'theme.path' '');
+        $theme = $this->app->any('theme', 'theme.default', '');
         $listPlg = $this->app->plugin(true);
         $paths = [];
         foreach($listPlg as $plgName => $d)

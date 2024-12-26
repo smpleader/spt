@@ -55,6 +55,7 @@ class Base extends ACore implements IApp
     public function initialize($beforePlugin = null, $afterPlugin = null)
     {
         $this->container->set('app', $this);
+        $this->container->set('config', $this->config);
 
         if( is_callable($beforePlugin))
         {

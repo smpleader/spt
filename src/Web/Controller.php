@@ -33,7 +33,7 @@ class Controller extends Client
          */
         $pluginPath = $this->app->get('pluginPath');
         $plugin = $this->app->get('currentPlugin');
-        $themePath = $this->app->any('themePath', 'theme.path' '');
+        $themePath = $this->app->any('themePath', 'theme.path', '');
         $theme = $this->app->any('theme', 'theme.default', '');
         $listPlg = $this->app->plugin(true);
         $paths = [];

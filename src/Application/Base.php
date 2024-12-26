@@ -44,8 +44,8 @@ class Base extends ACore implements IApp
         $this->config = $config;
         $this->request = Request::instance();  
         $this->router = new Router(
-            $this->config->of('system.subpath', ''),
-            $this->config->of('system.ssl', '')
+            $this->config->of('router.subpath', ''),
+            $this->config->of('router.ssl', '')
         );
         $this->plgManager = new Manager( $this, $this->config->of('system.packages') );
 

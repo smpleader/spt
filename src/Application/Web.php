@@ -32,10 +32,10 @@ class Web extends Base
     {
         $this->routing();
 
-        if( $this->config->exists('homeEndpoint') )
+        if( $this->config->exists('router.home') )
         {
             $this->router->import([
-                '' => $this->config->of('homeEndpoint')
+                '' => $this->config->of('router.home')
             ]);
         }
 

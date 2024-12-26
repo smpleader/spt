@@ -28,6 +28,7 @@ use SPT\Session\PhpSession;
 use SPT\Session\DatabaseSession;
 use SPT\Storage\DB\Session as SessionEntity;
 use SPT\Application\Token as AppToken;
+use SPT\Web\Controller;
 
 class App
 {
@@ -174,6 +175,36 @@ class App
                 }
             }
         }
+    }
+
+    public static function createController(string $className, $pluginName = ''): Controller
+    {
+        $app = self::getInstance();
+        if(!class_exists($className))
+        {
+            $app->raiseError('Invalid controller '. $className);
+        }
+
+        $controller = new $controller($app->getContainer());
+
+        if(!($controller instanceof Controller))
+        {
+            $app->raiseError('Prohibited controller '. $className);
+        }
+
+        $plugin = $app->plugin($pluginName);
+        if(false === $plugin)
+        {
+            $app->raiseError(
+                empty($pluginName) ? 'Invalid main plugin' : 'Invalid plugin '.$pluginName
+            );
+        }
+        
+        $app->set('currentPlugin', $plugin['name']);
+        $app->set('namespace', $plugin['namespace']);
+        $app->set('pluginPath', $plugin['path']);
+
+        return $controller;
     }
 
     public static function addModel(string $path, string $namespace)

@@ -24,13 +24,6 @@ class Web extends Base
         $this->plgManager->call('all')->run('routing', 'registerEndpoints', false, function ($endpoints) use ($router){
             $router->import($endpoints);
         });
-        
-        $this->plgManager->call('all')->run('routing', 'afterRouting');
-    }
-
-    public function execute( string | array $_parameters = [])
-    {
-        $this->routing();
 
         if( $this->config->exists('router.home') )
         {
@@ -38,6 +31,13 @@ class Web extends Base
                 '' => $this->config->of('router.home')
             ]);
         }
+        
+        $this->plgManager->call('all')->run('routing', 'afterRouting');
+    }
+
+    public function execute( string | array $_parameters = [])
+    {
+        $this->routing();
 
         try{
 

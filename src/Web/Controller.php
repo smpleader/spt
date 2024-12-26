@@ -24,14 +24,14 @@ class Controller extends Client
     protected $supportMVVM = false;
 
     protected function getTheme()
-    {
-        // mainPlugin | childPlugin -> currentPlugin
-        $this->setCurrentPlugin();
-            
-        /**
-         * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
-         */
-        $pluginPath = $this->app->get('pluginPath');
+    {   
+        $pluginPath = $this->app->get('pluginPath', '_NOT_SET_'); 
+        if('_NOT_SET_' === $pluginPath)
+        {
+            // Carefully check SPT\Support\App::createController()
+            $this->app->raiseError('Invalid current plugin');
+        }
+
         $plugin = $this->app->get('currentPlugin');
         $themePath = $this->app->any('themePath', 'theme.path', '');
         $theme = $this->app->any('theme', 'theme.default', '');
@@ -146,40 +146,5 @@ class Controller extends Client
         $view = $this->getView();
 
         return $view->renderLayout($layout, $data);
-    }
-
-    /**
-     * Set plugin information, after Dispatcher found and dispatch the process
-     *
-     * @param string   $name  plugin name
-     * @param bool    $silent through exception if a plugin is aleardy set
-     * 
-     * @throws Exception if plugin not found or plugin is already set 
-     * @return bool 
-     */ 
-    public function setCurrentPlugin(string $name = '', $silent=true)
-    {
-        $current = $this->app->get('currentPlugin', true);
-        if(true === $current)
-        {
-            // set plugin info
-            $plugin = $this->app->plugin($name);
-            if(false === $plugin)
-            {
-                throw new \Exception('Can not set current plugin with '.$name);
-            }
-            $this->app->set('currentPlugin', $plugin['name']);
-            $this->app->set('namespace', $plugin['namespace']);
-            $this->app->set('pluginPath', $plugin['path']);
-        }
-        else
-        {
-            if(!$silent)
-            {
-                throw new \Exception('Can not set current plugin twice');
-            }
-            return false;
-        }
-        return true;
     }
 }

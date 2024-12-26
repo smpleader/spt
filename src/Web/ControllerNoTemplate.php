@@ -17,12 +17,13 @@ class ControllerNoTemplate extends Controller
 {
     protected function getTheme()
     {
-        $this->setCurrentPlugin();
-        
-        /**
-         * NOTICE those values are available after setCurrentPlugin() or plugin/registers/Dispatcher process
-         */
-        $pluginPath = $this->app->get('pluginPath'); 
+        $pluginPath = $this->app->get('pluginPath', '_NOT_SET_'); 
+        if('_NOT_SET_' === $pluginPath)
+        {
+            // Carefully check SPT\Support\App::createController()
+            $this->app->raiseError('Invalid current plugin');
+        }
+
         $themePath = $this->app->any('themePath', 'theme.path', '');
         $theme = $this->app->any('theme', 'theme.default', '');
         $listPlg = $this->app->plugin(true);

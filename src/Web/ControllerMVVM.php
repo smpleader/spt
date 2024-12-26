@@ -52,12 +52,16 @@ class ControllerMVVM extends Controller
      * @return void 
      */ 
     public function registerViewModels(array $vms = array())
-    { 
-        $this->setCurrentPlugin();
+    {
+        $plgName = $this->app->get('currentPlugin', '_NOT_SET_');
+        if('_NOT_SET_' === $plgName)
+        {
+            // Carefully check SPT\Support\App::createController()
+            $this->app->raiseError('Invalid current plugin');
+        }
         
         if(!count($vms))
         {
-            $plgName = $this->app->get('currentPlugin');
             $vms = $this->app->getVMList($plgName);
         }
         $container = $this->getContainer();

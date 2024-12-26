@@ -23,14 +23,14 @@ class Token
     private $request;
     private $storage;
     private $keyLength = 9;
-    private $expireSessionDuration = 30;
+    private $defaultExpireDuration = 30;
 
     public function __construct(Configuration $config, Request $request)
     {
         $now = strtotime('now');
-        $this->secrect = $config->exists('secrect') ? $config->secrect : '__NO_PRODUCT_MODE__';
+        $this->secrect = $config->of('session.secrect') ?? '__NO_PRODUCT_MODE__';
         $this->request = $request;
-        $expireDuration = $config->exists('expireSessionDuration') ? $config->expireSessionDuration : $this->expireSessionDuration;
+        $expireDuration = $config->of('session.duration') ?? $this->defaultExpireDuration;
         $expireDuration = (int)$expireDuration * 60; // seconds
         
         $cookie = $request->cookie->get($this->secrect, '_do_not_set_');

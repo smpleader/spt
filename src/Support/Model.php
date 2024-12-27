@@ -25,16 +25,4 @@ class Model
             $alias
         );
     }
-
-    public static function loadFolder(string $path, string $namespace)
-    {
-        var_dump($path, 
-        $namespace);
-        $container = App::getInstance()->getContainer();
-        Loader::findClass( 
-            $path, 
-            $namespace, 
-            function($classname, $fullname) { \SPT\Support\Model::containerize($classname, $fullname, '');}
-        );
-    }
 }

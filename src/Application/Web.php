@@ -34,21 +34,6 @@ class Web extends Base
         $this->plgManager->call('all')->run('routing', 'afterRouting');
     }
 
-    protected function dispatch($pluginName)
-    {
-        $plugin = $this->plgManager->getDetail($pluginName);
-
-        if(false === $plugin)
-        {
-            $this->raiseError('Invalid plugin '.$pluginName, 500);
-        }
-        
-        $this->set('mainPlugin', $plugin);
-        App::prepareLibraries($plugin);
-
-        return $this->plgManager->call($pluginName)->run('Dispatcher', 'dispatch', true);
-    }
-
     public function execute( string | array $_parameters = [])
     {
         $this->routing();
@@ -103,7 +88,9 @@ class Web extends Base
                 $this->plgManager->call('all')->run('Routing', 'isHome');
             }
 
-            $this->dispatch($pluginName);
+            $this->prepareDispatch($pluginName);
+
+            return $this->plgManager->call($pluginName)->run('Dispatcher', 'dispatch', true);
 
         }
         catch (\Exception $e) 

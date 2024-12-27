@@ -132,6 +132,72 @@ class Base extends ACore implements IApp
                 );
     }
 
+    protected function prepareDispatch(string $pluginName)
+    {
+        $plugin = $this->plgManager->getDetail($pluginName);
+
+        if(false === $plugin)
+        {
+            $this->raiseError('Invalid plugin '.$pluginName, 500);
+        }
+        
+        $this->set('mainPlugin', $plugin);
+        $list = $plugin['dependencies'];
+
+        // check if package is ready
+        // packages must be added in Bootstrap::initialize
+        if(is_array($list['packages']))
+        {
+            foreach($list['packages'] as $name)
+            {
+                if( !$container->exists($name) )
+                {
+                    $app->raiseError('Plugin '. $plugin['name']. ' requires an instance of '. $namee);
+                }
+            }
+        }
+
+        $loop = [
+            'models' =>  '\SPT\Support\Model::containerize',
+            'entities' => '\SPT\Support\Entity::containerize',
+            'viewmodels' => '\SPT\Support\ViewModel::containerize'
+        ];
+
+        foreach($loop as $obj=>$fnc)
+        {
+            if(is_array($list[$obj]))
+            {   
+                foreach($list[$obj] as $cfgArr)
+                {
+                    list($path, $name, $alias) = $cfgArr;
+                    if(file_exists($path))
+                    {
+                        if(is_dir($path))
+                        {
+                            Loader::findClass( $path, $name,
+                                function($classname, $fullname) use ($fnc) { 
+                                    $fnc($classname, $fullname, '');
+                                }
+                            );
+                        }
+                        elseif(class_exists($path))
+                        {
+                            $fnc( $name, $path, $alias );
+                        }
+                    }
+                }
+            }
+            elseif(false !== $list[$obj])
+            {
+                Loader::findClass( $plugin['path']. $obj, $plugin['namespace']. '\\'. $obj,
+                    function($classname, $fullname) use ($fnc) { 
+                        $fnc($classname, $fullname, '');
+                    }
+                );
+            }
+        }
+    }
+
     /**
      * 
      *  SUPPORT MVVM ENGINE

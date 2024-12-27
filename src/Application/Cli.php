@@ -105,16 +105,7 @@ class Cli extends Base
         {
             $this->raiseError('Not correct routing');
         } 
-        
-        list($pluginName, $controller, $function) = $try;
 
-        $plugin = $this->plgManager->getDetail($pluginName);
-
-        if(false === $plugin)
-        {
-            $this->raiseError('Invalid plugin '.$pluginName, 500);
-        }
-            
         if(count($siteParams))
         {
             foreach($siteParams as $key => $value)
@@ -122,10 +113,13 @@ class Cli extends Base
                 $this->set($key, $value);
             }
         }
+        
+        list($pluginName, $controller, $function) = $try;
 
-        $this->set('mainPlugin', $plugin);
         $this->set('controller', $controller);
         $this->set('function', $function);
+        
+        $this->prepareDispatch($pluginName);
 
         return $this->plgManager->call($pluginName)->run('Dispatcher', 'terminal', true);
     }

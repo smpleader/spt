@@ -25,14 +25,4 @@ class Entity
             $alias
         );
     }
-
-    public static function loadFolder(string $path, string $namespace)
-    {
-        $container = App::getInstance()->getContainer();
-        Loader::findClass( 
-            $path, 
-            $namespace, 
-            function($classname, $fullname) { \SPT\Support\Entity::containerize($classname, $fullname, '');}
-        );
-    }
 }

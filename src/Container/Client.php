@@ -67,30 +67,4 @@ abstract class Client
 
         throw new \RuntimeException('Invalid Container Service '.$name, 500);
     }
-
-    /**
-     * Easily way to containerize a class
-     */
-    public function containerize(string $classname, string $fullname, IContainer $container, \Closure $getInstance, ?string $alias = '')
-    {
-        if($this->container->exists($classname) && !empty($alias))
-        {
-            $this->container->alias( $alias, $fullname);
-        }
-        elseif ( !$this->container->exists($classname) && class_exists($fullname) )
-        {
-            $ins = $getInstance($fullname, $this->container);
-            if(!($ins instanceof $fullname))
-            {
-                die('Invalid object when containerize '. $classname);
-            } 
-
-            $this->container->share( $classname, $ins, true);
-
-            if(!empty($alias))
-            {
-                $container->alias( $alias, $fullname);
-            }
-        }
-    }
 }

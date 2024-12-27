@@ -15,10 +15,11 @@ use SPT\Router\ArrayEndpoint as Router;
 use SPT\Response;
 use SPT\Container\IContainer;
 use SPT\Request\Base as Request;
-use SPT\MagicObj;
+use SPT\Traits\ObjectHasInternalData;
 
 abstract class ACore
 {
+    use ObjectHasInternalData;
     protected $namespace;
     public function getNamespace()
     {
@@ -51,18 +52,6 @@ abstract class ACore
     public function getConfig()
     {
         return $this->config;
-    }
-
-    // -- Variables --
-    protected array $_vars = [];
-    public function get($key, $default = null)
-    {
-        return isset($this->_vars[$key]) ? $this->_vars[$key] : $default;
-    }
-
-    public function set($key, $value)
-    {
-        $this->_vars[$key] = $value;
     }
 
     // -- Shortcut :: no factory pattern

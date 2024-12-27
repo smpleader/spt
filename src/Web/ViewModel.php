@@ -11,9 +11,11 @@
 namespace SPT\Web;
 
 use SPT\Container\Client;
+use SPT\Traits\ObjectHasInternalData;
 
 class ViewModel extends Client
 {
+    use ObjectHasInternalData;
     /**
      * Get a state from a session
      * 

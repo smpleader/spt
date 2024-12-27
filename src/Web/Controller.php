@@ -12,9 +12,11 @@ namespace SPT\Web;
 
 use SPT\Application\IApp;
 use SPT\Container\Client;   
+use SPT\Traits\ObjectHasInternalData;
 
 class Controller extends Client
 {
+    use ObjectHasInternalData;
     /**
      * Internal variable to check if we apply MVVM or not
      * This is important for View

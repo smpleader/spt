@@ -67,21 +67,4 @@ abstract class Client
 
         throw new \RuntimeException('Invalid Container Service '.$name, 500);
     }
-
-    protected $_vars = []; 
-
-    public function get($key, $default = null)
-    {
-        return isset( $this->_vars[$key] ) ? $this->_vars[$key] : $default; 
-    }
-
-    public function set($key, $value)
-    {
-        $this->_vars[$key] = $value;
-    }
-
-    public function getAll()
-    {
-        return $this->_vars;
-    }
 }

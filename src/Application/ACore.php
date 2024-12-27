@@ -61,16 +61,16 @@ abstract class ACore
     }
 
     // TODO: consider a better way 
-    public function any(string $key, string $cfgName = '', $default = null)
+    public function any(string $key, string $keyInConfig = '', $default = null)
     {
         if(isset($this->_vars[$key]))
         {
             return $this->_vars[$key];
         }
 
-        if(!$cfgName) return $default;
+        if(!$keyInConfig) return $default;
 
-        return $this->config->of($cfgName, $default);
+        return $this->config->of($keyInConfig, $default);
     }
 
     public function input($key, string $method = '')

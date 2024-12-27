@@ -34,7 +34,7 @@ class Web extends Base
         $this->plgManager->call('all')->run('routing', 'afterRouting');
     }
 
-    protected function dispatch($pluginName, $controller, $function)
+    protected function dispatch($pluginName)
     {
         $plugin = $this->plgManager->getDetail($pluginName);
 
@@ -44,7 +44,7 @@ class Web extends Base
         }
         
         $this->set('mainPlugin', $plugin);
-        App::addLibraries($plugin);
+        App::prepareLibraries($plugin);
 
         return $this->plgManager->call($pluginName)->run('Dispatcher', 'dispatch', true);
     }

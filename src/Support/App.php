@@ -185,7 +185,7 @@ class App
             $app->raiseError('Invalid controller '. $className);
         }
 
-        $controller = new $controller($app->getContainer());
+        $controller = new $className($app->getContainer());
 
         if(!($controller instanceof Controller))
         {
@@ -234,7 +234,7 @@ class App
             $classname. 'Model', 
             $fullname,
             $container,
-            function($fullname, $container) { return new $fullname($container) }, 
+            function($fullname, $container) { return new $fullname($container); }, 
             $alias
         );
     }
@@ -259,7 +259,7 @@ class App
             $classname. 'Entity', 
             $fullname,
             $container,
-            function($fullname, $container) { return new $fullname($container->get('query')) }, 
+            function($fullname, $container) { return new $fullname($container->get('query')); }, 
             $alias
         );
     }
@@ -284,9 +284,7 @@ class App
             $classname. 'VM', 
             $fullname,
             $container,
-            function($fullname, $container) { 
-                //return new $fullname($container->get('query')) 
-            }, 
+            function($fullname, $container) { return new $fullname($container);}, 
             $alias
         );
     }
@@ -375,7 +373,7 @@ class App
             }
             elseif(false !== $list[$obj])
             {
-                self::$fnc1($plugin['path'].'/'.$obj, $plugin['namespace']. '\\'. ucfirst($obj));
+                self::$fnc1($plugin['path'].'/'.$obj, $plugin['namespace']. '\\'. ucfirst($obj), $container, null);
             }
         }
 /*

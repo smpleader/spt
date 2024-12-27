@@ -17,7 +17,7 @@ class Joomla extends Container implements IContainer
     /**
      * Easily way to containerize a class
      */
-    public function containerize(string $classname, string $fullname, \Closure $getInstance, ?string $alias = '')
+    public function containerize(string $classname, string $fullname, $getInstance, ?string $alias = '')
     {
         if ( $this->exists($classname) && !empty($alias))
         {
@@ -25,7 +25,16 @@ class Joomla extends Container implements IContainer
         }
         elseif ( !$this->exists($classname) && class_exists($fullname))
         {
-            $ins = $getInstance($fullname, $this);
+            $ins = false;
+            if(is_callable($getInstance))
+            {
+                $ins = $getInstance($fullname, $this);
+            }
+            elseif(is_object($getInstance))
+            {
+                $ins = $getInstance;
+            }
+            
             if(!($ins instanceof $fullname))
             {
                 throw new \RuntimeException('Invalid object when containerize '. $classname);

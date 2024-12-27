@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Env
+ * SPT software - Support/App
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: support to check environment information
+ * @description: comfortable way to use Application
  * 
  * Configuration keys:
  * - system.application.type: instance type of IApp
@@ -207,33 +207,11 @@ class App
         return $controller;
     }
 
-    public static function containerize(string $classname, string $fullname, IContainer $container, \Closure $getIns, ?string $alias = '')
-    {
-        if($container->exists($classname) && !empty($alias))
-        {
-            $container->alias( $alias, $fullname);
-        }
-        elseif ( !$container->exists($classname) && class_exists($fullname) )
-        {
-            $ins = $getIns($fullname, $container);
-            if(!($ins instanceof $fullname))
-            {
-                die('Invalid object when containerize '. $classname);
-            } 
-            $container->share( $classname, $ins, true);
-            if(!empty($alias))
-            {
-                $container->alias( $alias, $fullname);
-            }
-        }
-    }
-
     public static function addModel(string $classname, string $fullname, IContainer $container, ?string $alias)
     {
-        \SPT\Support\App::containerize(
+        $container->containerize(
             $classname. 'Model', 
             $fullname,
-            $container,
             function($fullname, $container) { return new $fullname($container); }, 
             $alias
         );
@@ -255,10 +233,9 @@ class App
 
     public static function addEntity(string $classname, string $fullname, IContainer $container, ?string $alias)
     {
-        \SPT\Support\App::containerize(
+        $container->containerize(
             $classname. 'Entity', 
             $fullname,
-            $container,
             function($fullname, $container) { return new $fullname($container->get('query')); }, 
             $alias
         );
@@ -280,10 +257,9 @@ class App
 
     public static function addViewModel(string $classname, string $fullname, IContainer $container, ?string $alias)
     {
-        \SPT\Support\App::containerize(
+        $container->containerize(
             $classname. 'VM', 
             $fullname,
-            $container,
             function($fullname, $container) { return new $fullname($container);}, 
             $alias
         );
@@ -346,10 +322,11 @@ class App
         }
 
         $loop = [
-            'models'=>['addModel', 'addModels'],
-            'entities'=>['addEntity', 'addEntities'],
-            'viewmodels'=>['addViewModel', 'addViewModels'],
+            'models' => ['\SPT\Support\Model::containerize', '\SPT\Support\Model::loadFolder'],
+            'entities' => ['\SPT\Support\Entity::containerize', '\SPT\Support\Entity::loadFolder'],
+            'viewmodels' => ['\SPT\Support\ViewModel::containerize', '\SPT\Support\ViewModel::loadFolder'],
         ];
+
         foreach($loop as $obj=>$arr)
         {
             list($fnc1, $fnc2) = $arr;
@@ -362,18 +339,18 @@ class App
                     {
                         if(is_dir($path))
                         {
-                            self::$fnc2($path, $name);
+                            $fnc2( $path, $name);
                         }
                         elseif(class_exists($path))
                         {
-                            self::$fnc1($name, $path, $container, $alias);
+                            $fnc1( $name, $path, $alias);
                         }
                     }
                 }
             }
             elseif(false !== $list[$obj])
             {
-                self::$fnc1($plugin['path'].'/'.$obj, $plugin['namespace']. '\\'. ucfirst($obj), $container, null);
+                $fnc2( $plugin['path'].'/'.$obj, $plugin['namespace']. '\\'. ucfirst($obj));
             }
         }
 /*

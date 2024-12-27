@@ -207,7 +207,64 @@ class App
         return $controller;
     }
 
-    public static function addModel(string $path, string $namespace)
+    public static function containerize(string $classname, string $fullname, IContainer $container, \Closure $getIns, ?string $alias = '')
+    {
+        if($container->exists($classname) && !empty($alias))
+        {
+            $container->alias( $alias, $fullname);
+        }
+        elseif ( !$container->exists($classname) && class_exists($fullname) )
+        {
+            $ins = $getIns($fullname, $container);
+            if(!($ins instanceof $fullname))
+            {
+                die('Invalid object when containerize '. $classname);
+            } 
+            $container->share( $classname, $ins, true);
+            if(!empty($alias))
+            {
+                $container->alias( $alias, $fullname);
+            }
+        }
+    }
+
+    public static function addModel(string $classname, string $fullname, IContainer $container, ?string $alias)
+    {
+        \SPT\Support\App::containerize(
+            $classname. 'Model', 
+            $fullname,
+            $container,
+            function($fullname, $container) { return new $fullname($container) }, 
+            $alias
+        );
+    }
+
+    public static function addModels(string $path, string $namespace)
+    {
+        $app = self::getInstance();
+        $container = $app->getContainer();
+        Loader::findClass( 
+            $path, 
+            $namespace, 
+            function($classname, $fullname) use ($container)
+            {
+                \SPT\Support\App::addModel($classname, $fullname, $container, '');
+            }
+        );
+    }
+
+    public static function addEntity(string $classname, string $fullname, IContainer $container, ?string $alias)
+    {
+        \SPT\Support\App::containerize(
+            $classname. 'Entity', 
+            $fullname,
+            $container,
+            function($fullname, $container) { return new $fullname($container->get('query')) }, 
+            $alias
+        );
+    }
+
+    public static function addEntities(string $path, string $namespace)
     {
         $app = self::getInstance();
         $container = $app->getContainer();
@@ -216,16 +273,25 @@ class App
             $namespace, 
             function($classname, $fullname) use ($container)
             { 
-                if( !$container->exists($classname) && class_exists($fullname) )
-                {
-                    $container->share( $classname. 'Model', new $fullname($container), true);
-                    //$container->alias( $alias, $fullname);
-                }
+                \SPT\Support\App::addEntity($classname, $fullname, $container, '');
             }
         );
     }
 
-    public static function addEntity(string $path, string $namespace)
+    public static function addViewModel(string $classname, string $fullname, IContainer $container, ?string $alias)
+    {
+        \SPT\Support\App::containerize(
+            $classname. 'VM', 
+            $fullname,
+            $container,
+            function($fullname, $container) { 
+                //return new $fullname($container->get('query')) 
+            }, 
+            $alias
+        );
+    }
+
+    public static function addViewModels(string $path, string $namespace)
     {
         $app = self::getInstance();
         $container = $app->getContainer();
@@ -234,14 +300,11 @@ class App
             $namespace, 
             function($classname, $fullname) use ($container)
             { 
-                if( !$container->exists($classname) && class_exists($fullname) )
-                {
-                    $container->share( $classname. 'Entity', new $fullname($container->get('query')), true);
-                }
+                \SPT\Support\App::addViewModel($classname, $fullname, $container, '');
             }
         );
     }
-
+/*
     public static function addViewModel(string $path, string $namespace): array
     {
         // Todo: add widget by a config instead of autoload
@@ -263,5 +326,80 @@ class App
         return $vmList;
         // Usage:
         $controller->registerViewModels($vmList); 
+    }*/
+
+    public static function prepareLibraries($plugin)
+    {
+        $app = self::getInstance();
+        $container = $app->getContainer();
+        $list = $plugin['dependencies'];
+
+        // check if package is ready
+        // packages must be added in Bootstrap::initialize
+        if(is_array($list['packages']))
+        {
+            foreach($list['packages'] as $name)
+            {
+                if( !$container->exists($name) )
+                {
+                    $app->raiseError('Plugin '. $plugin['name']. ' requires an instance of '. $namee);
+                }
+            }
+        }
+
+        $loop = [
+            'models'=>['addModel', 'addModels'],
+            'entities'=>['addEntity', 'addEntities'],
+            'viewmodels'=>['addViewModel', 'addViewModels'],
+        ];
+        foreach($loop as $obj=>$arr)
+        {
+            list($fnc1, $fnc2) = $arr;
+            if(is_array($list[$obj]))
+            {   
+                foreach($list[$obj] as $cfgArr)
+                {
+                    list($path, $name, $alias) = $cfgArr;
+                    if(file_exists($path))
+                    {
+                        if(is_dir($path))
+                        {
+                            self::$fnc2($path, $name);
+                        }
+                        elseif(class_exists($path))
+                        {
+                            self::$fnc1($name, $path, $container, $alias);
+                        }
+                    }
+                }
+            }
+            elseif(false !== $list[$obj])
+            {
+                self::$fnc1($plugin['path'].'/'.$obj, $plugin['namespace']. '\\'. ucfirst($obj));
+            }
+        }
+/*
+        if(is_array($list['models']))
+        {   
+            foreach($list['models'] as $cfgArr)
+            {
+                list($path, $name, $alias) = $cfgArr;
+                if(file_exists($path))
+                {
+                    if(is_dir($path))
+                    {
+                        self::addModels($path, $name);
+                    }
+                    elseif(class_exists($path))
+                    {
+                        self::addModel($name, $path, $container, $alias);
+                    }
+                }
+            }
+        }
+        elseif(false !== $list['models'])
+        {
+            self::addModels($plugin['path'].'/models', $plugin['namespace'].'\\Models');
+        }*/
     }
 }

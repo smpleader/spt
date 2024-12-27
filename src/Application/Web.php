@@ -13,6 +13,7 @@ namespace SPT\Application;
  
 use SPT\Router\ArrayEndpoint as Router;
 use SPT\Response; 
+use SPT\Support\App;
 
 class Web extends Base
 {
@@ -27,12 +28,25 @@ class Web extends Base
 
         if( $this->config->exists('router.home') )
         {
-            $this->router->import([
-                '' => $this->config->of('router.home')
-            ]);
+            $this->router->import(['' => $this->config->of('router.home')]);
         }
         
         $this->plgManager->call('all')->run('routing', 'afterRouting');
+    }
+
+    protected function dispatch($pluginName, $controller, $function)
+    {
+        $plugin = $this->plgManager->getDetail($pluginName);
+
+        if(false === $plugin)
+        {
+            $this->raiseError('Invalid plugin '.$pluginName, 500);
+        }
+        
+        $this->set('mainPlugin', $plugin);
+        App::addLibraries($plugin);
+
+        return $this->plgManager->call($pluginName)->run('Dispatcher', 'dispatch', true);
     }
 
     public function execute( string | array $_parameters = [])
@@ -70,15 +84,6 @@ class Web extends Base
                 $this->raiseError('Incorrect routing', 500);
             } 
 
-            list($pluginName, $controller, $function) = $try;
-
-            $plugin = $this->plgManager->getDetail($pluginName);
-
-            if(false === $plugin)
-            {
-                $this->raiseError('Invalid plugin '.$pluginName, 500);
-            }
-            
             if(count($siteParams))
             {
                 foreach($siteParams as $key => $value)
@@ -87,17 +92,18 @@ class Web extends Base
                 }
             }
 
+            list($pluginName, $controller, $function) = $try;
+
+            $this->set('controller', $controller);
+            $this->set('function', $function);
+
             // support if this is  home and need a special deal
             if($this->router->get('isHome'))
             {
                 $this->plgManager->call('all')->run('Routing', 'isHome');
             }
 
-            $this->set('mainPlugin', $plugin);
-            $this->set('controller', $controller);
-            $this->set('function', $function);
-
-            return $this->plgManager->call($pluginName)->run('Dispatcher', 'dispatch', true);
+            $this->dispatch($pluginName);
 
         }
         catch (\Exception $e) 

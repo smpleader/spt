@@ -59,7 +59,8 @@ class Manager
                 'namespace' => $namespace,
                 'path' => $path,
                 'name' => $name,
-                'details' => class_exists($installer) ? $installer::info() : []
+                'details' => class_exists($installer) ? $installer::info() : [],
+                'dependencies' => class_exists($installer) ? $installer::info() : [],
             ];
         } 
     }

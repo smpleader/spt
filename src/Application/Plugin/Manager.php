@@ -60,7 +60,7 @@ class Manager
                 'path' => $path,
                 'name' => $name,
                 'details' => class_exists($installer) ? $installer::info() : [],
-                'dependencies' => class_exists($installer) ? $installer::info() : [],
+                'dependencies' => method_exists($installer, 'dependencies') ? $installer::dependencies() : [],
             ];
         } 
     }

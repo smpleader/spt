@@ -28,11 +28,18 @@ class Response extends StaticObj
      */ 
     public static function _($content=false, int $http_code=200)
     {
-        http_response_code($http_code);
+        if (!headers_sent()) 
+        {
+            http_response_code($http_code);
+        }
 
         if(is_array($content) || is_object($content))
         {
-            header('Content-Type: application/json');
+            if (!headers_sent()) 
+            {
+                header('Content-Type: application/json');
+            }
+            
             echo json_encode($content);
         }
         elseif($content!==false)

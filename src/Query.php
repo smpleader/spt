@@ -752,7 +752,7 @@ class Query
      *  
      * @return bool 
      */ 
-    public function truncate(string $table = null)
+    public function truncate(?string $table = null)
     {
         if( null === $table )
         {

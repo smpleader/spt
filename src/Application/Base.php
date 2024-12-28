@@ -147,7 +147,7 @@ class Base extends ACore implements IApp
 
         // check if package is ready
         // packages must be added in Bootstrap::initialize
-        if(is_array($list['packages']))
+        if(isset($list['packages']) && is_array($list['packages']))
         {
             foreach($list['packages'] as $name)
             {
@@ -166,7 +166,7 @@ class Base extends ACore implements IApp
 
         foreach($loop as $obj=>$fnc)
         {
-            if(is_array($list[$obj]))
+            if(isset($list[$obj]) && is_array($list[$obj]))
             {   
                 foreach($list[$obj] as $cfgArr)
                 {
@@ -188,7 +188,7 @@ class Base extends ACore implements IApp
                     }
                 }
             }
-            elseif(false !== $list[$obj])
+            elseif(!isset($list[$obj]) || false !== $list[$obj])
             {
                 Loader::findClass( $plugin['path']. $obj, $plugin['namespace']. '\\'. $obj,
                     function($classname, $fullname) use ($fnc) { 

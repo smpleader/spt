@@ -18,7 +18,7 @@ class Base
 	protected $inputs = array();
 	protected static $loaded = false;
 
-    public function __construct(array $source = null)
+    public function __construct(?array $source = null)
     {   
 		if ($source === null)
 		{

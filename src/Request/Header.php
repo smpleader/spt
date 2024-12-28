@@ -12,7 +12,7 @@ namespace SPT\Request;
 
 class Header extends Base
 {
-    public function __construct(array $source = null)
+    public function __construct(?array $source = null)
     {
         if (function_exists('getallheaders'))
         {

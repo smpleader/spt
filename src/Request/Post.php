@@ -15,7 +15,7 @@ use SPT\Support\ParseInputStream;
 
 class Post extends Base
 {
-    public function __construct(array $source = null)
+    public function __construct(?array $source = null)
     {
         $request = Singleton::instance();
         $type = $request->header->get('Content-Type', '--', 'raw');

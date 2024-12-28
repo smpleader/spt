@@ -12,7 +12,7 @@ namespace SPT\Request;
 
 class File extends Base
 {
-    public function __construct(array $source = null)
+    public function __construct(?array $source = null)
     {
         $this->data = & $_FILES;
     }

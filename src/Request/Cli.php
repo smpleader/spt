@@ -15,7 +15,7 @@ class Cli extends Base
 	public $args = array();
 	private $executable = array();
     
-    public function __construct(array $source = null)
+    public function __construct(?array $source = null)
     {
 		$argv = $_SERVER['argv'] ?? [];
 

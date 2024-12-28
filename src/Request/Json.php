@@ -14,7 +14,7 @@ class Json extends Base
 {
 	protected $_raw;
     
-    public function __construct(array $source = null)
+    public function __construct(?array $source = null)
     {   
 		if (is_null($source))
 		{

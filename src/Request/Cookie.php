@@ -14,7 +14,7 @@ use SPT\Support\Env;
 
 class Cookie extends Base
 {    
-  public function __construct(array $source = null)
+  public function __construct(?array $source = null)
   {
     $this->data = & $_COOKIE;
   }

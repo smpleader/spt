@@ -50,13 +50,13 @@ class Base extends ACore implements IApp
         );
         $this->plgManager = new Manager( $this, $this->config->of('system.packages') );
 
-        $this->container->set('app', $this);
-        $this->container->set('config', $this->config);
+        $this->container->share('app', $this);
+        $this->container->share('config', $this->config);
 
         return $this;
     }
 
-    public function initialize($beforePlugin = null, $afterPlugin = null)
+    public function initialize(?callable $beforePlugin = null, ?callable $afterPlugin = null)
     {
         if( is_callable($beforePlugin))
         {

@@ -34,9 +34,13 @@ class Manager
         }
     }
 
-    // ALWAYS HAS slash AT END OF PARAMETER !!!
     protected function add(string $path, string $namespace)
     {
+        if('/' !== substr($path, -1))
+        {
+            $path .= '/';
+        }
+        
         // a solution
         if( file_exists($path. 'about.php') ) 
         {

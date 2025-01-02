@@ -14,11 +14,9 @@ use SPT\Application\IApp;
 
 Class Installer
 {
-    private static $details;
-
-    public static function info($key='name')
+    public static function info()
     {   
-        return '' === $key ? static::$details : ( static::$details[$key] ?? '--' );
+        return [];
     }
 
     public static function install( IApp $app)

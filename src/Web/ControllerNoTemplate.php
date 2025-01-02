@@ -26,10 +26,10 @@ class ControllerNoTemplate extends Controller
 
         $listPlg = $this->app->plugin(true);
         $paths = [];
-        foreach($listPlg as $plgName => $d)
+        foreach($listPlg as $id => $plugin)
         {
-            $paths[$plgName] = $d['path'];
-        } 
+            $paths[$id] = $plugin->getPath();
+        }
 
         $_themePath = $pluginPath. 'views/';
         $_overrides = [

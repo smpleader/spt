@@ -110,7 +110,7 @@ class Base extends ACore implements IApp
             throw new \Exception('Method childLoad can not be called before Routing.'); 
         }
 
-        return $this->plgManager->call($plugin['name'], 'children')->run($event, $function, false, $callback, $getResult);
+        return $this->plgManager->call($plugin->getId(), 'children')->run($event, $function, false, $callback, $getResult);
     }
 
     public function familyLoad(string $event, string $function, $callback = null, bool $getResult = false)
@@ -121,7 +121,7 @@ class Base extends ACore implements IApp
             throw new \Exception('Method familyLoad can not be called before Routing.'); 
         }
 
-        return $this->plgManager->call($plugin['name'], 'family')->run($event, $function, false, $callback, $getResult);
+        return $this->plgManager->call($plugin->getId(), 'family')->run($event, $function, false, $callback, $getResult);
     }
 
     public function plugin($name = '')
@@ -143,7 +143,7 @@ class Base extends ACore implements IApp
         }
         
         $this->set('mainPlugin', $plugin);
-        $list = $plugin['dependencies'];
+        $list = $plugin->getDependencies();
 
         // check if package is ready
         // packages must be added in Bootstrap::initialize
@@ -153,7 +153,7 @@ class Base extends ACore implements IApp
             {
                 if( !$container->exists($name) )
                 {
-                    $app->raiseError('Plugin '. $plugin['name']. ' requires an instance of '. $namee);
+                    $app->raiseError('Plugin '. $plugin->getId(). ' requires an instance of '. $namee);
                 }
             }
         }
@@ -190,7 +190,7 @@ class Base extends ACore implements IApp
             }
             elseif(!isset($list[$obj]) || false !== $list[$obj])
             {
-                Loader::findClass( $plugin['path']. $obj, $plugin['namespace']. '\\'. $obj,
+                Loader::findClass( $plugin->getPath($obj), $plugin->getNamespace('\\'. $obj),
                     function($classname, $fullname) use ($fnc) { 
                         $fnc($classname, $fullname, '');
                     }

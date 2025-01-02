@@ -28,13 +28,23 @@ class Manager
     {
         $this->app = $app;
 
-        foreach($packages as $path=>$namespace)
+        foreach($packages as $path=>$sth)
         {
-            $this->add($path, $namespace);
+            if(is_array($sth))
+            {
+                list($id, $namespace) = $sth;
+            }
+            else
+            {
+                $id = '';
+                $namespace = $sth;
+            }
+
+            $this->add($id, $path, $namespace);
         }
     }
 
-    protected function add(string $path, string $namespace)
+    protected function add(string $id, string $path, string $namespace)
     {
         if('/' !== substr($path, -1))
         {
@@ -49,23 +59,23 @@ class Manager
                 if (!$item->isDot() && $item->isDir())
                 {
                     $name = $item->getBasename(); 
-                    $this->add($path. $name. '/', $namespace. '\\'. $name);
+                    $id = empty($id) ? $name : $id.'/'.$name;
+                    $this->add($id, $path. $name. '/', $namespace. '\\'. $name);
                 }
             }
         }
         // a plugin
         elseif( file_exists($path. 'registers') && is_dir($path. 'registers') ) 
         {
-            $name = basename($path);
-            $installer = $namespace. '\\registers\\Installer';
-
-            $this->list[$name] = [
-                'namespace' => $namespace,
-                'path' => $path,
-                'name' => $name,
-                'details' => class_exists($installer) ? $installer::info() : [],
-                'dependencies' => method_exists($installer, 'dependencies') ? $installer::dependencies() : [],
-            ];
+            $id = empty($id) ? basename($path) : $id.'/'.basename($path);
+            if(isset($this->list[$id]))
+            {
+                echo 'Warning: Package '.$id. ' already exists.';
+            }
+            else
+            {
+                $this->list[$id] = new Plugin($id, $path, $namespace);
+            }
         } 
     }
 
@@ -120,28 +130,28 @@ class Manager
         return $this;
     }
 
-    protected function hasTag(array $matchTags, string $pluginName)
+    protected function hasTag(array $matchTags, string $pluginId)
     {
         // TODO: call plugin by tags 
         return false;
     }
 
-    protected function callPlugin($pluginName, string $mode = 'single')
+    protected function callPlugin($pluginId, string $mode = 'single')
     {
-        if(!isset($this->list[$pluginName]))
+        if(!isset($this->list[$pluginId]))
         {
-            $this->message = 'Invalid plugin '. $pluginName;
+            $this->message = 'Invalid plugin '. $pluginId;
             return false;
         }
 
         if($mode == 'single' || $mode == 'family')
         {
-            $this->calls[$pluginName] = $this->list[$pluginName];
+            $this->calls[$pluginId] = $this->list[$pluginId];
         }
 
         if($mode == 'children' || $mode == 'family')
         {
-            $test = $pluginName. '_';
+            $test = $pluginId. '_';
             foreach($this->list as $name => $plg)
             {
                 if(strpos($name, $test) === 0)
@@ -172,13 +182,13 @@ class Manager
         $event = ucfirst(strtolower($event));
         $results = $outputResult ? [] : true;
 
-        foreach($this->calls as $plugin => $pluginInfo)
+        foreach($this->calls as $id => $plugin)
         {
-            $class = $pluginInfo['namespace']. '\\registers\\'. $event;
+            $class = $plugin->getNamespace(). '\\registers\\'. $event;
             if(!method_exists($class, $function))
             {
                 if(!$required) continue;
-                throw new Exception('Invalid plugin '. $plugin. ' with '. $event. '.'. $function);
+                throw new Exception('Invalid plugin '. $id. ' with '. $event. '.'. $function);
             }
 
             $result = $class::$function($this->app);
@@ -187,19 +197,19 @@ class Manager
                 $ok = $closure( $result );
                 if(false === $ok && $required)
                 {
-                    throw new Exception('Callback failed with plugin '. $plugin. ' when call '. $event .'.' . $function);
+                    throw new Exception('Callback failed with plugin '. $id. ' when call '. $event .'.' . $function);
                 }
 
                 if( $outputResult )
                 {
-                    $results[$plugin] = ['result'=>$result, 'afterCallback' =>$ok];
+                    $results[$id] = ['result'=>$result, 'afterCallback' =>$ok];
                 }
             }
             else
             {   
                 if( $outputResult )
                 {
-                    $results[$plugin] = ['result'=>$result];
+                    $results[$id] = ['result'=>$result];
                 }
             }
         }

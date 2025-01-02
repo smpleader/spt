@@ -34,14 +34,14 @@ class Controller extends Client
             $this->app->raiseError('Invalid current plugin');
         }
 
-        $plugin = $this->app->get('currentPlugin');
+        $currentPlugin = $this->app->get('currentPlugin');
         $themePath = $this->app->any('themePath', 'theme.path', '');
         $theme = $this->app->any('theme', 'theme.default', '');
         $listPlg = $this->app->plugin(true);
         $paths = [];
-        foreach($listPlg as $plgName => $d)
+        foreach($listPlg as $id => $plugin)
         {
-            $paths[$plgName] = $d['path'];
+            $paths[$id] = $plugin->getPath();
         }
 
         if( $theme )
@@ -63,7 +63,7 @@ class Controller extends Client
 
             $_overrides = [
                 'layout' => [
-                    $_themePath. '_layouts/'. $plugin. '/',
+                    $_themePath. '_layouts/'. $currentPlugin. '/',
                     $pluginPath. 'views/layouts/'
                 ],
                 'widget' => [

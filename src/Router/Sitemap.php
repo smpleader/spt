@@ -23,8 +23,8 @@ class Sitemap extends Base
     {
         $this->table = $entity;
 
-        $siteSubpath = $config->exists('sitepath') ? $config->sitepath : '';
-        $protocol = $config->exists('protocol') ? $config->protocol : '';
+        $siteSubpath = $config->of('system.sitepath', '');
+        $protocol = $config->of('system.protocol', '');
 
         $p =  ( (!empty($request->server->get('HTTPS', '', 'string')) && $request->server->get('HTTPS', '', 'string') !== 'off') || 
         (!empty($request->server->get('SERVER_PORT', '', 'string')) && $request->server->get('SERVER_PORT', '', 'string') == 443)) ? 'https' : 'http';
@@ -103,7 +103,7 @@ class Sitemap extends Base
     public function parse(Configuration $config, Request $request)
     {
         $method = $request->header->getRequestMethod();
-        $defaultEndpoint = $config->exists('defaultEndpoint') ? $config->defaultEndpoint : '';
+        $defaultEndpoint = $config->of('defaultEndpoint', '');
         $intruction = $this->pathFinding($defaultEndpoint, $method);
         $fnc = '';
         $parameters = [];

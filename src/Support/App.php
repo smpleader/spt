@@ -22,6 +22,7 @@ use SPT\Request\Singleton as Request;
 use SPT\Response;
 use SPT\Query;
 use SPT\StaticObj;
+use SPT\DynamicObj;
 use SPT\Support\Loader;
 use SPT\Extend\Pdo;
 use SPT\Session\Instance as Session;
@@ -98,7 +99,7 @@ class App extends StaticObj
         $foundConfig = false;
         $config = $appConfig->of('system.boot');
 
-        if($config instanceof MagicObj)
+        if($config instanceof DynamicObj)
         {
             $foundConfig = true;
             $useRequest = $config->get('request', true);

@@ -11,4 +11,10 @@
 namespace SPT;
 
 #[\AllowDynamicProperties]
-class DynamicObj {}
+class DynamicObj 
+{
+    public function get($key, $default = null)
+    {
+        return property_exists($this, $key) ? $this->{$key} : $default;
+    }
+}

@@ -10,6 +10,8 @@
 
 namespace SPT\Web\Layout;
 
+use SPT\Web\Theme;
+
 class Base
 { 
     /**
@@ -17,6 +19,12 @@ class Base
     * @var string $_path
     */
     protected string $_path = '';
+
+    /**
+    * Theme info
+    * @var string $_path
+    */
+    protected Theme $theme;
 
     /**
      * After calling renderLayout from View instance, 

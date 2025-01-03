@@ -10,53 +10,98 @@
  */
 
 namespace SPT\Application;
+ 
+use SPT\DynamicObj;
 
-use SPT\MagicObj;
-use SPT\Support\FncMagicObj;
-
-class Configuration extends MagicObj
+class Configuration
 {
-    /**
-     * Internal array for environments
-     * @var array $_envs
-     */
-    protected $_envs = [];
-
-    /**
-     * Internal path for environments
-     * @var array $_envs
-     */
-    protected $_path = '';
+    protected DynamicObj $_vars;
 
     public function __construct(string $pathConfig = '')
     {
         '' == $pathConfig || file_exists($pathConfig) || die('Invalid configuration path '.$pathConfig);
 
-        $this->_vars = [];
-        $this->_path = $pathConfig;
-        if('' != $pathConfig) $this->import($pathConfig, $this);
+        $this->_vars = new DynamicObj;
+        
+        if('' != $pathConfig) $this->importFile($pathConfig, $this->_vars);
     }
 
-    public function import(string $path)
-    {
-        FncMagicObj::import($path, $this);
+    private function importFile(string $path, &$_var)
+    { 
+        if( is_dir($path) )
+        {
+            foreach(new \DirectoryIterator($path) as $item) 
+            {
+                if($item->isDot()) continue;
+                
+                if($item->isDir())
+                {
+                    $name =  $item->getBasename();
+                    $_var->{$name} = new DynamicObj();
+                    $this->importFile($path. '/'. $name, $_var->{$name});
+                }
+                elseif($item->isFile())
+                {
+                    $name =  $item->getBasename('.php');
+                    $_var->{$name} = new DynamicObj();
+                    $this->import($item->getExtension(), $_var->{$name}, $path. '/'. $item->getBasename());
+                }
+            } 
+        }
+        elseif( file_exists($path) && is_file($path) )
+        {
+            $p = pathinfo($path);
+            $this->import($p['extension'], $_var, $path);
+        }
     }
+
+    private function import(string $ext, DynamicObj &$_obj, string $path)
+    {
+        switch($ext)
+        {
+            case 'json':
+                $try = file_get_contents($path);
+                $try = json_decode($try);
+                if(is_array($try) || is_object($try))
+                {
+                    foreach ($try as $key => $value) 
+                    {
+                        $_obj->{$key} = $value;
+                    }
+                }
+                break;
+            case 'ini':
+                $try = parse_ini_file($path);
+                foreach ($try as $key => $value) 
+                {
+                    $_obj->{$key} = $value;
+                }
+                break;
+            case 'php':
+                $try = require $path;
+                if(is_array($try) || is_object($try))
+                {
+                    foreach ($try as $key => $value) {
+                        if(!is_numeric($key))
+                        {
+                            $_obj->{$key} = $value; 
+                        }
+                    } 
+                }
+                break;
+        }
+    } 
 
     // Check key exists in the configuraton by token format a.b.c
     public function exists(string $key)
     {
         $tmp = explode('.', $key);
 
-        $var = $this;
+        $var = $this->_vars;
 
         foreach($tmp as $k)
-        {
-            if($var instanceof MagicObj)
-            {
-                if(!$var->isset($k)) return false;
-                $var = $var->{$k};
-            }
-            elseif( is_array($var))
+        { 
+            if( is_array($var))
             {
                 if(!isset($var[$k]))  return false;
                 $var = $var[$k];
@@ -77,16 +122,11 @@ class Configuration extends MagicObj
     {
         $tmp = explode('.', $key);
 
-        $var = $this;
+        $var = $this->_vars;
 
         foreach($tmp as $k)
         {
-            if($var instanceof MagicObj)
-            {
-                if(!$var->isset($k)) return $default;
-                $var = $var->{$k};
-            }
-            elseif( is_array($var))
+            if( is_array($var))
             {
                 if(!isset($var[$k]))  return $default;
                 $var = $var[$k];
@@ -100,29 +140,5 @@ class Configuration extends MagicObj
         }
 
         return $var;
-    } 
-
-    public function empty($key)
-    {
-        return empty($this->_vars[$key]);
-    }
-    
-    public function setEnv(string $path)
-    {
-        $configs = parse_ini_file($path); 
-        if( count($configs) && is_array($configs))
-        {
-            $this->_envs = $configs;
-        }
-    }
-
-    public function env($key)
-    {
-        return isset($this->_envs[$key]) ? $this->_envs[$key] : null;
-    }
-
-    public function getConfigPath()
-    {
-        return $this->_path;
     }
 }

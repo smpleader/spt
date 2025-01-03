@@ -16,19 +16,15 @@ class StaticObj
 {
     /**
      * Assign value into internal variable array by key
-     * Accept overwrite if existing or not
      *
      * @param string|integer   $key  internal variable array key name
      * @param mixed    $value Assign value
      * 
      * @return void
      */ 
-    static function set($key, $value, $overwrite = true)
+    static function set( string | integer $key, $value)
     {
-        if( $overwrite || !isset( static::$_vars[$key] ) )
-        {
-            static::$_vars[$key] = $value;
-        }
+        static::$_vars[$key] = $value;
     }
     
     /**

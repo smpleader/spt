@@ -16,7 +16,19 @@ trait ObjectHasInternalData
      * Internal array
      * @var array $_vars
      */
-    protected $_vars = [];
+    protected array $_vars = [];
+
+    /**
+     * Check internal variable exists  by key
+     *
+     * @param string|integer   $key  internal variable array key name
+     * 
+     * @return mixed    value 
+     */ 
+    public function exists( string | integer $key)
+    {
+        return isset($this->_vars[$key]);
+    }
 
     /**
      * Assign value into internal variable array by key
@@ -26,7 +38,7 @@ trait ObjectHasInternalData
      * 
      * @return void
      */ 
-    public function set($key, $value)
+    public function set( string | integer $key, $value)
     {
         $this->_vars[$key] = $value;
     }
@@ -39,7 +51,7 @@ trait ObjectHasInternalData
      * 
      * @return mixed
      */ 
-    public function get($key, $default = null)
+    public function get( string | integer $key, $default = null)
     {
         return  $this->_vars[$key] ?? $default;
     }

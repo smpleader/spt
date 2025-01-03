@@ -21,6 +21,7 @@ use SPT\Router\ArrayEndpoint as Router;
 use SPT\Request\Singleton as Request;
 use SPT\Response;
 use SPT\Query;
+use SPT\StaticObj;
 use SPT\Support\Loader;
 use SPT\Extend\Pdo;
 use SPT\Session\Instance as Session;
@@ -30,9 +31,10 @@ use SPT\Storage\DB\Session as SessionEntity;
 use SPT\Application\Token as AppToken;
 use SPT\Web\Controller;
 
-class App
+class App extends StaticObj
 {
     private static IApp $_instance;
+    private static array $_vars;
     private static function checkInstance() 
     {
         if(null === self::$_instance)

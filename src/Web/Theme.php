@@ -48,7 +48,7 @@ class Theme extends BaseObj
      */ 
     public function __construct(string $path, array $overrides)
     {
-        if(empty($path))
+        if(!file_exists($path))
         {
             throw new \Exception('Invalid theme path');
         }

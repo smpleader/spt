@@ -215,4 +215,6 @@ class Base extends ACore implements IApp
     {
         $this->vmClasses[$plgName][] = [$name, $fullName];
     }
+
+    TODO: process VM to map the layouts
 }

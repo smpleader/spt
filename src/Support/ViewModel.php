@@ -21,8 +21,18 @@ class ViewModel
         $container->containerize(
             $classname. 'VM', 
             $fullname,
-            function($fullname, $container) { return new $fullname($container);}, 
+            function($fullname, $container) { 
+                $vm = new $fullname($container);
+                TODO: load VM and prepare collections
+                App::getInstance()->addVM($classname. 'VM')
+                return $vm;
+            }, 
             $alias
         );
+    }
+
+    public static function getData(string $path)
+    {
+        TODO: get data for layout
     }
 }

@@ -149,4 +149,9 @@ class Controller extends Client
 
         return $view->renderLayout($layout, $data);
     }
+
+    public function renderPage()
+    {
+        
+    }
 }

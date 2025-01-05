@@ -23,6 +23,7 @@ class ViewModel
             $fullname,
             function($fullname, $container) { 
                 $vm = new $fullname($container);
+                // collect registers 
                 TODO: load VM and prepare collections
                 App::getInstance()->addVM($classname. 'VM')
                 return $vm;

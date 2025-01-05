@@ -93,6 +93,20 @@ class Controller extends Client
     }
 
     /**
+     * Return an View Instance based current override paths, theme, ViewComponent instance, mvvm mode
+     * 
+     * @return View new View instance
+     */ 
+    protected function getView()
+    {
+        return new View(
+            $this->getTheme(),
+            new ViewComponent($this->app->getRouter()),
+            $this->supportMVVM
+        );
+    }
+
+    /**
      * Return HTML format after a process
      * 
      * @return string HTML content body
@@ -134,41 +148,5 @@ class Controller extends Client
         $view = $this->getView();
 
         return $view->renderLayout($layout, $data);
-    }
-
-    /**
-     * Return an View Instance based current override paths, theme, ViewComponent instance, mvvm mode
-     * 
-     * @return View new View instance
-     */ 
-    protected function getView()
-    {
-        todo: 
-        - plugin collect its paths
-        - overrides layouts
-        - theme path 
-        - 
-
-        $pluginPath = $this->app->get('pluginPath', '_NOT_SET_'); 
-        if('_NOT_SET_' === $pluginPath)
-        {
-            // Carefully check SPT\Support\App::createController()
-            $this->app->raiseError('Invalid current plugin');
-        }
-
-        $themePath = $this->app->any('themePath', 'theme.path', '');
-        $theme = $this->app->any('theme', 'theme.default', '');
-
-        $pluginPaths = $this->app->get('pluginPaths');
-
-        $themePath = $this->app->any('themePath', 'theme.path', '');
-        $theme = $this->app->any('theme', 'theme.default', '');
-
-
-        return new View(
-            $this->getTheme(),
-            new ViewComponent($this->app->getRouter()),
-            $this->supportMVVM
-        );
     }
 }

@@ -48,7 +48,9 @@ class Base extends ACore implements IApp
             $this->config->of('router.subpath', ''),
             $this->config->of('router.ssl', '')
         );
+        
         $this->plgManager = new Manager( $this, $this->config->of('system.packages') );
+        $this->set('pluginPaths', $this->plgManager->getPluginPaths());
 
         $this->container->share('app', $this);
         $this->container->share('config', $this->config);
@@ -62,7 +64,7 @@ class Base extends ACore implements IApp
         {
             $beforePlugin($this);
         }
-
+        
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
 
         if( is_callable($afterPlugin))

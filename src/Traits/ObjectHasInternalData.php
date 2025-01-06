@@ -10,6 +10,8 @@
 
 namespace SPT\Traits;
 
+use SPT\Support\Filter;
+
 trait ObjectHasInternalData
 {   
     /**
@@ -48,12 +50,14 @@ trait ObjectHasInternalData
      *
      * @param string|integer   $key  internal variable array key name
      * @param mixed    $default Value if key not found
+     * @param nullable string    $format Value filter key
      * 
      * @return mixed
      */ 
-    public function get( string | integer $key, $default = null)
+    public function get( string | integer $key, $default = null, ?string $format = null)
     {
-        return  $this->_vars[$key] ?? $default;
+        if(!isset($this->_vars[$key])) return $default;
+        return $format ? Filter::$format($this->_vars[$key]) : $this->_vars[$key];
     }
 
     /**

@@ -27,47 +27,57 @@ class Theme extends BaseObj
      * Internal variable to store array of value
      * @var array $_assets
      */
-    protected $_vars = []; 
+    protected $_vars = [];
+
+    /**
+     * Readonlye theme path (since PHP 8.1)
+     * @var string $path
+     */
+    public readonly string $path; 
+
     /**
      * Readonlye theme override layouts (since PHP 8.1)
      * @var array $overrides
      */
-    //public readonly array $overrides; 
+    public readonly array $overrides;
 
     /**
-     * Register Asset array
-     *
-     * @param array   $arr array of asset links
+     * Constructor
      * 
      * @return void 
      */ 
-    public function registerAsset(array $arr)
+    public function __construct(string $path, array $overrides)
     {
-        $this->_assets = array_merge($this->_assets, $arr);
+        if(!file_exists($path))
+        {
+            throw new \Exception('Invalid theme path');
+        }
+
+        $this->path = $path;
+        $this->overrides = $overrides;
+        $this->registerAssets();
     }
 
     /**
-     * Register Asset links based theme file
+     * Register Asset links based theme file or array
      *
-     * @param string   $path string of asset file
+     * @param string   $profile  profile name, empty mean auto load from file _assets.php in theme
+     * @param array   $list array of asset links
      * 
      * @return void 
      */ 
-    public function registerAssets(string $path)
+    public function registerAssets(string $profile = '', array $list = [])
     {
-        if(file_exists($path))
+        if( '' === $profile && file_exists($this->path. '/_assets.php'))
         {
-            $info = pathinfo($path);
-            if('php' == $path['extension'])
-            {
-                $arr = require_once $this->path;
-            }
-
-            if( is_array($arr) )
-            {
-                $this->registerAsset($arr);
-            }
+            $arr = require_once $this->path. '/_assets.php';
         }
+        else
+        {
+            $arr = [$profile => $list];
+        }
+
+        $this->_assets = array_merge($this->_assets, $arr);
     }
 
     /**

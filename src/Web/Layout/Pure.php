@@ -16,22 +16,31 @@ class Pure extends Base
     /**
      * Constructor
      * 
-     * @param string   $filePath layout path
-     * @param array   $dataView data from View
-     * @param array   $dataViewModel data from ViewModel
+     * @param Theme   $theme variable theme
+     * @param string   $id token, format plugin:type:path
+     * @param string   $path path file
+     * @param array   $data data 
      * 
      * @return void 
      */ 
-    public function __construct(string $path, array $dataView, array $dataViewModel)
+    public function __construct(Theme $theme, string $id, string $path, array $data = [])
     {
-        foreach($dataView as $k=>$v)
+        if(!file_exists($path))
         {
-            $this->$k = $v;
+            throw new \Exception('Can not create a layout from path '.$path);
         }
+        
+        $this->theme = $theme ;
+        $this->_plugin = $plugin;
+        $this->_path = $path;
+        $this->_type = $type;
 
-        foreach($dataViewModel as $k=>$v)
+        foreach($data as $k=>$v)
         {
-            $this->$k = $v;
-        } 
+            if(!in_array($k, ['theme', '__path', '__id']))
+            {
+                $this->$k = $v;
+            }
+        }
     } 
 }

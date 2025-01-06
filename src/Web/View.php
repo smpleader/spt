@@ -11,46 +11,121 @@
 namespace SPT\Web;
 
 use SPT\Web\Theme;
-use SPT\Web\ViewLayout;
+use SPT\Web\Layout\Pure as Layout; 
+use SPT\Support\ViewModel;
 
 class View
 {
-    public function __construct()
+    private array $_layouts;
+    private Theme $_theme;
+    private array $_plugins;
+    private string $_current;
+    private string $_themePath;
+
+    /**
+     * Constructor
+     * 
+     * @param array   $pluginList list all information of plugins
+     * @param string   $currentPlugin id of current plugin
+     * @param string   $themePath path to theme path
+     * @param string   $themeConfigFile path to theme configuration path
+     * 
+     * @return void 
+     */ 
+    public function __construct(array $pluginList, string $currentPlugin, string $themePath = '', string $themeConfigFile = '' )
     {
-        1- override layouts
-        2- theme paths
-        3- solve paths
-        4- call viewmodel on every render
+        $this->_plugins = $pluginList;
+        $this->_current = $currentPlugin;
+
+        if( $themePath && substr($themePath, -1) !== '/') $themePath .= '/';
+        $this->_themePath = $themePath;
+
+        $this->_theme = new Theme;
+        if($themeConfigFile)
+        {
+            $this->_theme->registerAssets($themeConfigFile);
+        }
     }
 
-    public function getPath(string $key)
+    /**
+     * Key format  plugin/id:layout:a.b.c
+     * 
+     * @param string   $key a short token to layout path
+     * 
+     * @return Layout 
+     */
+    public function getLayout(string $key): Layout
     {
         $tmp = explode(':', $key);
         $count = count($tmp);
         switch($count) 
         {
             case 1:
-                $plg = $currentPlugin;
+                $plg = $this->_current;
                 $type = 'layout';
                 $path = $key;
                 break;
             case 2:
-                $plg = $currentPlugin;
+                $plg = $this->_current;
                 list($type, $path) = $tmp;
                 break;
             case 3:
                 list($plg, $type, $path) = $tmp;
+                if(!isset($this->_plugins[$plg]))
+                {
+                    throw new \Exception('Invalid plugin '. $plg. ' of path '. $key);
+                }
                 break;
             default:
                 throw new \Exception('Invalid path '. $key);
             break;
         }
-        
-        plugin/id:layout:a.b.c
+
+        $id = $plg. ':'. $type. ':'. $path;
+        if(!isset($this->_layouts[$id]))
+        {
+            $realPath = $this->getRealPath($plg, $type, $path);
+            $this->_layouts[$id] = new Layout($this->_theme, $id, $realPath);
+        }
+
+        return $this->_layouts[$id];
     }
 
-    public function render()
+    public function render(string $key, array $data = [], $isString = true)
     {
+        $layout = $this->getLayout($key);
+        
+        $data = ViewModel::getData($layout->getId(), $data);
+        $layout->update($data);
 
+        return $isString ? $layout->_render() : $layout->render();
+    }
+
+    public function getRealPath(string $plgId, string $type, string $token)
+    {
+        if(!isset($this->_plugins[$plgId]))
+        {
+            throw new \Exception('Invalid Plugin '. $plgId);
+        }
+
+        $type = strtolower($type);
+
+        if(!in_array($type, ['theme', 'layout', 'widget']))
+        {
+            throw new \Exception('Invalid Path type '. $type);
+        }
+
+        $token = str_replace('.', '/', $token);
+
+        if($this->_themePath)
+        {
+            $path = $this->_themePath. $plgId. '/'. $type. '/'. $token;
+            if( file_exists($path) ) return $path;
+        }
+
+        $path = $this->_plugins[$plgId]->getPath( 'views/'. $type. '/'. $token);
+        if( file_exists($path) ) return $path;
+
+        throw new \Exception('Invalid path '. $token. ' <!-- plugin '. $plgId. ':'. $type. '-->' );
     }
 }

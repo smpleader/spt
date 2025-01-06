@@ -40,19 +40,19 @@ class Magic extends Base
         $this->_viewmodel = $viewmodel;
         $this->_viewmodel->prepareData($path);
     }
-
+/*
     public function render(string $path)
     {
         // 1 - convert path into real path
-        list($plugin, $path) = explode('::', $path)
+        list($plugin, $path) = explode('::', $path);
         // if using current plugin, find it
-        if(empty($plugin))
+        //if(empty($plugin))
         // 2- differ layout by renderLayout vs renderWidget or component
         // 3- view store data from controller
         // 4- call viewmodel everytime render a layout
         // *** controller use viewmodel to create data for main view
         // function toHtml() --> call layout of theme, viewmodel of theme auto loaded
-    }
+    }*/
 
     /**
      * Magic get

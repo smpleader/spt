@@ -19,6 +19,7 @@ class View
     private array $_layouts;
     private Theme $_theme;
     private array $_plugins;
+    private array $_closures;
     private string $_current;
     private string $_themePath;
 
@@ -27,15 +28,17 @@ class View
      * 
      * @param array   $pluginList list all information of plugins
      * @param string   $currentPlugin id of current plugin
+     * @param array   $viewFunction array of closure
      * @param string   $themePath path to theme path
      * @param string   $themeConfigFile path to theme configuration path
      * 
      * @return void 
      */ 
-    public function __construct(array $pluginList, string $currentPlugin, string $themePath = '', string $themeConfigFile = '' )
+    public function __construct(array $pluginList, string $currentPlugin, array $closures, string $themePath = '', string $themeConfigFile = '' )
     {
         $this->_plugins = $pluginList;
         $this->_current = $currentPlugin;
+        $this->_closures = $closures;
 
         if( $themePath && substr($themePath, -1) !== '/') $themePath .= '/';
         $this->_themePath = $themePath;
@@ -57,7 +60,7 @@ class View
     public function getLayout(string $key): Layout
     {
         $tmp = explode(':', $key);
-        $count = count($tmp);
+        $count = count($tmp); 
         switch($count) 
         {
             case 1:
@@ -81,11 +84,11 @@ class View
             break;
         }
 
-        $id = $plg. ':'. $type. ':'. $path;
+        $id = $plg. ':'. $type. ':'. $path; var_dump($id);
         if(!isset($this->_layouts[$id]))
         {
             $realPath = $this->getRealPath($plg, $type, $path);
-            $this->_layouts[$id] = new Layout($this->_theme, $id, $realPath);
+            $this->_layouts[$id] = new Layout($this->_theme, $id, $realPath, $this->_closures);
         }
 
         return $this->_layouts[$id];
@@ -120,12 +123,20 @@ class View
         if($this->_themePath)
         {
             $path = 'theme' == $type ? $this->_themePath. $token : $this->_themePath. $plgId. '/'. $type. '/'. $token;
-            if( file_exists($path) ) return $path;
+            if( $path = $this->fileExists($path) ) return $path;
         }
 
         $path = $this->_plugins[$plgId]->getPath( 'views/'. $type. '/'. $token);
-        if( file_exists($path) ) return $path;
+        if( $path = $this->fileExists($path) ) return $path;
 
         throw new \Exception('Invalid path '. $token. ' <!-- plugin '. $plgId. ':'. $type. '-->' );
+    }
+
+    private function fileExists(string $path)
+    {
+        if(file_exists($path. '.php')) return $path. '.php';
+        if(file_exists($path) && is_file($path)) return $path;
+        if(file_exists($path. '/index.php')) return $path. '/index.php';
+        return false;
     }
 }

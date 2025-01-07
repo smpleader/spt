@@ -26,6 +26,7 @@ class ViewModel
             function($fullname, $container) use ($pluginId)
             { 
                 $vm = new $fullname($container);
+
                 if(method_exists($vm, 'registerLayouts'))
                 {
                     $arr = $vm->registerLayouts();
@@ -36,10 +37,10 @@ class ViewModel
                             self::extractSettings($arr[$k], $pluginId. ':'. $k, $classname. 'VM');
                         }
                     }
-                    // TODO: attach function to a layout
-                    // https://www.php.net/manual/en/closure.bindto.php
-                    if()
                 }
+
+                // TODO: attach function to a layout
+                // https://www.php.net/manual/en/closure.bindto.php
 
                 return $vm;
             }, 
@@ -78,13 +79,10 @@ class ViewModel
             }
             else
             {
-                list($layout, $fnc, $arrBinder) = $sth;
+                list($layout, $fnc) = $sth;
                 self::add( $token. ':'. $layout, $vm, $fnc);
-                if(is_array($arrBinder))
-                {
-                    
-                }
             }
+
         }
     }
 

@@ -56,7 +56,8 @@ class Controller extends Client
     public function toAjax()
     {
         $data = (array) $this->getAll();
-        $page = $this->app->get('layout', 'ajax');
+        $page = $this->app->get('layout
+        ', 'ajax');
         $view = $this->getView();
 
         return $view->render($page, $data);
@@ -116,10 +117,10 @@ class Controller extends Client
 
         call_user_func_array([$this, $fName], $agurments); 
 
-        $format = $app->get('format', 'html', 'cmd');
+        $format = $this->app->get('format', 'html', 'cmd');
         $fName = 'to'. ucfirst($format);
 
-        if(!method_exists($this, $format))
+        if(!method_exists($this, $fName))
         {
             throw new \Exception('Invalid page format '. $format);
         }

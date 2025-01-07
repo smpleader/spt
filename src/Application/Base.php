@@ -141,7 +141,7 @@ class Base extends ACore implements IApp
 
         if(false === $plugin)
         {
-            $this->raiseError('Invalid plugin '.$pluginName, 500);
+            $this->raiseError('Invalid plugin '. $pluginName, 500);
         }
         
         $this->set('mainPlugin', $plugin);
@@ -170,9 +170,9 @@ class Base extends ACore implements IApp
         {
             if(isset($list[$obj]) && is_array($list[$obj]))
             {   
-                foreach($list[$obj] as $cfgArr)
+                foreach($list[$obj] as $configArr)
                 {
-                    list($path, $name, $alias) = $cfgArr;
+                    list($path, $name, $alias) = $configArr;
                     if(file_exists($path))
                     {
                         if(is_dir($path))
@@ -199,5 +199,21 @@ class Base extends ACore implements IApp
                 );
             }
         }
+
+        $viewFunctions = $this->get('ViewFunctions', []);
+        Loader::findClass( 
+            $plugin->getPath('viewfunctions'), 
+            $plugin->getNamespace('\\viewfunctions'),
+            function($classname, $fullname) use ( &$viewFunctions ) { 
+                if($classname instanceof IViewFunction)
+                {
+                    $instance = new $fullname;
+                    $viewFunctions = array_merge($viewFunctions, $instance->registerFunctions());
+                }
+            }
+        );
+
+        $this->set('ViewFunctions', $viewFunctions); 
+
     }
 }

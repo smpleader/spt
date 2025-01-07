@@ -12,7 +12,7 @@ namespace SPT\Web\Layout;
 
 use SPT\Web\Theme;
 
-class Base
+abstract class Base
 { 
     /**
     * Internal variable cache file path

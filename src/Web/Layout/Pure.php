@@ -10,9 +10,23 @@
 
 namespace SPT\Web\Layout;
 
+use SPT\Web\Theme;
+
 #[\AllowDynamicProperties]
 class Pure extends Base
 {
+    /**
+    * Internal variable cache file path
+    * @var string $_path
+    */
+    protected readonly string $__path;
+    
+    /**
+    * Internal variable cache a token: plugin:type:path
+    * @var string $_id
+    */
+    protected readonly string $__id;
+    
     /**
      * Constructor
      * 
@@ -31,9 +45,8 @@ class Pure extends Base
         }
         
         $this->theme = $theme ;
-        $this->_plugin = $plugin;
-        $this->_path = $path;
-        $this->_type = $type;
+        $this->__path = $path;
+        $this->__id = $id;
 
         foreach($data as $k=>$v)
         {

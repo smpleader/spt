@@ -38,6 +38,7 @@ class ViewModel
                     }
                     // TODO: attach function to a layout
                     // https://www.php.net/manual/en/closure.bindto.php
+                    if()
                 }
 
                 return $vm;
@@ -77,10 +78,13 @@ class ViewModel
             }
             else
             {
-                list($layout, $fnc) = $sth;
+                list($layout, $fnc, $arrBinder) = $sth;
                 self::add( $token. ':'. $layout, $vm, $fnc);
+                if(is_array($arrBinder))
+                {
+                    
+                }
             }
-
         }
     }
 

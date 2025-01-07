@@ -29,7 +29,7 @@ class Controller extends Client
         $page = $this->app->get('page', 'index');
         $view = $this->getView();
 
-        return $view->render( $page, $data );
+        return $view->render( 'theme:'. $page, $data );
     }
 
     /**
@@ -56,7 +56,7 @@ class Controller extends Client
     public function toAjax()
     {
         $data = (array) $this->getAll();
-        $page = $this->app->get('page', 'ajax');
+        $page = $this->app->get('layout', 'ajax');
         $view = $this->getView();
 
         return $view->render($page, $data);

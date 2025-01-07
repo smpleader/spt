@@ -30,7 +30,7 @@ class Base
     * Theme info
     * @var string $_path
     */
-    protected readonly Theme $theme;
+    protected Theme $theme;
 
     /**
      * render content into string
@@ -52,7 +52,7 @@ class Base
      */ 
     public function getId(): string
     {
-        echo $this->__id;
+        return $this->__id;
     }
 
     /**

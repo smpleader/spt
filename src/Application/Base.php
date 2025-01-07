@@ -206,7 +206,6 @@ class Base extends ACore implements IApp
      *  SUPPORT MVVM ENGINE
      *  TODO: remove those functons
      * 
-     */
 
     protected array $vmClasses;
     public function getVMList(string $plgName)
@@ -218,6 +217,5 @@ class Base extends ACore implements IApp
     {
         $this->vmClasses[$plgName][] = [$name, $fullName];
     }
-
-    
+     */
 }

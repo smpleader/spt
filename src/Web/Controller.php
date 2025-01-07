@@ -63,7 +63,7 @@ class Controller extends Client
     }
 
     /**
-     * Return an View Instance based current override paths, theme, ViewComponent instance, mvvm mode
+     * Return an View Instance
      * 
      * @return View new View instance
      */ 

@@ -21,13 +21,13 @@ class Theme extends BaseObj
      * Internal variable to store array of asset
      * @var array $_assets
      */
-    protected $_assets = [];
+    protected array $_assets = [];
 
     /**
      * Internal variable to store array of value
      * @var array $_assets
      */
-    protected $_vars = []; 
+    protected array $_vars = []; 
     /**
      * Readonlye theme override layouts (since PHP 8.1)
      * @var array $overrides

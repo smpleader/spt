@@ -23,21 +23,22 @@ class ViewModel
         $container->containerize(
             $classname. 'VM', 
             $fullname,
-            function($fullname, $container) use ($pluginId) { 
+            function($fullname, $container) use ($pluginId)
+            { 
                 $vm = new $fullname($container);
-
-                $arr = $vm->registerLayouts();
-
-                foreach(['theme', 'layout', 'widget'] as $k)
+                if(method_exists($vm, 'registerLayouts'))
                 {
-                    if(isset($arr[$k]))
+                    $arr = $vm->registerLayouts();
+                    foreach(['theme', 'layout', 'widget'] as $k)
                     {
-                        self::extractSettings($arr[$k], $pluginId. ':'. $k, $classname. 'VM');
+                        if(isset($arr[$k]))
+                        {
+                            self::extractSettings($arr[$k], $pluginId. ':'. $k, $classname. 'VM');
+                        }
                     }
+                    // TODO: attach function to a layout
+                    // https://www.php.net/manual/en/closure.bindto.php
                 }
-
-                // TODO: attach function to a layout
-                // https://www.php.net/manual/en/closure.bindto.php
 
                 return $vm;
             }, 

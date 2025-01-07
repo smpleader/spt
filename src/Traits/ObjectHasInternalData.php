@@ -23,11 +23,11 @@ trait ObjectHasInternalData
     /**
      * Check internal variable exists  by key
      *
-     * @param string|integer   $key  internal variable array key name
+     * @param string|int   $key  internal variable array key name
      * 
      * @return mixed    value 
      */ 
-    public function exists( string | integer $key)
+    public function exists( string | int $key)
     {
         return isset($this->_vars[$key]);
     }
@@ -35,12 +35,12 @@ trait ObjectHasInternalData
     /**
      * Assign value into internal variable array by key
      *
-     * @param string|integer   $key  internal variable array key name
+     * @param string|int   $key  internal variable array key name
      * @param mixed    $value Assign value
      * 
      * @return void
      */ 
-    public function set( string | integer $key, $value)
+    public function set( string | int $key, $value)
     {
         $this->_vars[$key] = $value;
     }
@@ -48,13 +48,13 @@ trait ObjectHasInternalData
     /**
      * Get value from internal variable array by key
      *
-     * @param string|integer   $key  internal variable array key name
+     * @param string|int   $key  internal variable array key name
      * @param mixed    $default Value if key not found
      * @param nullable string    $format Value filter key
      * 
      * @return mixed
      */ 
-    public function get( string | integer $key, $default = null, ?string $format = null)
+    public function get( string | int $key, $default = null, ?string $format = null)
     {
         if(!isset($this->_vars[$key])) return $default;
         return $format ? Filter::$format($this->_vars[$key]) : $this->_vars[$key];

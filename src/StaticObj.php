@@ -17,12 +17,12 @@ class StaticObj
     /**
      * Assign value into internal variable array by key
      *
-     * @param string|integer   $key  internal variable array key name
+     * @param string|int   $key  internal variable array key name
      * @param mixed    $value Assign value
      * 
      * @return void
      */ 
-    static function set( string | integer $key, $value)
+    static function set( string | int $key, $value)
     {
         static::$_vars[$key] = $value;
     }

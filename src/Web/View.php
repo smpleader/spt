@@ -119,7 +119,7 @@ class View
 
         if($this->_themePath)
         {
-            $path = $this->_themePath. $plgId. '/'. $type. '/'. $token;
+            $path = 'theme' == $type ? $this->_themePath. $token : $this->_themePath. $plgId. '/'. $type. '/'. $token;
             if( file_exists($path) ) return $path;
         }
 

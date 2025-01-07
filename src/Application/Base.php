@@ -178,14 +178,14 @@ class Base extends ACore implements IApp
                         if(is_dir($path))
                         {
                             Loader::findClass( $path, $name,
-                                function($classname, $fullname) use ($fnc) { 
-                                    $fnc($classname, $fullname, '');
+                                function($classname, $fullname) use ($fnc, $pluginName) { 
+                                    $fnc($classname, $fullname, '', $pluginName);
                                 }
                             );
                         }
                         elseif(class_exists($path))
                         {
-                            $fnc( $name, $path, $alias );
+                            $fnc( $name, $path, $alias, $pluginName );
                         }
                     }
                 }
@@ -193,29 +193,11 @@ class Base extends ACore implements IApp
             elseif(!isset($list[$obj]) || false !== $list[$obj])
             {
                 Loader::findClass( $plugin->getPath($obj), $plugin->getNamespace('\\'. $obj),
-                    function($classname, $fullname) use ($fnc) { 
-                        $fnc($classname, $fullname, '');
+                    function($classname, $fullname) use ($fnc, $pluginName) { 
+                        $fnc($classname, $fullname, '', $pluginName);
                     }
                 );
             }
         }
     }
-
-    /**
-     * 
-     *  SUPPORT MVVM ENGINE
-     *  TODO: remove those functons
-     * 
-
-    protected array $vmClasses;
-    public function getVMList(string $plgName)
-    {
-        return isset($this->vmClasses[$plgName]) ? $this->vmClasses[$plgName] : [];
-    }
-
-    public function addVM(string $plgName, string $name, string $fullName)
-    {
-        $this->vmClasses[$plgName][] = [$name, $fullName];
-    }
-     */
 }

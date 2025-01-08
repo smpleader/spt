@@ -28,6 +28,7 @@ class View
      * 
      * @param array   $pluginList list all information of plugins
      * @param string   $currentPlugin id of current plugin
+     * @param array   $closures function to attache into Layout
      * @param string   $themePath path to theme path
      * @param string   $themeConfigFile path to theme configuration path
      * 

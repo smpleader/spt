@@ -82,31 +82,4 @@ class Magic extends Base
 
 		return call_user_func_array($this->functions[$method], $args);
 	}
-
-    /**
-     * Render a layout, alias to renderLayout() of View
-     * 
-     * @param string   $layout layout path or layout name
-     * @param array   $data data attached
-     * @param string   $type layout type
-     * 
-     * @return string 
-     */ 
-    public function render(string $layout, array $data=[], string $type='layout')
-    {
-        return $this->_view->renderLayout($layout, $data, $type);
-    }
-
-    /**
-     * Render a layout, alias to render() with type "widget"
-     * 
-     * @param string   $layout layout path or layout name
-     * @param array   $data data attached
-     * 
-     * @return string 
-     */ 
-    public function renderWidget(string $layout, array $data=[])
-    {
-        return $this->render($layout, $data, 'widget');
-    } 
 }

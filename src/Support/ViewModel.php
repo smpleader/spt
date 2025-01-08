@@ -92,6 +92,7 @@ class ViewModel
         if(isset(self::$_list[$id]))
         {
             $container = App::getInstance()->getContainer();
+            
             foreach(self::$_list[$id] as $tmp)
             {
                 list($vm, $fnc) = $tmp;

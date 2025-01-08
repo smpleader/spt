@@ -13,6 +13,8 @@ namespace SPT\Web;
 use SPT\Application\IApp;
 use SPT\Container\Client;   
 use SPT\Traits\ObjectHasInternalData;
+use SPT\Support\Loader;
+use SPT\Web\IViewFunction;
 
 class Controller extends Client
 {
@@ -29,7 +31,7 @@ class Controller extends Client
         $page = $this->app->get('page', 'index');
         $view = $this->getView();
 
-        return $view->render( 'theme:'. $page, $data );
+        return $view->render( 'theme:'. $page, $data);
     }
 
     /**
@@ -56,8 +58,8 @@ class Controller extends Client
     public function toAjax()
     {
         $data = (array) $this->getAll();
-        $page = $this->app->get('layout
-        ', 'ajax');
+        $data = array_merge($data, $this->app->get('ViewFunctions', []));
+        $page = $this->app->get('layout', 'ajax');
         $view = $this->getView();
 
         return $view->render($page, $data);
@@ -70,38 +72,66 @@ class Controller extends Client
      */ 
     protected function getView()
     {
-        $pluginPath = $this->app->get('pluginPath', '_NOT_SET_'); 
-        if('_NOT_SET_' === $pluginPath)
+        if(!$this->container->exists('view'))
         {
-            // Carefully check SPT\Support\App::createController()
-            $this->app->raiseError('Invalid current plugin');
-        }
-
-        $currentPlugin = $this->app->get('currentPlugin');
-        $pluginList = $this->app->plugin(true);
-
-        $themePath = $this->app->any('themePath', 'theme.path', '');
-        $theme = $this->app->any('theme', 'theme.default', '');
-
-        if($themePath)
-        {
-            if(substr($themePath, -1) !== '/')
+            $pluginPath = $this->app->get('pluginPath', '_NOT_SET_'); 
+            if('_NOT_SET_' === $pluginPath)
             {
-                $themePath .= '/';
+                // Carefully check SPT\Support\App::createController()
+                $this->app->raiseError('Invalid current plugin');
             }
 
-            $themePath .= $theme;
-            $themeConfigFile = $themePath. '/'. $this->app->any('themeConfigFile', 'theme.config', '_assets.php');
-        }
-        else
-        {
-            $themeConfigFile = '';
+            $currentPlugin = $this->app->get('currentPlugin');
+            $pluginList = $this->app->plugin(true);
+
+            $themePath = $this->app->any('themePath', 'theme.path', '');
+            $theme = $this->app->any('theme', 'theme.default', '');
+
+            if($themePath)
+            {
+                if(substr($themePath, -1) !== '/')
+                {
+                    $themePath .= '/';
+                }
+
+                $themePath .= $theme;
+                $themeConfigFile = $themePath. '/'. $this->app->any('themeConfigFile', 'theme.config', '_assets.php');
+            }
+            else
+            {
+                $themeConfigFile = '';
+            }
+                
+            $viewFunctions = [];
+            $configFunction = $this->config->of('view.functions', []);
+            foreach($configFunction as $path => $namespace)
+            {
+                Loader::findClass( 
+                    $path, 
+                    $namespace,
+                    function($classname, $fullname) use ( &$viewFunctions )
+                    { 
+                        $instance = new $fullname;
+                        if( $instance instanceof IViewFunction)
+                        {
+                            $viewFunctions = array_merge($viewFunctions, $instance->registerFunctions());
+                        }
+                    }
+                );
+            }
+
+            //var_dump($viewFunctions); die;
+
+            $this->container->share(
+                'view',
+                new View(
+                    $pluginList, $currentPlugin, $viewFunctions, $themePath, $themeConfigFile
+                ),
+                true
+            ) ;
         }
 
-        //$pluginPaths = $this->app->get('pluginPaths'); ?? 
-        return new View(
-            $pluginList, $currentPlugin, $this->app->get('ViewFunctions'), $themePath, $themeConfigFile
-        );
+        return $this->container->get('view');
     }
 
     public function execute()

@@ -11,7 +11,7 @@
 namespace SPT\Web;
 
 use SPT\Web\Theme;
-use SPT\Web\Layout\Pure as Layout; 
+use SPT\Web\Layout\Base as Layout; 
 use SPT\Support\ViewModel;
 
 class View
@@ -28,7 +28,6 @@ class View
      * 
      * @param array   $pluginList list all information of plugins
      * @param string   $currentPlugin id of current plugin
-     * @param array   $viewFunction array of closure
      * @param string   $themePath path to theme path
      * @param string   $themeConfigFile path to theme configuration path
      * 
@@ -57,9 +56,9 @@ class View
      * 
      * @return Layout 
      */
-    public function getLayout(string $key): Layout
+    public function getLayout(string|array $key): Layout
     {
-        $tmp = explode(':', $key);
+        $tmp = is_array($key) ? $key : explode(':', $key);
         $count = count($tmp); 
         switch($count) 
         {
@@ -88,18 +87,21 @@ class View
         if(!isset($this->_layouts[$id]))
         {
             $realPath = $this->getRealPath($plg, $type, $path);
-            $this->_layouts[$id] = new Layout($this->_theme, $id, $realPath, $this->_closures);
+            $this->_layouts[$id] = new  \SPT\Web\Layout\Pure($this->_theme, $id, $realPath, $this->_closures);
         }
 
         return $this->_layouts[$id];
     }
 
-    public function render(string $key, array $data = [], $isString = true)
+    public function render(string|array $key, array $data = [], $isString = true)
     {
         $layout = $this->getLayout($key);
         
         $data = ViewModel::getData($layout->getId(), $data);
         $layout->update($data);
+
+        // TODO: VALIDATE  before render
+        // $layout->validate()
 
         return $isString ? $layout->_render() : $layout->render();
     }
@@ -122,11 +124,11 @@ class View
 
         if($this->_themePath)
         {
-            $path = 'theme' == $type ? $this->_themePath. $token : $this->_themePath. $plgId. '/'. $type. '/'. $token;
+            $path = 'theme' == $type ? $this->_themePath. $token : $this->_themePath. $plgId. '/'. $type. 's/'. $token;
             if( $path = $this->fileExists($path) ) return $path;
         }
 
-        $path = $this->_plugins[$plgId]->getPath( 'views/'. $type. '/'. $token);
+        $path = $this->_plugins[$plgId]->getPath( 'views/'. $type. 's/'. $token);
         if( $path = $this->fileExists($path) ) return $path;
 
         throw new \Exception('Invalid path '. $token. ' <!-- plugin '. $plgId. ':'. $type. '-->' );

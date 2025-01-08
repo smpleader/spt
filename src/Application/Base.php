@@ -19,6 +19,7 @@ use SPT\Extend\Pdo;
 use SPT\Container\IContainer;
 use SPT\Application\Plugin\Manager;
 use SPT\Support\Loader;
+use SPT\Web\IViewFunction;
 
 class Base extends ACore implements IApp
 {
@@ -155,7 +156,7 @@ class Base extends ACore implements IApp
             {
                 if( !$container->exists($name) )
                 {
-                    $app->raiseError('Plugin '. $plugin->getId(). ' requires an instance of '. $namee);
+                    $this->raiseError('Plugin '. $plugin->getId(). ' requires an instance of '. $namee);
                 }
             }
         }
@@ -199,21 +200,5 @@ class Base extends ACore implements IApp
                 );
             }
         }
-
-        $viewFunctions = $this->get('ViewFunctions', []);
-        Loader::findClass( 
-            $plugin->getPath('viewfunctions'), 
-            $plugin->getNamespace('\\viewfunctions'),
-            function($classname, $fullname) use ( &$viewFunctions ) { 
-                if($classname instanceof IViewFunction)
-                {
-                    $instance = new $fullname;
-                    $viewFunctions = array_merge($viewFunctions, $instance->registerFunctions());
-                }
-            }
-        );
-
-        $this->set('ViewFunctions', $viewFunctions); 
-
     }
 }

@@ -12,7 +12,7 @@ namespace SPT\Web\Layout;
 
 use SPT\Web\Theme;
 
-abstract class Base
+class Base
 { 
     /**
     * Internal variable cache file path
@@ -76,8 +76,42 @@ abstract class Base
         {
             if(!in_array($k, ['theme', '__path', '__id']))
             {
-                $this->$k = $v;
+                if(is_callable($v))
+                {
+                    var_dump($k, isset($this->$k),
+                    property_exists($this, $k)
+                );
+                    //
+                    if(!isset($this->$k))
+                    {
+                        $v->bindTo($this, $this);
+                    }
+                }
+                else
+                {
+                    $this->$k = $v;
+                }
             }
         }
     }
+
+    /**
+     * magic method
+     * 
+     */
+    public function __call($name, $args)
+    {
+        if (is_callable($this->$name)) {
+            return call_user_func_array($this->$name, $args);
+        }
+        else 
+        {
+            throw new \RuntimeException("Method {$name} does not exist");
+        }
+    }
+    
+    /*public function __set($name, $value) 
+    {
+        $this->$name = is_callable($value) ? $value->bindTo($this, $this): $value;
+    }*/
 }

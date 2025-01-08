@@ -48,12 +48,6 @@ class Pure extends Base
         $this->__path = $path;
         $this->__id = $id;
 
-        foreach($data as $k=>$v)
-        {
-            if(!in_array($k, ['theme', '__path', '__id']))
-            {
-                $this->$k = $v;
-            }
-        }
+        $this->update($data);
     } 
 }

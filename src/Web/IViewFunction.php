@@ -12,5 +12,5 @@ namespace SPT\Web;
 
 interface IViewFunction
 {
-    public function registerFunctions(): array
+    public function registerFunctions(): array;
 }

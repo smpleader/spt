@@ -100,7 +100,7 @@ class Controller extends Client
 
         //$pluginPaths = $this->app->get('pluginPaths'); ?? 
         return new View(
-            $pluginList, $currentPlugin, $themePath, $themeConfigFile
+            $pluginList, $currentPlugin, $this->app->get('ViewFunctions'), $themePath, $themeConfigFile
         );
     }
 

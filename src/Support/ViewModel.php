@@ -23,7 +23,7 @@ class ViewModel
         $container->containerize(
             $classname. 'VM', 
             $fullname,
-            function($fullname, $container) use ($pluginId)
+            function($fullname, $container) use ($pluginId, $classname)
             { 
                 $vm = new $fullname($container);
 
@@ -102,7 +102,11 @@ class ViewModel
                     throw new \Exception('Invalid function '. $fnc. ' of ViewModel '.$vm);
                 }
 
-                $data = array_merge($data, $ViewModel->$fnc($data, $extraData));
+                $try = $ViewModel->$fnc($data, $extraData);
+                if(is_array($try))
+                {
+                    $data = array_merge($data, $try);
+                }
             }
         }
         

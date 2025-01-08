@@ -84,7 +84,7 @@ class View
             break;
         }
 
-        $id = $plg. ':'. $type. ':'. $path; var_dump($id);
+        $id = $plg. ':'. $type. ':'. $path;
         if(!isset($this->_layouts[$id]))
         {
             $realPath = $this->getRealPath($plg, $type, $path);

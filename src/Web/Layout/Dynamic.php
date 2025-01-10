@@ -26,21 +26,7 @@ class Dynamic extends Base
     * Internal variable cache a token: plugin:type:path
     * @var string $_id
     */
-    protected readonly string $__id; 
-
-    public function __construct(Theme $theme, string $id, string $path)
-    {
-        if(!file_exists($path))
-        {
-            throw new \Exception('Can not create a layout from path '.$path);
-        }
-        
-        $this->__view = $view;
-        $this->__path = $path;
-        $this->__id = $id; 
-
-        $this->theme = &$theme;
-    }
+    protected readonly string $__id;
 
     /**
      * update data if new one

@@ -28,12 +28,6 @@ class Base
     protected readonly string $__id;
 
     /**
-    * Internal variable cache a token: plugin:type:path
-    * @var string $__methods
-    */
-    //protected readonly array $__methods;
-
-    /**
     * Theme info
     * @var Theme $theme
     */
@@ -56,12 +50,11 @@ class Base
      * 
      * @param Theme   $theme variable theme
      * @param string   $id token, format plugin:type:path
-     * @param string   $path path file
-     * @param array   $methods allow functions 
+     * @param string   $path path file 
      * 
      * @return void 
      */ 
-    public function __construct(View $view, string $id, string $path, array $methods = [])
+    public function __construct(View $view, string $id, string $path)
     {
         if(!file_exists($path))
         {
@@ -74,14 +67,6 @@ class Base
 
         $theme = $view->getTheme();
         $this->theme = &$theme;
-
-        foreach($methods as $name => $fnc)
-        {
-            if(is_callable($fnc))
-            {
-                $this->__methods[$name] = $fnc;//->bindTo($this, $this);
-            }
-        }
     }
 
     /**
@@ -156,9 +141,9 @@ class Base
      */ 
     public function __call($name, $args)
     {
-        if(isset($this->__methods[$name]))
+        if(isset($this->__view->_closures[$name]))
         {
-            return call_user_func_array( $this->__methods[$name], $args);
+            return call_user_func_array( $this->__view->_closures[$name], $args);
         }
         else 
         {

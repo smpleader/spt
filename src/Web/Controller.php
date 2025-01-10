@@ -106,18 +106,27 @@ class Controller extends Client
             $configFunction = $this->config->of('view.functions', []);
             foreach($configFunction as $path => $namespace)
             {
-                Loader::findClass( 
-                    $path, 
-                    $namespace,
-                    function($classname, $fullname) use ( &$viewFunctions )
-                    {
-                        if(method_exists($fullname, 'registerFunctions'))
+                if(is_dir($path))
+                {
+                    Loader::findClass( 
+                        $path, 
+                        $namespace,
+                        function($classname, $fullname) use ( &$viewFunctions )
                         {
-                            $viewFunctions = array_merge($viewFunctions, $fullname::registerFunctions());
-
+                            if(method_exists($fullname, 'registerFunctions'))
+                            {
+                                $viewFunctions = array_merge($viewFunctions, $fullname::registerFunctions());
+                            }
                         }
+                    );
+                }
+                elseif(is_file($path))
+                {
+                    if(method_exists($namespace, 'registerFunctions'))
+                    {
+                        $viewFunctions = array_merge($viewFunctions, $namespace::registerFunctions());
                     }
-                );
+                }
             }
 
             $this->container->share(

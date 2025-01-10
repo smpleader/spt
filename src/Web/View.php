@@ -114,7 +114,7 @@ class View
 
         $type = strtolower($type);
 
-        if(!in_array($type, ['theme', 'layout', 'widget']))
+        if(!in_array($type, ['theme', 'layout', 'widget', 'viewcom']))
         {
             throw new \Exception('Invalid Path type '. $type);
         }

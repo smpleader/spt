@@ -11,8 +11,8 @@
 namespace SPT\Web\Layout;
 
 use SPT\Web\Theme;
+use SPT\Web\View;
 
-#[\AllowDynamicProperties]
 class Pure extends Base
 {
     /**
@@ -26,28 +26,45 @@ class Pure extends Base
     * @var string $_id
     */
     protected readonly string $__id;
+
+    /**
+    * Internal variable cache methods
+    * @var array $__methods
+    */
+    protected  array $__methods = [];
+
+    /**
+    * Internal variable cache variables
+    * @var array $__vars
+    */
+    protected array $__vars = [];
     
     /**
-     * Constructor
-     * 
-     * @param Theme   $theme variable theme
-     * @param string   $id token, format plugin:type:path
-     * @param string   $path path file
-     * @param array   $data data 
+     * update data if new one
      * 
      * @return void 
      */ 
-    public function __construct(Theme $theme, string $id, string $path, array $data = [])
+    public function update(array $data): void
     {
-        if(!file_exists($path))
+        foreach($data as $k=>$v)
         {
-            throw new \Exception('Can not create a layout from path '.$path);
+            $this->__vars[$k] = $v; 
         }
-        
-        $this->theme = $theme ;
-        $this->__path = $path;
-        $this->__id = $id;
+    }
+    
+    /**
+     * magic method get
+     * 
+     * @return mixed 
+     */ 
+    public function __get($name) 
+    {
+        return $this->__vars[$name] ?? NULL;
+    }
 
-        $this->update($data);
-    } 
+    /*
+    public function __set($name, $value) 
+    {
+        $this->__vars[$name] = $value;
+    }*/
 }

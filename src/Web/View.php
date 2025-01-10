@@ -19,7 +19,7 @@ class View
     private array $_layouts;
     private Theme $_theme;
     private array $_plugins;
-    private array $_closures;
+    public array $_closures;
     private string $_current;
     private string $_themePath;
 
@@ -28,7 +28,6 @@ class View
      * 
      * @param array   $pluginList list all information of plugins
      * @param string   $currentPlugin id of current plugin
-     * @param array   $closures function to attache into Layout
      * @param string   $themePath path to theme path
      * @param string   $themeConfigFile path to theme configuration path
      * 
@@ -74,10 +73,8 @@ class View
                 break;
             case 3:
                 list($plg, $type, $path) = $tmp;
-                if(!isset($this->_plugins[$plg]))
-                {
-                    throw new \Exception('Invalid plugin '. $plg. ' of path '. $key);
-                }
+                if(empty($plg)) $plg = $this->_current;
+                if(empty($type)) $type = 'layout';
                 break;
             default:
                 throw new \Exception('Invalid path '. $key);
@@ -88,7 +85,7 @@ class View
         if(!isset($this->_layouts[$id]))
         {
             $realPath = $this->getRealPath($plg, $type, $path);
-            $this->_layouts[$id] = new  \SPT\Web\Layout\Pure($this->_theme, $id, $realPath, $this->_closures);
+            $this->_layouts[$id] = new \SPT\Web\Layout\Pure($this, $id, $realPath, $this->_closures );
         }
 
         return $this->_layouts[$id];
@@ -141,5 +138,10 @@ class View
         if(file_exists($path) && is_file($path)) return $path;
         if(file_exists($path. '/index.php')) return $path. '/index.php';
         return false;
+    }
+
+    public function getTheme(): Theme
+    {
+        return $this->_theme;
     }
 }

@@ -110,17 +110,15 @@ class Controller extends Client
                     $path, 
                     $namespace,
                     function($classname, $fullname) use ( &$viewFunctions )
-                    { 
-                        $instance = new $fullname;
-                        if( $instance instanceof IViewFunction)
+                    {
+                        if(method_exists($fullname, 'registerFunctions'))
                         {
-                            $viewFunctions = array_merge($viewFunctions, $instance->registerFunctions());
+                            $viewFunctions = array_merge($viewFunctions, $fullname::registerFunctions());
+
                         }
                     }
                 );
             }
-
-            //var_dump($viewFunctions); die;
 
             $this->container->share(
                 'view',

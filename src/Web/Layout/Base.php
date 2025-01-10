@@ -11,6 +11,7 @@
 namespace SPT\Web\Layout;
 
 use SPT\Web\Theme;
+use SPT\Web\View;
 
 class Base
 { 
@@ -27,21 +28,88 @@ class Base
     protected readonly string $__id;
 
     /**
+    * Internal variable cache a token: plugin:type:path
+    * @var string $__methods
+    */
+    //protected readonly array $__methods;
+
+    /**
     * Theme info
-    * @var string $_path
+    * @var Theme $theme
     */
     protected Theme $theme;
+
+    /**
+    * Theme info
+    * @var Theme $theme
+    */
+    protected View $__view;
+
+    /**
+    * Avoid a loop 
+    * @var boolean $__locked
+    */
+    protected  bool $__locked = false;
+    
+    /**
+     * Constructor
+     * 
+     * @param Theme   $theme variable theme
+     * @param string   $id token, format plugin:type:path
+     * @param string   $path path file
+     * @param array   $methods allow functions 
+     * 
+     * @return void 
+     */ 
+    public function __construct(View $view, string $id, string $path, array $methods = [])
+    {
+        if(!file_exists($path))
+        {
+            throw new \Exception('Can not create a layout from path '.$path);
+        }
+        
+        $this->__view = $view;
+        $this->__path = $path;
+        $this->__id = $id;
+
+        $theme = $view->getTheme();
+        $this->theme = &$theme;
+
+        foreach($methods as $name => $fnc)
+        {
+            if(is_callable($fnc))
+            {
+                $this->__methods[$name] = $fnc;//->bindTo($this, $this);
+            }
+        }
+    }
 
     /**
      * render content into string
      * 
      * @return string 
      */ 
-    public function _render(): string
+    public function _render(string $layoutId = '', array $data = []): string
     {
+        if($layoutId && $layoutId !== $this->__id)
+        {
+            return $this->__view->render($layoutId, $data);
+        }
+
+        if($this->__locked)
+        {
+            return ''; // TODO: warning if DEBUG mode is ON
+        }
+        else
+        {
+            $this->__locked = true;
+        }
+
         ob_start();
         include $this->__path;
         $content = ob_get_clean();
+
+        $this->__locked = false;        
         return $content;
     }
 
@@ -60,9 +128,9 @@ class Base
      * 
      * @return void 
      */ 
-    public function render(): void
+    public function render(string $layoutId = '', array $data = []): void
     {
-        echo $this->_render();
+        echo $this->_render($layoutId);
     }
 
     /**
@@ -74,44 +142,27 @@ class Base
     {
         foreach($data as $k=>$v)
         {
-            if(!in_array($k, ['theme', '__path', '__id']))
+            if(!in_array($k, ['theme', '__path', '__id', '__methods']))
             {
-                if(is_callable($v))
-                {
-                    var_dump($k, isset($this->$k),
-                    property_exists($this, $k)
-                );
-                    //
-                    if(!isset($this->$k))
-                    {
-                        $v->bindTo($this, $this);
-                    }
-                }
-                else
-                {
-                    $this->$k = $v;
-                }
+                $this->$k = $v; 
             }
         }
     }
-
+    
     /**
-     * magic method
+     * magic method call function
      * 
-     */
+     * @return void 
+     */ 
     public function __call($name, $args)
     {
-        if (is_callable($this->$name)) {
-            return call_user_func_array($this->$name, $args);
+        if(isset($this->__methods[$name]))
+        {
+            return call_user_func_array( $this->__methods[$name], $args);
         }
         else 
         {
             throw new \RuntimeException("Method {$name} does not exist");
         }
     }
-    
-    /*public function __set($name, $value) 
-    {
-        $this->$name = is_callable($value) ? $value->bindTo($this, $this): $value;
-    }*/
 }

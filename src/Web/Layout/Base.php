@@ -11,7 +11,7 @@
 namespace SPT\Web\Layout;
 
 use SPT\Web\Theme;
-use SPT\Web\View;
+use SPT\Support\View;
 
 class Base
 { 
@@ -31,13 +31,7 @@ class Base
     * Theme info
     * @var Theme $theme
     */
-    protected Theme $theme;
-
-    /**
-    * Theme info
-    * @var Theme $theme
-    */
-    protected View $__view;
+    protected Theme $theme; 
 
     /**
     * Avoid a loop 
@@ -54,18 +48,15 @@ class Base
      * 
      * @return void 
      */ 
-    public function __construct(View $view, string $id, string $path)
+    public function __construct(Theme $theme, string $id, string $path)
     {
         if(!file_exists($path))
         {
             throw new \Exception('Can not create a layout from path '.$path);
         }
         
-        $this->__view = $view;
         $this->__path = $path;
         $this->__id = $id;
-
-        $theme = $view->getTheme();
         $this->theme = &$theme;
     }
 
@@ -78,7 +69,7 @@ class Base
     {
         if($layoutId && $layoutId !== $this->__id)
         {
-            return $this->__view->render($layoutId, $data);
+            return View::render($layoutId, $data);
         }
 
         if($this->__locked)
@@ -123,31 +114,5 @@ class Base
      * 
      * @return void 
      */ 
-    public function update(array $data): void
-    {
-        foreach($data as $k=>$v)
-        {
-            if(!in_array($k, ['theme', '__path', '__id', '__methods']))
-            {
-                $this->$k = $v; 
-            }
-        }
-    }
-    
-    /**
-     * magic method call function
-     * 
-     * @return void 
-     */ 
-    public function __call($name, $args)
-    {
-        if(isset($this->__view->_closures[$name]))
-        {
-            return call_user_func_array( $this->__view->_closures[$name], $args);
-        }
-        else 
-        {
-            throw new \RuntimeException("Method {$name} does not exist");
-        }
-    }
+    public function update(array $data, bool $isMethod = false): void {}
 }

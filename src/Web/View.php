@@ -85,7 +85,8 @@ class View
         if(!isset($this->_layouts[$id]))
         {
             $realPath = $this->getRealPath($plg, $type, $path);
-            $this->_layouts[$id] = new \SPT\Web\Layout\Pure($this, $id, $realPath, $this->_closures );
+            $this->_layouts[$id] = new \SPT\Web\Layout\Pure($this->_theme, $id, $realPath);
+            $this->_layouts[$id]->update($this->_closures, true);
         }
 
         return $this->_layouts[$id];

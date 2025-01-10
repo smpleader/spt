@@ -29,9 +29,9 @@ class Pure extends Base
 
     /**
     * Internal variable cache methods
-    * @var array $__methods
+    * @var array $__closures
     */
-    protected  array $__methods = [];
+    protected  array $__closures = [];
 
     /**
     * Internal variable cache variables
@@ -44,11 +44,18 @@ class Pure extends Base
      * 
      * @return void 
      */ 
-    public function update(array $data): void
+    public function update(array $data, bool $isMethod = false): void
     {
         foreach($data as $k=>$v)
         {
-            $this->__vars[$k] = $v; 
+            if( !$isMethod && is_scalar($v))
+            {
+                $this->__vars[$k] = $v;
+            }
+            elseif( $isMethod && is_callable($v) )
+            {
+                $this->__closures[$k] = $v->bindTo($this);
+            }
         }
     }
     
@@ -59,12 +66,34 @@ class Pure extends Base
      */ 
     public function __get($name) 
     {
+        if('theme' == $name) return $this->theme;
         return $this->__vars[$name] ?? NULL;
     }
 
-    /*
+    /**
+     * magic method set
+     * 
+     * @return void 
+     */ 
     public function __set($name, $value) 
     {
         $this->__vars[$name] = $value;
-    }*/
+    }
+    
+    /**
+     * magic method call function
+     * 
+     * @return void 
+     */ 
+    public function __call($name, $args)
+    {
+        if(isset($this->__closures[$name]))
+        {
+            return call_user_func_array( $this->__closures[$name], $args);
+        }
+        else 
+        {
+            throw new \RuntimeException("Method {$name} does not exist");
+        }
+    }
 }

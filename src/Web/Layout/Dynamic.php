@@ -28,13 +28,50 @@ class Dynamic extends Base
     */
     protected readonly string $__id; 
 
-    /**
-     * magic method
-     * 
-     */
-    
-    /*public function __set($name, $value) 
+    public function __construct(Theme $theme, string $id, string $path)
     {
-        $this->$name = is_callable($value) ? $value->bindTo($this, $this): $value;
-    }*/
+        if(!file_exists($path))
+        {
+            throw new \Exception('Can not create a layout from path '.$path);
+        }
+        
+        $this->__view = $view;
+        $this->__path = $path;
+        $this->__id = $id; 
+
+        $this->theme = &$theme;
+    }
+
+    /**
+     * update data if new one
+     * 
+     * @return void 
+     */ 
+    public function update(array $data, bool $isMethod = false): void
+    {
+        foreach($data as $k=>$v)
+        {
+            if(!in_array($k, ['theme', '__path', '__id']))
+            {
+                $this->$k = is_callable($v) ? $v->bindTo($this): $v;
+            }
+        }
+    }
+
+    /**
+     * magic method call function
+     * 
+     * @return void 
+     */ 
+    public function __call($name, $args)
+    {
+        if(is_callable($this->$name))
+        {
+            return call_user_func_array( $this->$name, $args);
+        }
+        else 
+        {
+            throw new \RuntimeException("Method {$name} does not exist");
+        }
+    }
 }

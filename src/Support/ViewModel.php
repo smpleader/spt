@@ -39,9 +39,6 @@ class ViewModel
                     }
                 }
 
-                // TODO: attach function to a layout
-                // https://www.php.net/manual/en/closure.bindto.php
-
                 return $vm;
             }, 
             $alias

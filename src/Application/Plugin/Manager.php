@@ -19,6 +19,7 @@ use \Exception;
 class Manager
 {
     protected array $list = [];
+    protected array $paths = [];
     protected string $master = '';
     protected string $message = '';
     protected array $calls = [];
@@ -75,6 +76,7 @@ class Manager
             else
             {
                 $this->list[$id] = new Plugin($id, $path, $namespace);
+                $this->paths[$id] = $path;
             }
         } 
     }
@@ -217,7 +219,7 @@ class Manager
         return $results;
     }
 
-    public function getList()
+    public function getList(): array
     {
         return $this->list;
     }
@@ -225,5 +227,10 @@ class Manager
     public function getDetail(string $name)
     {
         return isset($this->list[$name]) ? $this->list[$name] : false;
+    }
+
+    public function getPluginPaths(): array
+    {
+        return $this->paths;
     }
 }

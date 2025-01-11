@@ -4,335 +4,145 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Just a core view
+ * @description: Class view to display content
  * 
  */
 
 namespace SPT\Web;
 
 use SPT\Web\Theme;
-use SPT\Web\ViewLayout;
+use SPT\Web\Layout\Base as Layout; 
+use SPT\Support\ViewModel;
 
 class View
-{    
-    /**
-    * Internal variable to see MVVM is applied or not
-    * @var bool $isMVVM
-    */
-    protected $isMVVM;
-
-    /**
-    * Internal variable for Theme instance
-    * @var Theme $theme
-    */
-    protected Theme $theme;
-
-    /**
-    * Internal variable for ViewComponent instance
-    * @var ViewComponent $isMVVM
-    */
-    protected ViewComponent $component;
-
-    /**
-    * Internal variable for logs
-    * @var array $logs
-    */
-    protected $logs = [];
-
-    /**
-    * Internal variable for paths
-    * @var array $paths
-    */
-    protected $paths = [];
-
-    /**
-    * Internal variable for shared varialbel accros layouts
-    * @var array $_shares
-    */
-    protected $_shares = [];
-
-    /**
-    * Internal variable for main layout
-    * @var string $mainLayout
-    */
-    protected $mainLayout = '';
-
-    /**
-    * Internal variable to cache main layout content
-    * @var string $mainContent
-    */
-    protected $mainContent = '';
-
-    /**
-    * Internal variable for current plugin name, this is important for a view
-    * @var string $currentPlugin
-    */    
-    protected $currentPlugin = '';
+{
+    private array $_layouts;
+    private Theme $_theme;
+    private array $_plugins;
+    public array $_closures;
+    private string $_current;
+    private string $_themePath;
 
     /**
      * Constructor
      * 
+     * @param array   $pluginList list all information of plugins
+     * @param string   $currentPlugin id of current plugin
+     * @param string   $themePath path to theme path
+     * @param string   $themeConfigFile path to theme configuration path
+     * 
      * @return void 
      */ 
-    public function __construct(Theme $theme, ViewComponent $component, $supportMVVM = true)
+    public function __construct(array $pluginList, string $currentPlugin, array $closures, string $themePath = '', string $themeConfigFile = '' )
     {
-        $this->theme = $theme;
-        $this->component = $component;
-        $this->isMVVM = $supportMVVM;
-    }
-    
-    /**
-     * Get golbal variable by key
-     *
-     * @param string   $key  key of array data
-     * @param mixed   $default default if null / not found
-     * 
-     * @return mixed 
-     */
-    public function getVar(string $key, $default = null)
-    {
-        return $this->_shares[$key] ?? $default; 
-    }
+        $this->_plugins = $pluginList;
+        $this->_current = $currentPlugin;
+        $this->_closures = $closures;
 
-    /**
-     * Set golbal variable by key
-     *
-     * @param string   $key  key of array data
-     * @param mixed   $value 
-     * 
-     * @return void 
-     */
-    public function setVar($key, $value)
-    {
-        $this->_shares[$key] = $value; 
-    }
+        if( $themePath && substr($themePath, -1) !== '/') $themePath .= '/';
+        $this->_themePath = $themePath;
 
-    /**
-     * Get current theme instance
-     * 
-     * @return Theme 
-     */
-    public function getTheme()
-    {
-        return $this->theme;
-    }
-
-    /**
-     * Get View Component
-     *
-     * @param ViewLayout   $layout  layou which sticked into View Component
-     * 
-     * @return ViewComponent 
-     */
-    public function getViewComponent(ViewLayout $layout)
-    {
-        return $this->component->support($layout);
-    }
-
-    /**
-     * Prepare available path based overrides info 
-     *
-     * @param string   $name  layou path
-     * @param string   $type  layou type
-     * 
-     * @throw Exception If path not ready with defined plugin
-     * 
-     * @return void 
-     */
-    protected function preparePath(string $name, string $type)
-    {
-        $overrides = [];
-        $plugin = '';
-        $layout = '';
-        if(in_array($type, ['widget', 'vcom']))
+        $this->_theme = new Theme;
+        if($themeConfigFile)
         {
-            @list($plugin, $layout) = explode('::', $name);
-            if(empty($plugin) || empty($layout))
-            {
-                throw new \Exception($type.' needs plugin name or path ( input: '. $name.')');
-            } 
-            
-            $realPath = $this->theme->overrides['_path'][$plugin] ?? '';
-
-            if(empty($realPath))
-            {
-                $realPath = $this->theme->overrides['_path'][$type.'_'.$plugin] ?? '';
-            }
-
-            if(empty($realPath))
-            {
-                throw new \Exception($type.' does not exists in '. $plugin);
-            }
-
-            $layout = str_replace('.', '/', $layout);
+            $this->_theme->registerAssets($themeConfigFile);
         }
-        else
+    }
+
+    /**
+     * Key format  plugin/id:layout:a.b.c
+     * 
+     * @param string   $key a short token to layout path
+     * 
+     * @return Layout 
+     */
+    public function getLayout(string|array $key): Layout
+    {
+        $tmp = is_array($key) ? $key : explode(':', $key);
+        $count = count($tmp); 
+        switch($count) 
         {
-            $layout = str_replace('.', '/', $name);
+            case 1:
+                $plg = $this->_current;
+                $type = 'layout';
+                $path = $key;
+                break;
+            case 2:
+                $plg = $this->_current;
+                list($type, $path) = $tmp;
+                break;
+            case 3:
+                list($plg, $type, $path) = $tmp;
+                if(empty($plg)) $plg = $this->_current;
+                if(empty($type)) $type = 'layout';
+                break;
+            default:
+                throw new \Exception('Invalid path '. $key);
+            break;
         }
 
-        foreach($this->theme->overrides[$type] as $line)
+        $id = $plg. ':'. $type. ':'. $path;
+        if(!isset($this->_layouts[$id]))
         {
-            if($plugin)
-            {
-                $line = str_replace('__PLG__', $plugin, $line);
-                $line = str_replace('__PLG_PATH__', $realPath, $line);
-            }
-
-            $overrides[] = $line. $layout. '.php';
-            $overrides[] = $line. $layout. '/index.php';
+            $realPath = $this->getRealPath($plg, $type, $path);
+            $this->_layouts[$id] = new \SPT\Web\Layout\Pure($this->_theme, $id, $realPath);
+            $this->_layouts[$id]->update($this->_closures, true);
         }
+
+        return $this->_layouts[$id];
+    }
+
+    public function render(string|array $key, array $data = [], $isString = true)
+    {
+        $layout = $this->getLayout($key);
         
-        $this->logs[$name] = $overrides;
-        $this->paths[$type. '_'. $name] = false;
-        foreach($overrides as $file)
-        {
-            if(file_exists($file))
-            {
-                $this->paths[$type. '_'.$name] = $file;
-                return;
-            }
-        }
+        $data = ViewModel::getData($layout->getId(), $data);
+        $layout->update($data);
+
+        // TODO: VALIDATE  before render
+        // $layout->validate()
+
+        return $isString ? $layout->_render() : $layout->render();
     }
 
-    /**
-     * Find path logs
-     *
-     * @param bool   $vardump echo content directly or return array log
-     * 
-     * @return void|array 
-     */
-    public function debugPath($vardump = true)
+    public function getRealPath(string $plgId, string $type, string $token)
     {
-        if($vardump)
+        if(!isset($this->_plugins[$plgId]))
         {
-            var_dump( $this->logs );
+            throw new \Exception('Invalid Plugin '. $plgId);
         }
-        else
+
+        $type = strtolower($type);
+
+        if(!in_array($type, ['theme', 'layout', 'widget', 'viewcom']))
         {
-            return $this->logs;
+            throw new \Exception('Invalid Path type '. $type);
         }
+
+        $token = str_replace('.', '/', $token);
+
+        if($this->_themePath)
+        {
+            $path = 'theme' == $type ? $this->_themePath. $token : $this->_themePath. $plgId. '/'. $type. 's/'. $token;
+            if( $path = $this->fileExists($path) ) return $path;
+        }
+
+        $path = $this->_plugins[$plgId]->getPath( 'views/'. $type. 's/'. $token);
+        if( $path = $this->fileExists($path) ) return $path;
+
+        throw new \Exception('Invalid path '. $token. ' <!-- plugin '. $plgId. ':'. $type. '-->' );
     }
 
-    /**
-     * Get real path based path name
-     *
-     * @param string   $name layout name
-     * @param string   $type layout type
-     * 
-     * @return string
-     */
-    public function getPath(string $name, string $type = 'layout')
+    private function fileExists(string $path)
     {
-        // absolute path, nothing to worry
-        if(file_exists($name)) return $name;
-
-        if(!isset($this->paths[$type. '_'. $name]))
-        {
-            $this->preparePath($name, $type); 
-        }
-
-        return $this->paths[$type. '_'. $name];
+        if(file_exists($path. '.php')) return $path. '.php';
+        if(file_exists($path) && is_file($path)) return $path;
+        if(file_exists($path. '/index.php')) return $path. '/index.php';
+        return false;
     }
 
-    /**
-     * Generate a main content based path name, with fully structured body content
-     *
-     * @param string   $page theme layout file name
-     * @param string   $layout layout name
-     * @param array   $data array of data, keep as global variable
-     * @param bool   $prepareMain trigger the main process before build a page
-     * 
-     * @throw Exception   If renderPage called twice or theme is not exist
-     * 
-     * @return string
-     */
-    public function renderPage(string $page, string $layout, array $data = [], bool $prepareMain = true)
+    public function getTheme(): Theme
     {
-        if($this->mainLayout)
-        {
-            throw new \Exception('Generate page twice is not supported ');
-        }
-        else
-        {
-            $this->mainLayout = $layout;
-        }
-        
-        
-        $file = $this->theme->path. '/'. $page. '/index.php';
-        if( !file_exists($file) )
-        {
-            $file = $this->theme->path. '/'. $page. '.php';
-        }
-        
-        if( !file_exists($file) )
-        {
-            throw new \Exception('Invalid theme page '. $page);
-        }
-
-        $this->setVar('mainLayout', $layout);
-
-        if($this->isMVVM)
-        {
-            ViewModelHelper::deployVM('layout', $layout, $data, []);
-        }
-
-        if(is_array($data) || is_object($data))
-        {
-            foreach($data as $key => $value)
-            {
-                $this->setVar($key, $value);
-            }
-        }
-
-        $vlayout = new ViewLayout($file, $this);
-        if($prepareMain)
-        {
-            $this->mainContent = $vlayout->render($layout);
-        }
-
-        return $vlayout->_render();
-    }
-
-    /**
-     * Generate a layout based layout path
-     *
-     * @param string   $layoutPath  layout file apath
-     * @param array   $data array of data, keep as global variable
-     * @param string   $type layout type
-     * 
-     * @throw Exception   if layout is not ready
-     * 
-     * @return string
-     */    
-    public function renderLayout(string $layoutPath, array $data = [], string $type = 'layout')
-    {
-        $file = $this->getPath($layoutPath, $type);
-        if( false === $file )
-        {
-            // $this->debugPath();
-            throw new \Exception('Invalid layout '. $layoutPath);
-        }
-
-        if($this->isMVVM && $layoutPath != $this->mainLayout)
-        {
-            ViewModelHelper::deployVM($type, $layoutPath, $data, $this->_shares);
-        }
-
-        $layout = new ViewLayout(
-            $file, 
-            $this,
-            $data
-        );
-        
-        return $layout->_render();
-    }
-
-    /**
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->mainContent;
+        return $this->_theme;
     }
 }

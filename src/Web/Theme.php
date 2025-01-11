@@ -21,63 +21,53 @@ class Theme extends BaseObj
      * Internal variable to store array of asset
      * @var array $_assets
      */
-    protected $_assets = [];
+    protected array $_assets = [];
 
     /**
      * Internal variable to store array of value
      * @var array $_assets
      */
-    protected $_vars = [];
-
-    /**
-     * Readonlye theme path (since PHP 8.1)
-     * @var string $path
-     */
-    public readonly string $path; 
-
+    protected array $_vars = []; 
     /**
      * Readonlye theme override layouts (since PHP 8.1)
      * @var array $overrides
      */
-    public readonly array $overrides;
+    //public readonly array $overrides; 
 
     /**
-     * Constructor
+     * Register Asset array
+     *
+     * @param array   $arr array of asset links
      * 
      * @return void 
      */ 
-    public function __construct(string $path, array $overrides)
+    public function registerAsset(array $arr)
     {
-        if(empty($path))
-        {
-            throw new \Exception('Invalid theme path');
-        }
-
-        $this->path = $path;
-        $this->overrides = $overrides;
-        $this->registerAssets();
+        $this->_assets = array_merge($this->_assets, $arr);
     }
 
     /**
-     * Register Asset links based theme file or array
+     * Register Asset links based theme file
      *
-     * @param string   $profile  profile name, empty mean auto load from file _assets.php in theme
-     * @param array   $list array of asset links
+     * @param string   $path string of asset file
      * 
      * @return void 
      */ 
-    public function registerAssets(string $profile = '', array $list = [])
+    public function registerAssets(string $path)
     {
-        if( '' === $profile && file_exists($this->path. '/_assets.php'))
+        if(file_exists($path))
         {
-            $arr = require_once $this->path. '/_assets.php';
-        }
-        else
-        {
-            $arr = [$profile => $list];
-        }
+            $info = pathinfo($path);
+            if('php' == $path['extension'])
+            {
+                $arr = require_once $this->path;
+            }
 
-        $this->_assets = array_merge($this->_assets, $arr);
+            if( is_array($arr) )
+            {
+                $this->registerAsset($arr);
+            }
+        }
     }
 
     /**

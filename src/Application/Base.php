@@ -19,6 +19,7 @@ use SPT\Extend\Pdo;
 use SPT\Container\IContainer;
 use SPT\Application\Plugin\Manager;
 use SPT\Support\Loader;
+use SPT\Web\IViewFunction;
 
 class Base extends ACore implements IApp
 {
@@ -48,7 +49,9 @@ class Base extends ACore implements IApp
             $this->config->of('router.subpath', ''),
             $this->config->of('router.ssl', '')
         );
+        
         $this->plgManager = new Manager( $this, $this->config->of('system.packages') );
+        $this->set('pluginPaths', $this->plgManager->getPluginPaths());
 
         $this->container->share('app', $this);
         $this->container->share('config', $this->config);
@@ -62,7 +65,7 @@ class Base extends ACore implements IApp
         {
             $beforePlugin($this);
         }
-
+        
         $this->plgManager->call('all')->run('Bootstrap', 'initialize');
 
         if( is_callable($afterPlugin))
@@ -139,7 +142,7 @@ class Base extends ACore implements IApp
 
         if(false === $plugin)
         {
-            $this->raiseError('Invalid plugin '.$pluginName, 500);
+            $this->raiseError('Invalid plugin '. $pluginName, 500);
         }
         
         $this->set('mainPlugin', $plugin);
@@ -153,7 +156,7 @@ class Base extends ACore implements IApp
             {
                 if( !$container->exists($name) )
                 {
-                    $app->raiseError('Plugin '. $plugin->getId(). ' requires an instance of '. $namee);
+                    $this->raiseError('Plugin '. $plugin->getId(). ' requires an instance of '. $namee);
                 }
             }
         }
@@ -168,22 +171,22 @@ class Base extends ACore implements IApp
         {
             if(isset($list[$obj]) && is_array($list[$obj]))
             {   
-                foreach($list[$obj] as $cfgArr)
+                foreach($list[$obj] as $configArr)
                 {
-                    list($path, $name, $alias) = $cfgArr;
+                    list($path, $name, $alias) = $configArr;
                     if(file_exists($path))
                     {
                         if(is_dir($path))
                         {
                             Loader::findClass( $path, $name,
-                                function($classname, $fullname) use ($fnc) { 
-                                    $fnc($classname, $fullname, '');
+                                function($classname, $fullname) use ($fnc, $pluginName) { 
+                                    $fnc($classname, $fullname, '', $pluginName);
                                 }
                             );
                         }
                         elseif(class_exists($path))
                         {
-                            $fnc( $name, $path, $alias );
+                            $fnc( $name, $path, $alias, $pluginName );
                         }
                     }
                 }
@@ -191,28 +194,11 @@ class Base extends ACore implements IApp
             elseif(!isset($list[$obj]) || false !== $list[$obj])
             {
                 Loader::findClass( $plugin->getPath($obj), $plugin->getNamespace('\\'. $obj),
-                    function($classname, $fullname) use ($fnc) { 
-                        $fnc($classname, $fullname, '');
+                    function($classname, $fullname) use ($fnc, $pluginName) { 
+                        $fnc($classname, $fullname, '', $pluginName);
                     }
                 );
             }
         }
-    }
-
-    /**
-     * 
-     *  SUPPORT MVVM ENGINE
-     * 
-     */
-
-    protected array $vmClasses;
-    public function getVMList(string $plgName)
-    {
-        return isset($this->vmClasses[$plgName]) ? $this->vmClasses[$plgName] : [];
-    }
-
-    public function addVM(string $plgName, string $name, string $fullName)
-    {
-        $this->vmClasses[$plgName][] = [$name, $fullName];
     }
 }

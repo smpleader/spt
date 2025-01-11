@@ -16,6 +16,16 @@ use SPT\Traits\ObjectHasInternalData;
 class ViewModel extends Client
 {
     use ObjectHasInternalData;
+
+    /**
+     * Get array of support layout
+     * 
+     */
+    public function getLayouts(): array
+    {
+        return [];
+    }
+
     /**
      * Get a state from a session
      * 

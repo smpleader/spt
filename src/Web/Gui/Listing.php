@@ -43,8 +43,8 @@ class Listing
     protected $limit;  
 
     /**
-    * Internal variable information of columns, support to generate a column
-    *   this be supported by ViewComponent ( ViewLayout->ui )
+    * Internal variable information of columns, 
+    *   support to generate a column
     *   with support of: link / sortable/ icons
     *   
     * @var array $columns

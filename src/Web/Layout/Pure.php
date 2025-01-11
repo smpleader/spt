@@ -48,7 +48,7 @@ class Pure extends Base
     {
         foreach($data as $k=>$v)
         {
-            if( !$isMethod && is_scalar($v))
+            if( !$isMethod && !is_callable($v))
             {
                 $this->__vars[$k] = $v;
             }

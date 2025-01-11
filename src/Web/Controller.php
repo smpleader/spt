@@ -14,7 +14,6 @@ use SPT\Application\IApp;
 use SPT\Container\Client;   
 use SPT\Traits\ObjectHasInternalData;
 use SPT\Support\Loader;
-use SPT\Web\IViewFunction;
 
 class Controller extends Client
 {

@@ -10,7 +10,6 @@
 namespace SPT\Support;
 
 use SPT\Log;
-use SPT\Web\IViewFunction;
 use SPT\Web\Layout\Pure;
 use SPT\Support\App;
 use SPT\Support\View;

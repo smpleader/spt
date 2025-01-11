@@ -19,7 +19,6 @@ use SPT\Extend\Pdo;
 use SPT\Container\IContainer;
 use SPT\Application\Plugin\Manager;
 use SPT\Support\Loader;
-use SPT\Web\IViewFunction;
 
 class Base extends ACore implements IApp
 {

@@ -4,7 +4,7 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Just a view layout using magic methods
+ * @description: Just a view layout using dynamic properties
  * 
  */
 

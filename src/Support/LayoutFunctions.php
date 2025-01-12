@@ -45,7 +45,7 @@ class LayoutFunctions
                 },
             'form' => function($name = null)
                 {
-                    if(is_array($this->form))
+                    if( is_array($this->form) )
                     {
                         if(!count($this->form)) return false;
                         if(isset($this->form[$name])) return $this->form[$name];
@@ -56,21 +56,20 @@ class LayoutFunctions
             
                     return false;
                 },
-            'field' => function ($name = null, $formName = null)
+            'field' => function ($name = null)
                 {
-                    echo $this->_field($name, $formName);
+                    echo $this->_field($name);
                 },
-            '_field' => function ($name = null, $formName = null)
+            '_field' => function ($name = null)
                 {
-                    $form = $this->form($formName);
-                    if(!$form) return '';
+                    if( !($this->form instanceof \SPT\Web\Gui\Form) ) return '';  
                     
                     $field = false;
                     if(null === $name)
                     {
-                        if($form->hasField())
+                        if($this->form->hasField())
                         {
-                            $field = $form->getField();
+                            $field = $this->form->getField();
                         }
             
                         if(false === $field)
@@ -80,7 +79,7 @@ class LayoutFunctions
                     }
                     else
                     {
-                        $field = $form->getField($name);
+                        $field = $this->form->getField($name);
             
                         if(false === $field)
                         {

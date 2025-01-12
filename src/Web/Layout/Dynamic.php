@@ -37,11 +37,22 @@ class Dynamic extends Base
     {
         foreach($data as $k=>$v)
         {
-            if(!in_array($k, ['theme', '__path', '__id']))
+            if(!in_array($k, ['theme', '__path', '__id', '__view']))
             {
                 $this->$k = is_callable($v) ? $v->bindTo($this): $v;
             }
         }
+    }
+    
+    /**
+     * magic method get
+     * 
+     * @return mixed 
+     */ 
+    public function __get($name) 
+    {
+        if('theme' == $name) return $this->__view->getTheme();
+        return $this->$name ?? NULL;
     }
 
     /**

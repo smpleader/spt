@@ -26,11 +26,12 @@ class Controller extends Client
      */ 
     public function toHtml()
     {
-        $data = (array) $this->getAll(); 
-        $page = $this->app->get('page', 'index');
         $view = $this->getView();
+        $data = $this->getAll();
+        $view->linkData($data);
+        $page = $this->app->get('page', 'index');
 
-        return $view->render( 'theme:'. $page, $data);
+        return $view->render( 'theme:'. $page);
     }
 
     /**
@@ -56,12 +57,12 @@ class Controller extends Client
      */ 
     public function toAjax()
     {
-        $data = (array) $this->getAll();
-        $data = array_merge($data, $this->app->get('ViewFunctions', []));
-        $page = $this->app->get('layout', 'ajax');
         $view = $this->getView();
+        $data = $this->getAll();
+        $view->linkData($data);
+        $page = $this->app->get('layout', 'ajax'); 
 
-        return $view->render($page, $data);
+        return $view->render($page);
     }
 
     /**

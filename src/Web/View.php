@@ -22,6 +22,7 @@ class View
     public array $_closures;
     private string $_current;
     private string $_themePath;
+    private ?array $_data;
 
     /**
      * Constructor
@@ -47,6 +48,8 @@ class View
         {
             $this->_theme->registerAssets($themeConfigFile);
         }
+
+        $this->_data = null;
     }
 
     /**
@@ -81,11 +84,28 @@ class View
             break;
         }
 
+        // support a shorten type
+        switch($type)
+        {
+            case 'w': $type = 'widget'; break;
+            case 'l': $type = 'layout'; break;
+            case 'v': $type = 'viewcom'; break;
+            case 't': $type = 'theme'; break;
+            case 'widget':
+            case 'layout':
+            case 'viewcom':
+            case 'theme':
+                break;
+            default:
+                throw new \Exception('Invalid layout type '.$type);
+                break;
+        }
+
         $id = $plg. ':'. $type. ':'. $path;
         if(!isset($this->_layouts[$id]))
         {
             $realPath = $this->getRealPath($plg, $type, $path);
-            $this->_layouts[$id] = new \SPT\Web\Layout\Pure($this->_theme, $id, $realPath); // TODO: allow change Layout type
+            $this->_layouts[$id] = new \SPT\Web\Layout\Pure($this, $id, $realPath);
             $this->_layouts[$id]->update($this->_closures, true);
         }
 
@@ -97,7 +117,7 @@ class View
         $layout = $this->getLayout($key);
         
         $data = ViewModel::getData($layout->getId(), $data);
-        $layout->update($data);
+        $layout->update($data); 
 
         // TODO: VALIDATE  before render
         // $layout->validate()
@@ -133,16 +153,28 @@ class View
         throw new \Exception('Invalid path '. $token. ' <!-- plugin '. $plgId. ':'. $type. '-->' );
     }
 
-    private function fileExists(string $path)
+    public function fileExists(string $path)
     {
         if(file_exists($path. '.php')) return $path. '.php';
         if(file_exists($path) && is_file($path)) return $path;
-        if(file_exists($path. '/index.php')) return $path. '/index.php';
         return false;
     }
 
     public function getTheme(): Theme
     {
         return $this->_theme;
+    }
+
+    public function linkData(array &$data)
+    {
+        if(null === $this->_data)
+        {
+            $this->_data = &$data;
+        }
+    }
+
+    public function getData(): array
+    {
+        return $this->_data ?? [];
     }
 }

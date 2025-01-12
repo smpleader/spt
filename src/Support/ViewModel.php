@@ -83,9 +83,9 @@ class ViewModel
         }
     }
 
-    public static function getData(string $id, $extraData): array
+    public static function getData(string $id, array $extraData): array
     {
-        $data = [];
+        $data = $extraData;
         if(isset(self::$_list[$id]))
         {
             $container = App::getInstance()->getContainer();

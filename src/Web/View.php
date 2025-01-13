@@ -16,13 +16,14 @@ use SPT\Support\ViewModel;
 
 class View
 {
+    public readonly string $_themePath;
+    public Theme $_theme;
+
     private array $_layouts;
-    private Theme $_theme;
     private array $_plugins;
     public array $_closures;
     private string $_current;
-    private string $_themePath;
-    private ?array $_data;
+    private array $_shares;
 
     /**
      * Constructor
@@ -39,6 +40,7 @@ class View
         $this->_plugins = $pluginList;
         $this->_current = $currentPlugin;
         $this->_closures = $closures;
+        $this->_shares = [];
 
         if( $themePath && substr($themePath, -1) !== '/') $themePath .= '/';
         $this->_themePath = $themePath;
@@ -48,8 +50,6 @@ class View
         {
             $this->_theme->registerAssets($themeConfigFile);
         }
-
-        $this->_data = null;
     }
 
     /**
@@ -160,21 +160,14 @@ class View
         return false;
     }
 
-    public function getTheme(): Theme
+    public function setData(array $data)
     {
-        return $this->_theme;
+        $this->_shares = array_merge($this->_shares, $data);
     }
 
-    public function linkData(array &$data)
+    public function getData(string | int $key, $default = null, ?string $format = null)
     {
-        if(null === $this->_data)
-        {
-            $this->_data = &$data;
-        }
-    }
-
-    public function getData(): array
-    {
-        return $this->_data ?? [];
+        if(!isset($this->_shares[$key])) return $default;
+        return $format ? Filter::$format($this->_shares[$key]) : $this->_shares[$key];
     }
 }

@@ -45,13 +45,13 @@ class LayoutFunctions
                 },
             'form' => function($name = null)
                 {
-                    if( is_array($this->form) )
+                    if( is_array($this->forms) )
                     {
-                        if(!count($this->form)) return false;
-                        if(isset($this->form[$name])) return $this->form[$name];
+                        if(!count($this->forms)) return false;
+                        if(isset($this->forms[$name])) return $this->forms[$name];
             
-                        reset($this->form);
-                        return current($this->form);
+                        reset($this->forms);
+                        return current($this->forms);
                     }
             
                     return false;
@@ -87,8 +87,11 @@ class LayoutFunctions
                         } 
                     }
 
-                    $layout = empty($field->layout) ? ':viewcom:fields.'.$field->type : $field->layout;
-                    if(false === strpos($layout, ':')) $layout = ':viewcom:fields.'. $layout;
+                    // auto find in theme or in plugin
+                    $default = $this->getThemePath() ? ':t:_viewcoms.fields.' : ':v:fields.';
+
+                    $layout = empty($field->layout) ? $default.$field->type : $field->layout; 
+                    if(false === strpos($layout, ':')) $layout = $default. $layout;
             
                     return View::render( $layout, ['field'=>$field]);
                 }

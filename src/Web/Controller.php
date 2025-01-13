@@ -28,7 +28,7 @@ class Controller extends Client
     {
         $view = $this->getView();
         $data = $this->getAll();
-        $view->linkData($data);
+        $view->setData($data);
         $page = $this->app->get('page', 'index');
 
         return $view->render( 'theme:'. $page);
@@ -59,7 +59,7 @@ class Controller extends Client
     {
         $view = $this->getView();
         $data = $this->getAll();
-        $view->linkData($data);
+        $view->setData($data);
         $page = $this->app->get('layout', 'ajax'); 
 
         return $view->render($page);

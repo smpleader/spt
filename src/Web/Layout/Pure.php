@@ -67,6 +67,7 @@ class Pure extends Base
     public function __get($name) 
     {
         if('theme' == $name) return $this->__view->_theme;
+        if('config' == $name) return $this->__view->_config;
         return $this->__vars[$name] ?? $this->__view->getData($name);
     }
 

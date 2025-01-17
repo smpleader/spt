@@ -100,6 +100,7 @@ class Controller extends Client
             else
             {
                 $themeConfigFile = '';
+                $theme = $currentPlugin;
             }
                 
             $viewFunctions = [];
@@ -129,10 +130,19 @@ class Controller extends Client
                 }
             }
 
+            $configVMs = $this->app->any('themeVM', 'theme.viewmodel', []);
+            if(is_array($configVMs))
+            {
+                foreach($configVMs as $fullname => $name)
+                {
+                    \SPT\Support\ViewModel::containerize( $name, $fullname, '', $theme );
+                }
+            }
+
             $this->container->share(
                 'view',
                 new View(
-                    $pluginList, $currentPlugin, $viewFunctions, $themePath, $themeConfigFile
+                    $pluginList, $currentPlugin, $viewFunctions, $theme, $themePath, $themeConfigFile
                 ),
                 true
             ) ;

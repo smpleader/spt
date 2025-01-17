@@ -178,14 +178,14 @@ class Base extends ACore implements IApp
                         if(is_dir($path))
                         {
                             Loader::findClass( $path, $name,
-                                function($classname, $fullname) use ($fnc, $pluginName) { 
-                                    $fnc($classname, $fullname, '', $pluginName);
+                                function($classname, $fullname) use ($fnc) { 
+                                    $fnc($classname, $fullname, '');
                                 }
                             );
                         }
                         elseif(class_exists($path))
                         {
-                            $fnc( $name, $path, $alias, $pluginName );
+                            $fnc( $name, $path, $alias );
                         }
                     }
                 }
@@ -193,8 +193,8 @@ class Base extends ACore implements IApp
             elseif(!isset($list[$obj]) || false !== $list[$obj])
             {
                 Loader::findClass( $plugin->getPath($obj), $plugin->getNamespace('\\'. $obj),
-                    function($classname, $fullname) use ($fnc, $pluginName) { 
-                        $fnc($classname, $fullname, '', $pluginName);
+                    function($classname, $fullname) use ($fnc) { 
+                        $fnc($classname, $fullname, '');
                     }
                 );
             }

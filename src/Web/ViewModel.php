@@ -12,6 +12,8 @@ namespace SPT\Web;
 
 use SPT\Container\Client;
 use SPT\Traits\ObjectHasInternalData;
+use SPT\Support\ViewModel as VMHub;
+use SPT\Support\LayoutId;
 
 class ViewModel extends Client
 {
@@ -19,11 +21,43 @@ class ViewModel extends Client
 
     /**
      * Get array of support layout
-     * 
      */
-    public function getLayouts(): array
+    public function registerLayouts() {}
+
+    /**
+     * Convert array of settings into a hub
+     * TODO: consider to call this function after currentPlugin initialized
+     */
+    protected function extractSettings($sth, array|string $token, string $vm = '')
     {
-        return [];
+        if(empty($vm))
+        {
+            $tmp = new \ReflectionClass($this);
+            $vm = $tmp->getShortName(). 'VM';
+        }
+        
+        if(is_string($sth))
+        {
+            $id = LayoutId::implode($token, $sth);
+            VMHub::add($id, $vm, $sth);
+        }
+        elseif(is_array($sth))
+        {
+            //if (count($array) == count($array, COUNT_RECURSIVE))
+            if(is_array($sth[array_key_first($sth)])) 
+            {
+                foreach($sth as $tmp)
+                { 
+                    $this->extractSettings( $tmp, $token, $vm);
+                }
+            }
+            else
+            {
+                @list($layout, $fnc) = $sth;
+                $id = LayoutId::implode($token, $layout);
+                VMHub::add( $id, $vm, $fnc);
+            }
+        }
     }
 
     /**

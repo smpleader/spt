@@ -13,11 +13,13 @@ namespace SPT\Web;
 use SPT\Web\Theme;
 use SPT\Web\Layout\Base as Layout; 
 use SPT\Support\ViewModel;
+use SPT\Application\Configuration;
 
 class View
 {
     public readonly string $_themePath;
     public Theme $_theme;
+    public Configuration $_config;
 
     private array $_layouts;
     private array $_plugins;
@@ -46,9 +48,18 @@ class View
         $this->_themePath = $themePath;
 
         $this->_theme = new Theme;
-        if($themeConfigFile)
+        if($themeConfigFile && file_exists($themeConfigFile))
         {
-            $this->_theme->registerAssets($themeConfigFile);
+            $this->_config = new Configuration($themeConfigFile); 
+
+            if( is_array($this->_config->of('assets', null) ) )
+            {
+                $this->_theme->registerAsset($this->_config->of('assets'));
+            } 
+        }
+        else
+        {
+            $this->_config = new Configuration();
         }
     }
 

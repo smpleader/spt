@@ -25,14 +25,9 @@ class Theme extends BaseObj
 
     /**
      * Internal variable to store array of value
-     * @var array $_assets
+     * @var array $_vars
      */
     protected array $_vars = []; 
-    /**
-     * Readonlye theme override layouts (since PHP 8.1)
-     * @var array $overrides
-     */
-    //public readonly array $overrides; 
 
     /**
      * Register Asset array
@@ -44,30 +39,6 @@ class Theme extends BaseObj
     public function registerAsset(array $arr)
     {
         $this->_assets = array_merge($this->_assets, $arr);
-    }
-
-    /**
-     * Register Asset links based theme file
-     *
-     * @param string   $path string of asset file
-     * 
-     * @return void 
-     */ 
-    public function registerAssets(string $path)
-    {
-        if(file_exists($path))
-        {
-            $info = pathinfo($path);
-            if('php' == $path['extension'])
-            {
-                $arr = require_once $this->path;
-            }
-
-            if( is_array($arr) )
-            {
-                $this->registerAsset($arr);
-            }
-        }
     }
 
     /**

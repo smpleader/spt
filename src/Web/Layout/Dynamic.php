@@ -52,6 +52,7 @@ class Dynamic extends Base
     public function __get($name) 
     {
         if('theme' == $name) return $this->__view->_theme;
+        if('config' == $name) return $this->__view->_config;
         return $this->$name ?? $this->__view->getData($name);
     }
 

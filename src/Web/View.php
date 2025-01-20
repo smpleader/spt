@@ -13,6 +13,10 @@ namespace SPT\Web;
 use SPT\Web\Theme;
 use SPT\Web\Layout\Base as Layout; 
 use SPT\Support\ViewModel;
+<<<<<<< HEAD
+=======
+use SPT\Support\LayoutId;
+>>>>>>> d0958782882750ccae0fb91cc18bab378b689dbf
 use SPT\Application\Configuration;
 
 class View
@@ -24,7 +28,8 @@ class View
     private array $_layouts;
     private array $_plugins;
     public array $_closures;
-    private string $_current;
+    private string $_currentPlugin;
+    private string $_currentTheme;
     private array $_shares;
 
     /**
@@ -32,15 +37,18 @@ class View
      * 
      * @param array   $pluginList list all information of plugins
      * @param string   $currentPlugin id of current plugin
+     * @param array   $closures extra methods for layout
+     * @param string   $currentTheme   theme name
      * @param string   $themePath path to theme path
      * @param string   $themeConfigFile path to theme configuration path
      * 
      * @return void 
      */ 
-    public function __construct(array $pluginList, string $currentPlugin, array $closures, string $themePath = '', string $themeConfigFile = '' )
+    public function __construct(array $pluginList, string $currentPlugin, array $closures, string $currentTheme = '',  string $themePath = '', string $themeConfigFile = '' )
     {
         $this->_plugins = $pluginList;
-        $this->_current = $currentPlugin;
+        $this->_currentPlugin = $currentPlugin;
+        $this->_currentTheme = $currentTheme;
         $this->_closures = $closures;
         $this->_shares = [];
 
@@ -55,16 +63,21 @@ class View
             if( is_array($this->_config->of('assets', null) ) )
             {
                 $this->_theme->registerAsset($this->_config->of('assets'));
+<<<<<<< HEAD
             } 
+=======
+            }
+>>>>>>> d0958782882750ccae0fb91cc18bab378b689dbf
         }
         else
         {
             $this->_config = new Configuration();
         }
+
     }
 
     /**
-     * Key format  plugin/id:layout:a.b.c
+     * Key format  plugin/id:layout:a.b.c || [plugin/id, layout, a.b.c]
      * 
      * @param string   $key a short token to layout path
      * 
@@ -72,50 +85,15 @@ class View
      */
     public function getLayout(string|array $key): Layout
     {
-        $tmp = is_array($key) ? $key : explode(':', $key);
-        $count = count($tmp); 
-        switch($count) 
-        {
-            case 1:
-                $plg = $this->_current;
-                $type = 'layout';
-                $path = $key;
-                break;
-            case 2:
-                $plg = $this->_current;
-                list($type, $path) = $tmp;
-                break;
-            case 3:
-                list($plg, $type, $path) = $tmp;
-                if(empty($plg)) $plg = $this->_current;
-                if(empty($type)) $type = 'layout';
-                break;
-            default:
-                throw new \Exception('Invalid path '. $key);
-            break;
-        }
+       list($ext, $type, $path) = is_array($key) ? 
+                LayoutId::validateArray($key, $this->_currentPlugin, $this->_currentTheme) : 
+                LayoutId::toArray($key, $this->_currentPlugin, $this->_currentTheme); 
 
-        // support a shorten type
-        switch($type)
-        {
-            case 'w': $type = 'widget'; break;
-            case 'l': $type = 'layout'; break;
-            case 'v': $type = 'viewcom'; break;
-            case 't': $type = 'theme'; break;
-            case 'widget':
-            case 'layout':
-            case 'viewcom':
-            case 'theme':
-                break;
-            default:
-                throw new \Exception('Invalid layout type '.$type);
-                break;
-        }
 
-        $id = $plg. ':'. $type. ':'. $path;
+        $id = $ext. ':'. $type. ':'. $path;
         if(!isset($this->_layouts[$id]))
         {
-            $realPath = $this->getRealPath($plg, $type, $path);
+            $realPath = $this->getRealPath($ext, $type, $path);
             $this->_layouts[$id] = new \SPT\Web\Layout\Pure($this, $id, $realPath);
             $this->_layouts[$id]->update($this->_closures, true);
         }
@@ -128,7 +106,7 @@ class View
         $layout = $this->getLayout($key);
         
         $data = ViewModel::getData($layout->getId(), $data);
-        $layout->update($data); 
+        $layout->update($data);
 
         // TODO: VALIDATE  before render
         // $layout->validate()
@@ -138,7 +116,7 @@ class View
 
     public function getRealPath(string $plgId, string $type, string $token)
     {
-        if(!isset($this->_plugins[$plgId]))
+        if(!isset($this->_plugins[$plgId]) && $type != 'theme')
         {
             throw new \Exception('Invalid Plugin '. $plgId);
         }
@@ -156,7 +134,7 @@ class View
         {
             $path = 'theme' == $type ? $this->_themePath. $token : $this->_themePath. $plgId. '/'. $type. 's/'. $token;
             if( $path = $this->fileExists($path) ) return $path;
-        }
+        } 
 
         $path = $this->_plugins[$plgId]->getPath( 'views/'. $type. 's/'. $token);
         if( $path = $this->fileExists($path) ) return $path;

@@ -14,6 +14,7 @@ use SPT\Application\IApp;
 use SPT\Container\Client;   
 use SPT\Traits\ObjectHasInternalData;
 use SPT\Support\Loader;
+use \SPT\Support\ViewModel;
 
 class Controller extends Client
 {
@@ -100,6 +101,7 @@ class Controller extends Client
             else
             {
                 $themeConfigFile = '';
+                $theme = $currentPlugin;
             }
                 
             $viewFunctions = [];
@@ -129,10 +131,21 @@ class Controller extends Client
                 }
             }
 
+            $configVMs = $this->app->any('themeVM', 'theme.viewmodel', []);
+            if(is_array($configVMs))
+            {
+                foreach($configVMs as $fullname => $name)
+                {
+                    ViewModel::containerize( $name, $fullname, '' );
+                }
+            }
+
+            ViewModel::registerLayouts();
+
             $this->container->share(
                 'view',
                 new View(
-                    $pluginList, $currentPlugin, $viewFunctions, $themePath, $themeConfigFile
+                    $pluginList, $currentPlugin, $viewFunctions, $theme, $themePath, $themeConfigFile
                 ),
                 true
             ) ;

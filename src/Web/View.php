@@ -13,10 +13,7 @@ namespace SPT\Web;
 use SPT\Web\Theme;
 use SPT\Web\Layout\Base as Layout; 
 use SPT\Support\ViewModel;
-<<<<<<< HEAD
-=======
 use SPT\Support\LayoutId;
->>>>>>> d0958782882750ccae0fb91cc18bab378b689dbf
 use SPT\Application\Configuration;
 
 class View
@@ -63,11 +60,7 @@ class View
             if( is_array($this->_config->of('assets', null) ) )
             {
                 $this->_theme->registerAsset($this->_config->of('assets'));
-<<<<<<< HEAD
             } 
-=======
-            }
->>>>>>> d0958782882750ccae0fb91cc18bab378b689dbf
         }
         else
         {

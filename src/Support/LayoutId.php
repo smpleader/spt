@@ -83,6 +83,7 @@ class LayoutId
          * Important: we can't smart create a token because currentPlugin does not set while this VM get bootstrap
          * Other solution: let call registerLayouts when set View instance
          */
+        TODO: plgugin / theme get from App::getInstance()
 
         $tmp = is_array($sth) ? $sth : explode(':', $sth);
         $counter = count($tmp);

@@ -15,7 +15,8 @@ use SPT\Support\Loader;
 
 class ViewModel
 {
-    private static $_list;
+    private static array $_list;
+    private static array $_vms;
 
     public static function containerize(string $classname, string $fullname, ?string $alias)
     {
@@ -23,15 +24,29 @@ class ViewModel
         $container->containerize(
             $classname. 'VM', 
             $fullname,
-            function($fullname, $container)
+            function($fullname, $container) use ($classname)
             { 
                 $vm = new $fullname($container);
-                $vm->registerLayouts();
-
+                \SPT\Support\ViewModel::addVM($classname.'VM');
                 return $vm;
             }, 
             $alias
         );
+    }
+
+    public static function addVM(string $name)
+    {
+        self::$_vms[] = $name;
+    }
+
+    public static function registerLayouts()
+    {
+        self::$_vms = array_unique(self::$_vms);
+        $container = App::getInstance()->getContainer();
+        foreach(self::$_vms as $vm)
+        {
+            $container->get($vm)->registerLayouts();
+        }
     }
 
     public static function add(string $layoutId, string $vm, string $fnc)

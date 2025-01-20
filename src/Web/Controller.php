@@ -14,6 +14,7 @@ use SPT\Application\IApp;
 use SPT\Container\Client;   
 use SPT\Traits\ObjectHasInternalData;
 use SPT\Support\Loader;
+use \SPT\Support\ViewModel;
 
 class Controller extends Client
 {
@@ -135,9 +136,11 @@ class Controller extends Client
             {
                 foreach($configVMs as $fullname => $name)
                 {
-                    \SPT\Support\ViewModel::containerize( $name, $fullname, '', $theme );
+                    ViewModel::containerize( $name, $fullname, '' );
                 }
             }
+
+            ViewModel::registerLayouts();
 
             $this->container->share(
                 'view',

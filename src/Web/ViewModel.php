@@ -14,6 +14,7 @@ use SPT\Container\Client;
 use SPT\Traits\ObjectHasInternalData;
 use SPT\Support\ViewModel as VMHub;
 use SPT\Support\LayoutId;
+use SPT\Support\App;
 
 class ViewModel extends Client
 {
@@ -35,10 +36,22 @@ class ViewModel extends Client
             $tmp = new \ReflectionClass($this);
             $vm = $tmp->getShortName(). 'VM';
         }
+
+        $currentPlugin = App::getInstance()->get('currentPlugin', '');
+        if(empty($currentPlugin))
+        {
+            throw new \RuntimeException('You can not extract setting before intialize current plugin.');
+        }
+        
+        $currentTheme = App::getInstance()->any('theme', 'theme.default', '');
+        if(empty($currentTheme))
+        {
+            $currentTheme = $currentPlugin;
+        }
         
         if(is_string($sth))
         {
-            $id = LayoutId::implode($token, $sth);
+            $id = LayoutId::implode($token, $sth, $currentPlugin, $currentTheme);
             VMHub::add($id, $vm, $sth);
         }
         elseif(is_array($sth))
@@ -54,7 +67,7 @@ class ViewModel extends Client
             else
             {
                 @list($layout, $fnc) = $sth;
-                $id = LayoutId::implode($token, $layout);
+                $id = LayoutId::implode($token, $layout, $currentPlugin, $currentTheme);
                 VMHub::add( $id, $vm, $fnc);
             }
         }

@@ -78,13 +78,6 @@ class LayoutId
     // used in viewmodel
     public static function implode(array|string $sth, string $layout, string $plugin ='', string $theme=''): string
     {
-        return is_array($sth) ? implode(':', $sth). ':'. $layout : $sth. ':'. $layout;
-        /**
-         * Important: we can't smart create a token because currentPlugin does not set while this VM get bootstrap
-         * Other solution: let call registerLayouts when set View instance
-         */
-        TODO: plgugin / theme get from App::getInstance()
-
         $tmp = is_array($sth) ? $sth : explode(':', $sth);
         $counter = count($tmp);
         switch($counter)

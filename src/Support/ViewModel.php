@@ -18,7 +18,7 @@ class ViewModel
     private static array $_list;
     private static array $_vms;
 
-    public static function containerize(string $classname, string $fullname, ?string $alias)
+    public static function containerize(string $classname, string $fullname, string $alias = '')
     {
         $container = App::getInstance()->getContainer();
         $container->containerize(

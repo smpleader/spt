@@ -64,6 +64,9 @@ class App extends StaticObj
                 }
                 
                 $instance = new $className($container, $config);
+                
+                // assign here to support function intialize() called instance itself
+                self::$_instance = &$instance; 
             
                 if( !($instance instanceof IApp) )
                 {
@@ -86,7 +89,6 @@ class App extends StaticObj
                 die('Caught Exception: '.  $e->getMessage());
             }
             
-            self::$_instance = $instance; 
         }
 
         return self::$_instance;

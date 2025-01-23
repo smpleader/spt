@@ -131,15 +131,6 @@ class Controller extends Client
                 }
             }
 
-            $configVMs = $this->app->any('themeVM', 'theme.viewmodel', []);
-            if(is_array($configVMs))
-            {
-                foreach($configVMs as $fullname => $name)
-                {
-                    ViewModel::containerize( $name, $fullname, '' );
-                }
-            }
-
             ViewModel::registerLayouts();
 
             $this->container->share(

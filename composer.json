@@ -1,7 +1,7 @@
 {
     "name": "smpleader/spt",
-    "description": "The SPT Framework.",
-    "keywords": ["framework", "spt"],
+    "description": "Simple & Powerful Tool Framework based PHP.",
+    "keywords": ["PHP framework", "SPT framework", "PHP MVVM", "SPT"],
     "license": "GPL-2.0-or-later",
     "homepage": "https://github.com/smpleader/spt/wiki",
     "support": {
@@ -11,7 +11,7 @@
     "authors": [
         {
             "name": "Pham Minh",
-            "email": "contact@smpleader.com"
+            "email": "minh@joomaio.com"
         }
     ],
     "require": {
@@ -28,13 +28,7 @@
         }
     },
     "suggest": {
-        "ext-ftp": "Required to use the Flysystem FTP driver.",
-        "ext-gd": "Required to use work with image process.",
-        "ext-memcached": "Required to use the memcache cache driver.",
-        "ext-pcntl": "Required to use all features of the queue worker.",
-        "ext-posix": "Required to use all features of the queue worker.",
-        "phpunit/phpunit": "Required to use assertions and run tests (^8.4|^9.0).",
-        "guzzlehttp/guzzle": "Required to use the HTTP Client, Mailgun mail driver and the ping methods on schedules (^6.3.1|^7.0)."
+        "phpunit/phpunit": "Required to use assertions and run tests (^8.4|^9.0)."
     },
     "minimum-stability": "dev",
     "prefer-stable": true

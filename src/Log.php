@@ -45,15 +45,6 @@ class Log extends StaticObj
     }
 
     /**
-     * Return _vars for any use
-     * 
-     * @return array _vars
-     */ 
-    public static function all(){
-        return static::$_vars;
-    }
-
-    /**
      * Write all items from _vars into a log file
      * 
      * @return void

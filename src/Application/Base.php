@@ -29,15 +29,7 @@ class Base extends ACore implements IApp
         $packages =  $config->of('system.packages');
         if(!is_array($packages))
         {
-            die('Package is required in the configuration.');
-        }
-        
-        foreach($packages as $path=>$_namespace)
-        {
-            if(!is_string($path) || !is_string($_namespace) || !file_exists($path))
-            {
-                die ('Invalid package '. $_namespace);
-            }
+            die('Package is required to bootstrap an SPT application.');
         }
 
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
@@ -49,7 +41,7 @@ class Base extends ACore implements IApp
             $this->config->of('router.ssl', '')
         );
         
-        $this->plgManager = new Manager( $this, $this->config->of('system.packages') );
+        $this->plgManager = new Manager( $this, $packages );
         $this->set('pluginPaths', $this->plgManager->getPluginPaths());
 
         $this->container->share('app', $this);

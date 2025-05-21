@@ -35,10 +35,19 @@ class Manager
             {
                 list($id, $namespace) = $sth;
             }
-            else
+            elseif(is_string($sth))
             {
                 $id = '';
                 $namespace = $sth;
+            }
+            else
+            {
+                $app->raiseError('Invalid package namespace '.$path);
+            }
+            
+            if(!file_exists($path)) 
+            {
+                $app->raiseError('Invalid package '.$path);
             }
 
             $this->add($id, $path, $namespace);

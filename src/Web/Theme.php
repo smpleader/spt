@@ -73,13 +73,9 @@ class Theme extends BaseObj
      * 
      * @return void 
      */ 
-    public function echo(string $type, string $url = '')
+    public function echo(string $type)
     {
         $generate = $this->generate($type);
-        if ($url)
-        {
-            $generate = str_replace('__domain__', $url, $generate);
-        }
         echo implode("\n", $generate);
     }
 

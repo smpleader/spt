@@ -55,12 +55,13 @@ class Manager
         // a solution
         if( file_exists($path. 'about.php') ) 
         {
+            $parent = basename($path);
             foreach(new \DirectoryIterator($path) as $item) 
             {
                 if (!$item->isDot() && $item->isDir())
                 {
                     $name = $item->getBasename(); 
-                    $id = empty($id) ? $name : $id.'/'.$name;
+                    $id = empty($id) ? $parent. '/'. $name : $id. '/'. $name;
                     $this->add($id, $path. $name. '/', $namespace. '\\'. $name);
                 }
             }
@@ -68,10 +69,10 @@ class Manager
         // a plugin
         elseif( file_exists($path. 'registers') && is_dir($path. 'registers') ) 
         {
-            $id = empty($id) ? basename($path) : $id.'/'.basename($path);
+            if(empty($id)) $id = basename($path);
             if(isset($this->list[$id]))
             {
-                echo 'Warning: Package '.$id. ' already exists.';
+                echo 'Warning: Plugin '.$id. ' already exists.';
             }
             else
             {

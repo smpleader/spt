@@ -128,7 +128,7 @@ class Base extends ACore implements IApp
 
     public function plugin($name = '')
     {
-        return '' == $name ? $this->get('mainPlugin') : 
+        return '' == $name ? $this->get('mainPlugin', '_NOT_SET_') : 
                 ( true === $name ? 
                     $this->plgManager->getList() : 
                     $this->plgManager->getDetail($name) 

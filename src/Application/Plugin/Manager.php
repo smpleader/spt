@@ -30,9 +30,9 @@ class Manager
     {
         $this->app = $app;
 
-        foreach($packages as $path=>$sth)
+        foreach($packages as $path=>$namespace)
         {
-            $id = '';
+            /*$id = '';
             $alias = [];
             if(is_array($sth))
             {
@@ -76,13 +76,13 @@ class Manager
                         $app->raiseError('Duplicate alias "'. $v. '" of package '.$path);
                     }
                 }
-            }
+            }*/
 
-            $this->add($id, $alias, $path, $namespace);
+            $this->add($path, $namespace);
         }
     }
 
-    protected function add(string $id, array $alias, string $path, string $namespace)
+    protected function add(string $path, string $namespace)
     {
         if('/' !== substr($path, -1))
         {
@@ -92,37 +92,40 @@ class Manager
         // a solution
         if( file_exists($path. 'about.php') ) 
         {
-            $parent = basename($path);
             foreach(new \DirectoryIterator($path) as $item) 
             {
                 if (!$item->isDot() && $item->isDir())
                 {
                     $name = $item->getBasename(); 
-                    $id = empty($id) ? $parent. '/'. $name : $id. '/'. $name;
-                    $this->add($id, [], $path. $name. '/', $namespace. '\\'. $name);
+                    $this->add($path. $name. '/', $namespace. '\\'. $name);
                 }
             }
         }
         // a plugin
         elseif( file_exists($path. 'registers') && is_dir($path. 'registers') ) 
         {
-            if(empty($id)) $id = basename($path);
+            $plugin = new Plugin($path, $namespace);
+            $id = $plugin->getId();
+            $alias = $plugin->getAlias();
+
             if(isset($this->list[$id]))
             {
-                echo 'Warning: Plugin '.$id. ' already exists.';
+                $this->app->raiseError('Warning: Plugin '. $id. ' already exists.');
             }
-            else
+
+            foreach($alias as $v)
             {
-                $this->list[$id] = new Plugin($id, $path, $namespace);
-                $this->paths[$id] = $path;
-                if(count($alias))
+                if(isset($this->alias[$v]))
                 {
-                    foreach($alias as $v)
-                    {
-                        $this->alias[$v] = $id;
-                    }
+                    $this->app->raiseError('Duplicate alias "'. $v. '" of package '.$path);
+                }
+                else
+                {
+                    $this->alias[$v] = $id;
                 }
             }
+
+            $this->list[$id] = $plugin;
         } 
     }
 

@@ -32,52 +32,6 @@ class Manager
 
         foreach($packages as $path=>$namespace)
         {
-            /*$id = '';
-            $alias = [];
-            if(is_array($sth))
-            {
-                if(!isset($sth['namespace']))
-                {
-                    $app->raiseError('Invalid package namespace '.$path);
-                }
-
-                $namespace = $sth['namespace'];
-
-                if(isset($sth['id']))
-                {
-                    $id = $sth['id'];
-                }
-
-                if(isset($sth['alias']))
-                {
-                    $alias = $sth['alias'];
-                }
-            }
-            elseif(is_string($sth))
-            {
-                $namespace = $sth;
-            }
-            else
-            {
-                $app->raiseError('Invalid package namespace '.$path);
-            }
-            
-            if(!file_exists($path)) 
-            {
-                $app->raiseError('Invalid package '.$path);
-            }
-
-            if(count($alias))
-            {
-                foreach($alias as $v)
-                {
-                    if(isset($this->alias[$v]))
-                    {
-                        $app->raiseError('Duplicate alias "'. $v. '" of package '.$path);
-                    }
-                }
-            }*/
-
             $this->add($path, $namespace);
         }
     }

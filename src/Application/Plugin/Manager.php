@@ -19,6 +19,7 @@ use \Exception;
 class Manager
 {
     protected array $list = [];
+    protected array $alias = [];
     protected array $paths = [];
     protected string $master = '';
     protected string $message = '';
@@ -31,13 +32,29 @@ class Manager
 
         foreach($packages as $path=>$sth)
         {
+            $id = '';
+            $alias = [];
             if(is_array($sth))
             {
-                list($id, $namespace) = $sth;
+                if(!isset($sth['namespace']))
+                {
+                    $app->raiseError('Invalid package namespace '.$path);
+                }
+
+                $namespace = $sth['namespace'];
+
+                if(isset($sth['id']))
+                {
+                    $id = $sth['id'];
+                }
+
+                if(isset($sth['alias']))
+                {
+                    $alias = $sth['alias'];
+                }
             }
             elseif(is_string($sth))
             {
-                $id = '';
                 $namespace = $sth;
             }
             else
@@ -50,11 +67,22 @@ class Manager
                 $app->raiseError('Invalid package '.$path);
             }
 
-            $this->add($id, $path, $namespace);
+            if(count($alias))
+            {
+                foreach($alias as $v)
+                {
+                    if(isset($this->alias[$v]))
+                    {
+                        $app->raiseError('Duplicate alias "'. $v. '" of package '.$path);
+                    }
+                }
+            }
+
+            $this->add($id, $alias, $path, $namespace);
         }
     }
 
-    protected function add(string $id, string $path, string $namespace)
+    protected function add(string $id, array $alias, string $path, string $namespace)
     {
         if('/' !== substr($path, -1))
         {
@@ -71,7 +99,7 @@ class Manager
                 {
                     $name = $item->getBasename(); 
                     $id = empty($id) ? $parent. '/'. $name : $id. '/'. $name;
-                    $this->add($id, $path. $name. '/', $namespace. '\\'. $name);
+                    $this->add($id, [], $path. $name. '/', $namespace. '\\'. $name);
                 }
             }
         }
@@ -87,6 +115,13 @@ class Manager
             {
                 $this->list[$id] = new Plugin($id, $path, $namespace);
                 $this->paths[$id] = $path;
+                if(count($alias))
+                {
+                    foreach($alias as $v)
+                    {
+                        $this->alias[$v] = $id;
+                    }
+                }
             }
         } 
     }
@@ -236,6 +271,11 @@ class Manager
 
     public function getDetail(string $name)
     {
+        if(isset($this->alias[$name]))
+        {
+            return $this->getDetail( $this->alias[$name]);
+        }
+
         return isset($this->list[$name]) ? $this->list[$name] : false;
     }
 

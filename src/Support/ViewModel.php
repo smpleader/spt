@@ -45,7 +45,18 @@ class ViewModel
         $container = App::getInstance()->getContainer();
         foreach(self::$_vms as $vm)
         {
-            $container->get($vm)->registerLayouts();
+            $data = $container->get($vm)->registerLayouts();
+            foreach($data as $token => $func)
+            {
+                if(isset(self::$_list[$token]))
+                {
+                    self::$_list[$token][] = [$vm, $fnc];
+                }
+                else
+                {
+                    self::$_list[$token] = [[$vm, $fnc]];
+                }
+            }
         }
     }
 

@@ -80,6 +80,7 @@ class Manager
             }
 
             $this->list[$id] = $plugin;
+            $this->paths[$id] = $path;
         } 
     }
 

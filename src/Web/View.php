@@ -13,7 +13,7 @@ namespace SPT\Web;
 use SPT\Web\Theme;
 use SPT\Web\Layout\Base as Layout; 
 use SPT\Support\ViewModel;
-use SPT\Support\LayoutId;
+use SPT\Support\Plugin;
 use SPT\Application\Configuration;
 
 class View
@@ -70,31 +70,42 @@ class View
     }
 
     /**
-     * Key format  plugin/id:layout:a.b.c || [plugin/id, layout, a.b.c]
+     * Key format  plugin/id:a.b.c 
      * 
      * @param string   $key a short token to layout path
      * 
      * @return Layout 
      */
-    public function getLayout(string|array $key): Layout
+    public function getLayout(string $key): Layout
     {
-       list($ext, $type, $path) = is_array($key) ? 
-                LayoutId::validateArray($key, $this->_currentPlugin, $this->_currentTheme) : 
-                LayoutId::toArray($key, $this->_currentPlugin, $this->_currentTheme); 
+        $try = explode(':', $key);
+        if(count($try) == 1)
+        {
+            $layout =  $key;
+            $plugin = $this->_currentPlugin;
+        }
+        else
+        {
+            list($plugin, $layout) = $try;
+            $plugin = Plugin::id($plugin);
+        }
 
+        $id = $plugin. ':'. $layout;
 
-        $id = $ext. ':'. $type. ':'. $path;
         if(!isset($this->_layouts[$id]))
         {
-            $realPath = $this->getRealPath($ext, $type, $path);
-            $this->_layouts[$id] = new \SPT\Web\Layout\Pure($this, $id, $realPath);
+            $this->_layouts[$id] = new \SPT\Web\Layout\Pure(
+                $this, 
+                $id, 
+                $this->getRealPath($plugin, $layout)
+            );
             $this->_layouts[$id]->update($this->_closures, true);
         }
 
         return $this->_layouts[$id];
     }
 
-    public function render(string|array $key, array $data = [], $isString = true)
+    public function render(string $key, array $data = [], $isString = true)
     {
         $layout = $this->getLayout($key);
         
@@ -107,32 +118,34 @@ class View
         return $isString ? $layout->_render() : $layout->render();
     }
 
-    public function getRealPath(string $plgId, string $type, string $token)
+    public function getRealPath(string $plgId, string $token)
     {
-        if(!isset($this->_plugins[$plgId]) && $type != 'theme')
+        if(!isset($this->_plugins[$plgId]))
         {
             throw new \Exception('Invalid Plugin '. $plgId);
         }
 
-        $type = strtolower($type);
-
-        if(!in_array($type, ['theme', 'layout', 'widget', 'viewcom']))
+        $token = str_replace('.', '/', $token);
+        if($this->_currentTheme)
         {
-            throw new \Exception('Invalid Path type '. $type);
+            //  case1: theme override plugin layout
+            $path = $this->_plugins[$this->_currentTheme]. 'views/_'. $plgId. '/'. $token;
+            if( $path = $this->fileExists($path) ) return $path;
         }
 
-        $token = str_replace('.', '/', $token);
-
-        if($this->_themePath)
-        {
-            $path = 'theme' == $type ? $this->_themePath. $token : $this->_themePath. $plgId. '/'. $type. 's/'. $token;
-            if( $path = $this->fileExists($path) ) return $path;
-        } 
-
-        $path = $this->_plugins[$plgId]->getPath( 'views/'. $type. 's/'. $token);
+        //  case2: plugin layout
+        $path = $this->_plugins[$plgId]. 'views/'. $token;
         if( $path = $this->fileExists($path) ) return $path;
+    
+        if($this->_currentTheme)
+        {
+            //  case3: share layout from theme
+            $path = $this->_plugins[$this->_currentTheme]. 'views/'. $token;
+            if( $path = $this->fileExists($path) ) return $path;
+        }
 
-        throw new \Exception('Invalid path '. $token. ' <!-- plugin '. $plgId. ':'. $type. '-->' );
+        throw new \Exception('Invalid path '. $plgId. ':'. $token );
+
     }
 
     public function fileExists(string $path)

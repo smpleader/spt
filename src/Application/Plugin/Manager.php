@@ -198,7 +198,7 @@ class Manager
             $result = $class::$function($this->app);
             if(null !== $closure && is_callable($closure))
             {
-                $ok = $closure( $result );
+                $ok = $closure( $result,  $plugin->getNamespace() );
                 if(false === $ok && $required)
                 {
                     throw new Exception('Callback failed with plugin '. $id. ' when call '. $event .'.' . $function);

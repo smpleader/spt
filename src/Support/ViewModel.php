@@ -46,7 +46,7 @@ class ViewModel
         foreach(self::$_vms as $vm)
         {
             $data = $container->get($vm)->registerLayouts();
-            foreach($data as $token => $func)
+            foreach($data as $token => $fnc)
             {
                 if(isset(self::$_list[$token]))
                 {

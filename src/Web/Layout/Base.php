@@ -28,10 +28,16 @@ class Base
     protected readonly string $__sibling;
 
     /**
-    * Internal variable cache a token: plugin:type:path
+    * Internal variable cache a token: plugin:path
     * @var string $__id
     */
     protected readonly string $__id;
+
+    /**
+    * Internal variable cache a secondary token: theme:path
+    * @var string $__secondary
+    */
+    protected readonly string $__secondary;
 
     /**
     * View object
@@ -49,12 +55,13 @@ class Base
      * Constructor
      * 
      * @param View   $view variable view
-     * @param string   $id token, format plugin:type:path
+     * @param string   $id token, format plugin:path
+     * @param string   $secondary token, format theme::path
      * @param string   $path path file 
      * 
      * @return void 
      */ 
-    public function __construct(View $view, string $id, string $path)
+    public function __construct(View $view, string $id, string $secondary, string $path)
     {
         if(!file_exists($path))
         {
@@ -64,6 +71,7 @@ class Base
         $this->__path = $path;
         $this->__id = $id;
         $this->__view = $view;
+        $this->__secondary = $secondary == $id ? '' : $secondary;
 
         // calculate sibling
         $dotPos = strrpos($id, '.');
@@ -107,6 +115,16 @@ class Base
     public function getId(): string
     {
         return $this->__id;
+    }
+
+    /**
+     * return current theme token
+     * 
+     * @return string 
+     */ 
+    public function getSecondary(): string
+    {
+        return $this->__secondary;
     }
 
     /**

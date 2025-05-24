@@ -30,9 +30,9 @@ class Controller extends Client
         $view = $this->getView();
         $data = $this->getAll();
         $view->setData($data);
-        $page = $this->app->get('page', 'index');
+        $page = $this->app->get('page', 'page.index');
 
-        return $view->render( 'theme:'. $page);
+        return $view->render( $page);
     }
 
     /**

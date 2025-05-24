@@ -60,18 +60,6 @@ class ViewModel
         }
     }
 
-    public static function add(string $layoutId, string $vm, string $fnc)
-    {
-        if(isset(self::$_list[$layoutId]))
-        {
-            self::$_list[$layoutId][] = [$vm, $fnc];
-        }
-        else
-        {
-            self::$_list[$layoutId] = [[$vm, $fnc]];
-        }
-    }
-
     public static function getData(string $layoutId, array $extraData): array
     {
         $data = $extraData;

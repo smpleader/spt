@@ -91,12 +91,18 @@ class View
         }
 
         $id = $plugin. ':'. $layout;
+        $secondary = '';
+        if($this->_currentTheme && $this->_currentTheme != $plugin)
+        {
+            $secondary = $this->_currentTheme. ':'. $layout;
+        }
 
         if(!isset($this->_layouts[$id]))
         {
             $this->_layouts[$id] = new \SPT\Web\Layout\Pure(
                 $this, 
                 $id, 
+                $secondary, 
                 $this->getRealPath($plugin, $layout)
             );
             $this->_layouts[$id]->update($this->_closures, true);
@@ -110,6 +116,7 @@ class View
         $layout = $this->getLayout($key);
         
         $data = ViewModel::getData($layout->getId(), $data);
+        $data = ViewModel::getData($layout->getSecondary(), $data);
         $layout->update($data);
 
         // TODO: VALIDATE  before render

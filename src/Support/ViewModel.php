@@ -45,19 +45,18 @@ class ViewModel
         $container = App::getInstance()->getContainer();
         foreach(self::$_vms as $vm)
         {
-            $container->get($vm)->registerLayouts();
-        }
-    }
-
-    public static function add(string $layoutId, string $vm, string $fnc)
-    {
-        if(isset(self::$_list[$layoutId]))
-        {
-            self::$_list[$layoutId][] = [$vm, $fnc];
-        }
-        else
-        {
-            self::$_list[$layoutId] = [[$vm, $fnc]];
+            $data = $container->get($vm)->registerLayouts();
+            foreach($data as $token => $fnc)
+            {
+                if(isset(self::$_list[$token]))
+                {
+                    self::$_list[$token][] = [$vm, $fnc];
+                }
+                else
+                {
+                    self::$_list[$token] = [[$vm, $fnc]];
+                }
+            }
         }
     }
 

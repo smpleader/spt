@@ -19,6 +19,7 @@ use \Exception;
 class Manager
 {
     protected array $list = [];
+    protected array $alias = [];
     protected array $paths = [];
     protected string $master = '';
     protected string $message = '';
@@ -29,23 +30,13 @@ class Manager
     {
         $this->app = $app;
 
-        foreach($packages as $path=>$sth)
+        foreach($packages as $path=>$namespace)
         {
-            if(is_array($sth))
-            {
-                list($id, $namespace) = $sth;
-            }
-            else
-            {
-                $id = '';
-                $namespace = $sth;
-            }
-
-            $this->add($id, $path, $namespace);
+            $this->add($path, $namespace);
         }
     }
 
-    protected function add(string $id, string $path, string $namespace)
+    protected function add(string $path, string $namespace)
     {
         if('/' !== substr($path, -1))
         {
@@ -60,24 +51,36 @@ class Manager
                 if (!$item->isDot() && $item->isDir())
                 {
                     $name = $item->getBasename(); 
-                    $id = empty($id) ? $name : $id.'/'.$name;
-                    $this->add($id, $path. $name. '/', $namespace. '\\'. $name);
+                    $this->add($path. $name. '/', $namespace. '\\'. $name);
                 }
             }
         }
         // a plugin
         elseif( file_exists($path. 'registers') && is_dir($path. 'registers') ) 
         {
-            $id = empty($id) ? basename($path) : $id.'/'.basename($path);
+            $plugin = new Plugin($path, $namespace);
+            $id = $plugin->getId();
+            $alias = $plugin->getAlias();
+
             if(isset($this->list[$id]))
             {
-                echo 'Warning: Package '.$id. ' already exists.';
+                $this->app->raiseError('Warning: Plugin '. $id. ' already exists.');
             }
-            else
+
+            foreach($alias as $v)
             {
-                $this->list[$id] = new Plugin($id, $path, $namespace);
-                $this->paths[$id] = $path;
+                if(isset($this->alias[$v]))
+                {
+                    $this->app->raiseError('Duplicate alias "'. $v. '" of package '.$path);
+                }
+                else
+                {
+                    $this->alias[$v] = $id;
+                }
             }
+
+            $this->list[$id] = $plugin;
+            $this->paths[$id] = $path;
         } 
     }
 
@@ -196,7 +199,7 @@ class Manager
             $result = $class::$function($this->app);
             if(null !== $closure && is_callable($closure))
             {
-                $ok = $closure( $result );
+                $ok = $closure( $result,  $plugin->getNamespace() );
                 if(false === $ok && $required)
                 {
                     throw new Exception('Callback failed with plugin '. $id. ' when call '. $event .'.' . $function);
@@ -226,6 +229,11 @@ class Manager
 
     public function getDetail(string $name)
     {
+        if(isset($this->alias[$name]))
+        {
+            return $this->getDetail( $this->alias[$name]);
+        }
+
         return isset($this->list[$name]) ? $this->list[$name] : false;
     }
 

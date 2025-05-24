@@ -22,7 +22,7 @@ class Pure extends Base
     protected readonly string $__path;
     
     /**
-    * Internal variable cache a token: plugin:type:path
+    * Internal variable cache a token: plugin:path
     * @var string $_id
     */
     protected readonly string $__id;

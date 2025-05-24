@@ -16,21 +16,29 @@ class Plugin
     private string $path;
     private string $namespace;
     private string $id;
+    private array $alias;
     private ?array $details;
     private ?array $dependencies;
 
-    public function __construct(string $id, string $path, string $namespace)
+    public function __construct(string $path, string $namespace)
     {
-        $this->id = $id;
+        $installer = $namespace. '\\registers\\Installer';
+        if(!class_exists($installer))
+        {
+            throw new \Exception('Plugin '. $namespace. ' doesn\'t supply info. properly');
+        }
+
+        $this->id = $installer::id();
+        $this->alias = $installer::alias();
         $this->path = $path;
         $this->namespace = $namespace;
         $this->details = null;
         $this->dependencies = null;
-        $installer = $this->namespace. '\\registers\\Installer';
-        if(!class_exists($installer))
-        {
-            throw new \Exception('Plugin '. $id. ' doesn\'t supply info.');
-        }
+    }
+
+    public function getAlias(): array
+    {
+        return $this->alias;
     }
 
     public function getPath($subfolder = ''): string

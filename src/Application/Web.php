@@ -62,7 +62,7 @@ class Web extends Base
                 list($todo, $siteParams) = $try;
             }
 
-            $try = explode('.', $todo);
+            $try = explode(':', $todo);
             
             if(count($try) !== 3)
             {

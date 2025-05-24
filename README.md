@@ -1,18 +1,17 @@
-# Some words
+# Some words about SPT framework
 
-SPT == Simple PHP Tools ;)
+SPT means Simple PHP Tools
 
 - Or Simple Powerful Tools
 
 - Or Such Peachy Treats
 
-- .. anything make you happy with simplest and miniumn of code lines to solve your matters
-
-When you are bored with packages, and love simply "include and run", let try this software.
+This software was made with an expectation of something dead simply "include and run".
+Happy coding
 
 # SPT usage
 
-- Create a PHP application
+- Fast create a PHP application with advantages 
 - Support multi language
 - Support SEF link
 - Implement MVC
@@ -24,6 +23,7 @@ When you are bored with packages, and love simply "include and run", let try thi
 - Support multi sites
 - Support CLI
 - DI container PSR-11
+- Advanced query with PDO integration
 
 # Links
 

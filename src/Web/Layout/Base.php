@@ -28,16 +28,16 @@ class Base
     protected readonly string $__sibling;
 
     /**
-    * Internal variable cache a token: plugin:path
-    * @var string $__id
+    * Internal variable cache a plugin id
+    * @var string $__pid
     */
-    protected readonly string $__id;
+    protected readonly string $__pid;
 
     /**
-    * Internal variable cache a secondary token: theme:path
-    * @var string $__secondary
+    * Internal variable cache a layout token: theme:path
+    * @var string $__token
     */
-    protected readonly string $__secondary;
+    protected readonly string $__token;
 
     /**
     * View object
@@ -55,27 +55,27 @@ class Base
      * Constructor
      * 
      * @param View   $view variable view
-     * @param string   $id token, format plugin:path
-     * @param string   $secondary token, format theme::path
+     * @param string   $pluginid token, format plugin:path
+     * @param string   $token token, format theme::path
      * @param string   $path path file 
      * 
      * @return void 
      */ 
-    public function __construct(View $view, string $id, string $secondary, string $path)
+    public function __construct(View $view, string $pluginid, string $token, string $path)
     {
         if(!file_exists($path))
         {
-            throw new \Exception('Can not create a layout from path '.$path);
+            throw new \Exception('Can not create a laypluginout from path '.$path);
         }
         
         $this->__path = $path;
-        $this->__id = $id;
+        $this->__pid = $pluginid;
         $this->__view = $view;
-        $this->__secondary = $secondary == $id ? '' : $secondary;
+        $this->__token = $token;
 
         // calculate sibling
-        $dotPos = strrpos($id, '.');
-        $this->__sibling =  false ===  $dotPos? '' : substr($id, 0, $dotPos);
+        $dotPos = strrpos($token, '.');
+        $this->__sibling =  false ===  $dotPos? '' : substr($token, 0, $dotPos);
     }
 
     /**
@@ -108,33 +108,33 @@ class Base
     }
 
     /**
-     * return current token
+     * return  layout ID
      * 
      * @return string 
      */ 
     public function getId(): string
     {
-        return $this->__id;
+        return $this->__pid. ':'. $this->__token;
     }
 
     /**
-     * return current theme token
+     * return  layout token
      * 
      * @return string 
      */ 
-    public function getSecondary(): string
+    public function getToken(): string
     {
-        return $this->__secondary;
+        return $this->__token;
     }
 
     /**
-     * return theme path
+     * return  plugin ID
      * 
      * @return string 
      */ 
-    public function getThemePath(): string
+    public function getPluginId(): string
     {
-        return $this->__view->_themePath;
+        return $this->__pid;
     }
 
     /**
@@ -142,7 +142,7 @@ class Base
      * 
      * @return string 
      */ 
-    public function getPartId(string $subpath): string
+    public function getPartToken(string $subpath): string
     {
         return empty($this->__sibling) ? $subpath : $this->__sibling. '.'. $subpath;
     }
@@ -164,7 +164,7 @@ class Base
      */ 
     public function part(string $subpath, array $data = []): void
     {
-        $layoutId = $this->getPartId($subpath);
+        $layoutId = $this->__pid. ':'. $this->getPartToken($subpath);
         $this->__view->render($layoutId, $data, false);
     }
 

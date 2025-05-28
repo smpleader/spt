@@ -87,11 +87,7 @@ class LayoutFunctions
                         } 
                     }
 
-                    // auto find in theme or in plugin
-                    $default = $this->getThemePath() ? ':t:_viewcoms.fields.' : ':v:fields.';
-
-                    $layout = empty($field->layout) ? $default.$field->type : $field->layout; 
-                    if(false === strpos($layout, ':')) $layout = $default. $layout;
+                    $layout = empty($field->layout) ? 'fields.'.$field->type : $field->layout;
             
                     return View::render( $layout, ['field'=>$field]);
                 }

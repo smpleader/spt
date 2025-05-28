@@ -83,26 +83,8 @@ class Controller extends Client
             }
 
             $currentPlugin = $this->app->get('currentPlugin');
-            $pluginList = $this->app->plugin(true);
-
-            $themePath = $this->app->any('themePath', 'theme.path', '');
-            $theme = $this->app->any('theme', 'theme.default', '');
-
-            if($themePath)
-            {
-                if(substr($themePath, -1) !== '/')
-                {
-                    $themePath .= '/';
-                }
-
-                $themePath .= $theme;
-                $themeConfigFile = $themePath. '/'. $this->app->any('themeConfigFile', 'theme.config', '_assets.php');
-            }
-            else
-            {
-                $themeConfigFile = '';
-                $theme = $currentPlugin;
-            }
+            $pluginList = $this->app->get('pluginPaths', []);
+            $theme = $this->app->any('theme', 'system.theme', ''); 
                 
             $viewFunctions = [];
             $configFunction = $this->config->of('view.functions', []);
@@ -136,7 +118,7 @@ class Controller extends Client
             $this->container->share(
                 'view',
                 new View(
-                    $pluginList, $currentPlugin, $viewFunctions, $theme, $themePath, $themeConfigFile
+                    $pluginList, $currentPlugin, $viewFunctions, $theme, $themeConfigFile
                 ),
                 true
             ) ;

@@ -18,9 +18,7 @@ use SPT\Application\Configuration;
 
 class View
 {
-    public readonly string $_themePath;
     public Theme $_theme;
-    public Configuration $_config;
 
     private array $_layouts;
     private array $_plugins;
@@ -36,37 +34,17 @@ class View
      * @param string   $currentPlugin id of current plugin
      * @param array   $closures extra methods for layout
      * @param string   $currentTheme   theme name
-     * @param string   $themePath path to theme path
-     * @param string   $themeConfigFile path to theme configuration path
      * 
      * @return void 
      */ 
-    public function __construct(array $pluginList, string $currentPlugin, array $closures, string $currentTheme = '',  string $themePath = '', string $themeConfigFile = '' )
+    public function __construct(array $pluginList, string $currentPlugin, array $closures, string $currentTheme = '')
     {
         $this->_plugins = $pluginList;
         $this->_currentPlugin = $currentPlugin;
-        $this->_currentTheme = $currentTheme;
-        $this->_closures = $closures;
+        $this->_currentTheme = $currentPlugin != $currentTheme ? $currentTheme: '';
         $this->_shares = [];
-
-        if( $themePath && substr($themePath, -1) !== '/') $themePath .= '/';
-        $this->_themePath = $themePath;
-
         $this->_theme = new Theme;
-        if($themeConfigFile && file_exists($themeConfigFile))
-        {
-            $this->_config = new Configuration($themeConfigFile); 
-
-            if( is_array($this->_config->of('assets', null) ) )
-            {
-                $this->_theme->registerAsset($this->_config->of('assets'));
-            } 
-        }
-        else
-        {
-            $this->_config = new Configuration();
-        }
-
+        $this->_closures = $closures;
     }
 
     /**
@@ -91,21 +69,19 @@ class View
         }
 
         $id = $plugin. ':'. $layout;
-        $secondary = '';
-        if($this->_currentTheme && $this->_currentTheme != $plugin)
-        {
-            $secondary = $this->_currentTheme. ':'. $layout;
-        }
 
         if(!isset($this->_layouts[$id]))
         {
-            $this->_layouts[$id] = new \SPT\Web\Layout\Pure(
+            $aLayout = new \SPT\Web\Layout\Pure(
                 $this, 
-                $id, 
-                $secondary, 
+                $plugin,
+                $layout,
                 $this->getRealPath($plugin, $layout)
             );
-            $this->_layouts[$id]->update($this->_closures, true);
+            
+            $aLayout->update($this->_closures, true);
+
+            $this->_layouts[$id] = $aLayout;
         }
 
         return $this->_layouts[$id];
@@ -116,7 +92,10 @@ class View
         $layout = $this->getLayout($key);
         
         $data = ViewModel::getData($layout->getId(), $data);
-        $data = ViewModel::getData($layout->getSecondary(), $data);
+        if($this->_currentTheme)
+        {
+            $data = ViewModel::getData($this->_currentTheme. ':'. $layout->getToken(), $data);
+        }
         $layout->update($data);
 
         // TODO: VALIDATE  before render

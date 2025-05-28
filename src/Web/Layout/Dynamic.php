@@ -21,12 +21,6 @@ class Dynamic extends Base
     * @var string $_path
     */
     protected readonly string $__path;
-    
-    /**
-    * Internal variable cache a token: plugin:path
-    * @var string $_id
-    */
-    protected readonly string $__id;
 
     /**
      * update data if new one
@@ -37,7 +31,7 @@ class Dynamic extends Base
     {
         foreach($data as $k=>$v)
         {
-            if(!in_array($k, ['theme', '__path', '__id', '__view']))
+            if(!in_array($k, ['theme', '__path', '__pid', '__view']))
             {
                 $this->$k = is_callable($v) ? $v->bindTo($this): $v;
             }
@@ -52,7 +46,6 @@ class Dynamic extends Base
     public function __get($name) 
     {
         if('theme' == $name) return $this->__view->_theme;
-        if('config' == $name) return $this->__view->_config;
         return $this->$name ?? $this->__view->getData($name);
     }
 

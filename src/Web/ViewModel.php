@@ -13,7 +13,6 @@ namespace SPT\Web;
 use SPT\Container\Client;
 use SPT\Traits\ObjectHasInternalData;
 use SPT\Support\ViewModel as VMHub;
-use SPT\Support\LayoutId;
 use SPT\Support\App;
 
 class ViewModel extends Client

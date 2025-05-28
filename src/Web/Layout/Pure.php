@@ -23,9 +23,9 @@ class Pure extends Base
     
     /**
     * Internal variable cache a token: plugin:path
-    * @var string $_id
+    * @var string $__pid
     */
-    protected readonly string $__id;
+    protected readonly string $__pid;
 
     /**
     * Internal variable cache methods
@@ -67,7 +67,6 @@ class Pure extends Base
     public function __get($name) 
     {
         if('theme' == $name) return $this->__view->_theme;
-        if('config' == $name) return $this->__view->_config;
         return $this->__vars[$name] ?? $this->__view->getData($name);
     }
 

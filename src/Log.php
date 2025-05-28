@@ -4,7 +4,7 @@
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Calss support to log information for a debug
+ * @description: Class support to log information for a debug
  * 
  */
 

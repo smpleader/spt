@@ -1,10 +1,10 @@
 <?php
 /**
- * SPT software - Log class
+ * SPT software -  File env 
  * 
  * @project: https://github.com/smpleader/spt
  * @author: Pham Minh - smpleader
- * @description: Calss support to log information for a debug
+ * @description: Get information from env file
  * 
  */
 

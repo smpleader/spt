@@ -12,6 +12,7 @@
 namespace SPT\Application;
  
 use SPT\Router\ArrayEndpoint as Router;
+use SPT\Router\Cli as RouterCli;
 use SPT\Request\Singleton as Request;
 use SPT\Response;
 use SPT\Query;
@@ -35,11 +36,13 @@ class Base extends ACore implements IApp
         $this->namespace = empty($namespace) ? __NAMESPACE__ : $namespace;
         $this->container = $container;
         $this->config = $config;
-        $this->request = Request::instance();  
-        $this->router = new Router(
-            $this->config->of('router.subpath', ''),
-            $this->config->of('router.ssl', '')
-        );
+        $this->request = Request::instance();
+        $this->router = defined('STDOUT') || defined('STDIN') ? 
+                new RouterCli() : 
+                new Router(
+                    $this->config->of('router.subpath', ''),
+                    $this->config->of('router.ssl', '')
+                ); 
         
         $this->plgManager = new Manager( $this, $packages );
         $this->set('pluginPaths', $this->plgManager->getPluginPaths());

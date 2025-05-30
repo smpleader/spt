@@ -50,12 +50,12 @@ class App extends StaticObj
         return self::$_instance;
     }
 
-    public static function createInstance(IContainer $container, string $configPath = '', $beforeInit = 1, $afterInit = null) 
+    public static function createInstance(IContainer $container, string $configPath = '', string $applicationType = 'system.application.web', $beforeInit = 1, $afterInit = null) 
     {
         if( !isset( self::$_instance) )
         {
             $config = new Configuration( $configPath );
-            $className =  $config->of('system.application.type', '\SPT\Application\Web');
+            $className =  $config->of($applicationType, '\SPT\Application\Web');
             try
             {
                 if(!class_exists($className))

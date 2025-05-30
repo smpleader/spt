@@ -58,7 +58,15 @@ class App extends StaticObj
             $className =  $config->of($applicationType, '\SPT\Application\Web');
             try
             {
-                if(!class_exists($className))
+                if(class_exists($className))
+                {
+                    $reflected = new \ReflectionClass( $className );
+                    if(!$reflected->isSubclassOf( '\SPT\Application\Base' ))
+                    {
+                        throw($className.' must be extended from \SPT\Application\Base');
+                    }
+                }
+                else
                 {
                     throw('Invalid application type '. $className);
                 }

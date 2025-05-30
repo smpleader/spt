@@ -18,7 +18,7 @@ class Model
     public static function containerize(string $classname, string $fullname, ?string $alias)
     {
         // currently do not force Model as SPT\Web\Model
-        //$reflected = new ReflectionClass( $fullname );
+        //$reflected = new \ReflectionClass( $fullname );
         //$reflected->isSubclassOf( '\SPT\Web\Model' )
         $container = App::getInstance()->getContainer();
         $container->containerize(

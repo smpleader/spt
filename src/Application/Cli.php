@@ -65,7 +65,7 @@ class Cli extends Base
             $args = $this->request->cli->getArgs();
             if (!$args)
             {
-                $this->raiseError('Invalid Parameter');
+                $this->raiseError('No Command Found');
             }
 
             $exec = $args[0];
